@@ -100,7 +100,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Link Wokwi công khai: https://wokwi.com/projects/480535692769291265 (mở được khi chưa đăng nhập).
 
 **Trang 15. Phân công, khó khăn (0:50)**
-- Phân công: Hưng trưởng nhóm, đặc tả, thiết kế và mô phỏng; Giang phần cứng và QA; Bảo API và giao tiếp thiết bị với máy tính; Minh kiểm thử và QA.
+- Phân công: Hưng trưởng nhóm, đặc tả, thiết kế, mô phỏng và dashboard; Giang phần cứng và QA; Bảo backend, API và giao tiếp thiết bị với máy tính; Minh backend, kiểm thử và QA.
 - Kho mã chung github.com/moonshineTP/Haitay, nhánh riêng, xem chéo trước khi hợp nhất.
 - Khó khăn và rủi ro lớn nhất: FRAM phải đặt ngoài 1 đến 3 tuần, Bluetooth LE dễ trễ tiến độ, đo trễ tuyệt đối cần thiết bị tham chiếu, cảm biến chạm có thể kích hoạt sai khi tay ẩm.
 
