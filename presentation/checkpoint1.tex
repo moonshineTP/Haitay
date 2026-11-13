@@ -182,7 +182,7 @@ Thời gian solve $= t_1 - t_0$. Cạnh chạm chỉ được công nhận sau b
 \midrule
 \srow N1 & Mốc giờ có độ phân giải dưới 1~ms \\
 N2 & Trễ phát hiện chạm 2 đến 10~ms; sai lệch $\pm 10$~ms \\
-\srow N3* & Chạm hai tay dưới 1,5~s không làm đồng hồ sẵn sàng \\
+\srow N3 & Chạm hai tay dưới 1,5~s không làm đồng hồ sẵn sàng \\
 N4 & 0 bản ghi đã chốt bị mất qua 100 lần cắt điện \\
 \srow N5 & 0 mất, 0 trùng khi rơi kết nối Bluetooth \\
 N6 & Trên 100 lượt, thiết kế 512 lượt chưa đồng bộ \\
@@ -193,17 +193,17 @@ N6 & Trên 100 lượt, thiết kế 512 lượt chưa đồng bộ \\
 \toprule
 \hrow \hc{Mã} & \hc{Chỉ tiêu} \\
 \midrule
-\srow N7* & Đồng bộ 512 bản ghi dưới 10~s \\
-N8* & Màn hình 10 lần mỗi giây, đọc được ở 60~cm \\
-\srow N9* & Chạy liên tục 24 giờ không khởi động lại \\
+\srow N7 & Đồng bộ 512 bản ghi dưới 10~s \\
+N8 & Màn hình 10 lần mỗi giây, đọc được ở 60~cm \\
+\srow N9 & Chạy liên tục 24 giờ không khởi động lại \\
 N10 & Nguồn USB-C 5~V; pin CR2032 chỉ nuôi đồng hồ thực \\
-\srow N11* & Thân một thanh; pad còn nhạy sau 10.000 lần chạm \\
-N12* & Module firmware kiểm thử riêng được \\
+\srow N11 & Thân một thanh; pad còn nhạy sau 10.000 lần chạm \\
+N12 & Module firmware kiểm thử riêng được \\
 \bottomrule
 \end{tabular}
 \end{columns}
 
-Kiểm chứng: máy phân tích logic, relay cắt nguồn, ngắt Bluetooth 20 đến 50 lần. * Ngưỡng nhóm đề xuất.
+Kiểm chứng: máy phân tích logic, relay cắt nguồn, ngắt Bluetooth 20 đến 50 lần.
 \end{frame}
 
 % ================================================================ 4
@@ -427,15 +427,14 @@ Link Wokwi: \url{https://wokwi.com/projects/480535692769291265}
 \toprule
 \hrow \hc{Thành viên} & \hc{Phụ trách} \\
 \midrule
-\srow Phạm Gia Hưng & Điều phối, tích hợp, mô phỏng, báo cáo \\
-Đỗ Trường Giang & Thiết bị: lắp mạch, firmware, đo trễ \\
-\srow Dương Thanh Minh & Backend: bridge BLE, ingest, SQLite \\
-Nguyễn Anh Bảo & Dashboard web, kịch bản demo \\
+\srow Phạm Gia Hưng & Trưởng nhóm; đặc tả, thiết kế, mô phỏng \\
+Đỗ Trường Giang & Phần cứng và QA \\
+\srow Nguyễn Anh Bảo & API, giao tiếp thiết bị và máy tính \\
+Dương Thanh Minh & Kiểm thử và QA \\
 \bottomrule
 \end{tabular}
 
 \smallskip
-Phân công đề xuất: \cbs{cần bổ sung: nhóm xác nhận}\\
 Kho mã: \url{https://github.com/moonshineTP/Haitay}
 \column{0.42\textwidth}
 \textbf{Khó khăn và rủi ro lớn nhất}

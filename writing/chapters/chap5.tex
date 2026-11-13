@@ -1,15 +1,15 @@
 \chapter{Kế hoạch và đồng thuận}
 
-Một bản thiết kế chỉ thành sản phẩm khi mỗi phần có người nhận và mỗi điểm còn mở có người chốt. Chương này đề xuất cách chia việc, liệt kê rủi ro đang thấy, và gom các quyết định cần cả nhóm đồng thuận trước khi bước vào giai đoạn xây dựng.
+Một bản thiết kế chỉ thành sản phẩm khi mỗi phần có người nhận và mỗi điểm còn mở có người chốt. Chương này trình bày cách chia việc, liệt kê rủi ro đang thấy, và gom các quyết định cần cả nhóm đồng thuận trước khi bước vào giai đoạn xây dựng.
 
 \section{Phân công theo lớp kiến trúc}
-Nhóm chia việc theo đúng bốn lớp của Hình~\ref{fig:arch}, để mỗi người sở hữu một ranh giới giao tiếp rõ ràng. Bảng dưới đây là đề xuất, và cột cuối ghi sản phẩm mà mỗi vai trò chịu trách nhiệm nộp.
+Nhóm chia việc theo bốn lớp của Hình~\ref{fig:arch}, để mỗi người sở hữu một ranh giới giao tiếp rõ ràng. Cột cuối ghi sản phẩm mà mỗi vai trò chịu trách nhiệm nộp.
 
 \begin{table}[H]
     \centering
     \small
     \renewcommand{\arraystretch}{1.4}
-    \caption{Đề xuất phân công, chờ nhóm xác nhận}
+    \caption{Phân công công việc}
     \label{tab:roles}
     \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.0cm} >{\raggedright\arraybackslash}m{3.0cm} >{\raggedright\arraybackslash}m{4.0cm} >{\raggedright\arraybackslash}m{4.0cm}}
         \toprule
@@ -17,11 +17,11 @@ Nhóm chia việc theo đúng bốn lớp của Hình~\ref{fig:arch}, để mỗ
         \textcolor{white}{Thành viên} & \textcolor{white}{Vai trò} & \textcolor{white}{Phạm vi} & \textcolor{white}{Sản phẩm chịu trách nhiệm} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Phạm Gia Hưng & Điều phối và tích hợp & Đặc tả, mô phỏng, kiểm thử tích hợp, báo cáo & Báo cáo, bộ mô phỏng, biên bản kiểm thử \\
-        Đỗ Trường Giang & Phụ trách thiết bị & Lắp mạch, firmware ESP-IDF, đo độ trễ & Bảng chân kết nối, mã firmware, nhật ký đo \\
+        Phạm Gia Hưng & Trưởng nhóm & Đặc tả, thiết kế, mô phỏng, báo cáo & Báo cáo, bộ mô phỏng, kế hoạch \\
+        Đỗ Trường Giang & Phần cứng và QA & Lắp mạch, firmware ESP-IDF, đo độ trễ, kiểm tra chất lượng phần cứng & Bảng chân kết nối, mã firmware, nhật ký đo \\
         \rowcolor{haitayblue!8}
-        Dương Thanh Minh & Phụ trách backend & Bridge BLE, dịch vụ ingest, SQLite & Lược đồ CSDL, danh sách API, bộ kiểm thử API \\
-        Nguyễn Anh Bảo & Phụ trách giao diện & Dashboard web, kịch bản demo & Giao diện, ảnh chụp màn hình, video dự phòng \\
+        Nguyễn Anh Bảo & API và giao tiếp & Dịch vụ GATT, bridge BLE, ingest, API REST & Danh sách API, bridge, lược đồ CSDL \\
+        Dương Thanh Minh & Kiểm thử và QA & Kế hoạch kiểm thử, kịch bản bất lợi, chạy thử 24 giờ & Biên bản kiểm thử, nhật ký vận hành \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -124,7 +124,7 @@ Báo cáo này đóng vai trò bản đặc tả chung của nhóm. Những đi�
         \textcolor{white}{Điểm} & \textcolor{white}{Đề xuất} & \textcolor{white}{Ảnh hưởng tới} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Phân công & Theo Bảng~\ref{tab:roles} & Toàn bộ kế hoạch \\
+        Sketch Wokwi & Sửa phép so sánh mốc giờ có dấu 32 bit trước khi chạy dài & Mô phỏng Wokwi \\
         Màn hình & TFT 1,54 inch trên SPI thay OLED 0,96 inch trên I2C & Danh mục vật tư, bảng chân \\
         \rowcolor{haitayblue!8}
         Bố cục bản ghi & 16 byte, nhật ký chỉ ghi thêm, bản ghi sửa trỏ tới seq & Firmware, backend \\

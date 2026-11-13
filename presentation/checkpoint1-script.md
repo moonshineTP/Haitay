@@ -4,7 +4,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 
 | Trang | Nội dung | Thời lượng | Người nói |
 |---|---|---|---|
-| 1 | Trang bìa | 0:20 | [cần bổ sung] |
+| 1 | Trang bìa | 0:20 | |
 | 2 | 1. Giới thiệu dự án | 0:40 | |
 | 3 | 2. Vấn đề và người dùng | 0:50 | |
 | 4 | 3. Use case | 0:45 | |
@@ -54,7 +54,6 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Mười hai chỉ tiêu N1 đến N12, mỗi chỉ tiêu có con số và cách kiểm chứng.
 - Tách hai con số về thời gian: độ phân giải dưới 1 ms (N1) và độ trễ phát hiện chạm 2 đến 10 ms (N2).
 - Toàn vẹn dữ liệu: 0 bản ghi đã chốt bị mất qua 100 lần cắt điện, 0 mất và 0 trùng khi rơi Bluetooth.
-- Các dòng có dấu sao (N3, N7, N8, N9, N11, N12) là ngưỡng nhóm đề xuất, sẽ chốt trước khi đo.
 
 **Trang 7. Kiến trúc bốn lớp (1:10)**
 - Lớp cảm nhận: hai pad lá đồng nối kênh chạm của ESP32-S3; firmware đo giờ, ghi FRAM, giữ giờ bằng DS3231.
@@ -101,7 +100,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Link Wokwi công khai: https://wokwi.com/projects/480535692769291265 (mở được khi chưa đăng nhập).
 
 **Trang 15. Phân công, khó khăn (0:50)**
-- Phân công theo lớp kiến trúc: Hưng điều phối và mô phỏng, Giang thiết bị, Minh backend, Bảo dashboard. [cần bổ sung: nhóm xác nhận]
+- Phân công: Hưng trưởng nhóm, đặc tả, thiết kế và mô phỏng; Giang phần cứng và QA; Bảo API và giao tiếp thiết bị với máy tính; Minh kiểm thử và QA.
 - Kho mã chung github.com/moonshineTP/Haitay, nhánh riêng, xem chéo trước khi hợp nhất.
 - Khó khăn và rủi ro lớn nhất: FRAM phải đặt ngoài 1 đến 3 tuần, Bluetooth LE dễ trễ tiến độ, đo trễ tuyệt đối cần thiết bị tham chiếu, cảm biến chạm có thể kích hoạt sai khi tay ẩm.
 
