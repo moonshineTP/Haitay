@@ -109,40 +109,37 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
 \end{frame}
 
 % ================================================================ 3
-\begin{frame}{3. Yêu cầu chức năng: 12 use case}
+\begin{frame}{3. Yêu cầu chức năng: 4 use case}
 \centering
 \begin{tikzpicture}[
     scale=0.8, transform shape,
-    font=\scriptsize,
-    uc/.style={draw=haitayblue, fill=haitayblue!8, ellipse, minimum width=3.9cm, minimum height=0.62cm, inner sep=1pt},
+    font=\footnotesize,
+    uc/.style={draw=haitayblue, fill=haitayblue!8, ellipse, minimum width=8.6cm, minimum height=1.35cm, inner sep=0pt, align=center},
     sys/.style={draw=haitayblue, thick, rounded corners=4pt},
     lnk/.style={black!55},
     inc/.style={-{Stealth[length=1.6mm]}, dashed, black!60},
     actor/.pic={\draw[thick] (0,0.62) circle (0.14); \draw[thick] (0,0.48)--(0,0.12) (-0.22,0.36)--(0.22,0.36) (0,0.12)--(-0.17,-0.16) (0,0.12)--(0.17,-0.16);}
 ]
-    \draw[sys] (1.2,0.55) rectangle (6.4,-6.65);
-    \node[font=\footnotesize\bfseries, text=haitayblue] at (3.8,0.25) {Thiết bị Haitay};
-    \foreach \i/\t in {1/{UC01 Bấm giờ lượt solve}, 2/{UC02 Đánh dấu OK, +2, DNF}, 3/{UC03 Xem thống kê nhanh}, 4/{UC04 Xem, xóa, sửa lượt solve}, 5/{UC05 Mở session mới}, 6/{UC06 Đồng bộ dữ liệu}, 7/{UC07 Chuyển người dùng}} {
-        \node[uc] (d\i) at (3.8,-0.88*\i+0.15) {\t};
-    }
-    \draw[sys] (8.7,0.55) rectangle (13.9,-4.9);
-    \node[font=\footnotesize\bfseries, text=haitayblue] at (11.3,0.25) {Phần mềm máy tính};
-    \foreach \i/\t in {8/{UC08 Quản lý người dùng}, 9/{UC09 Gắn session với người dùng}, 10/{UC10 Xem dashboard xu hướng}, 11/{UC11 Đăng nhập bằng PIN}, 12/{UC12 Sao lưu, khôi phục}} {
-        \node[uc] (p\i) at (11.3,-0.88*\i+7.19) {\t};
-    }
-    \pic at (0,-3.1) {actor}; \node[align=center] at (0,-3.6) {Người\\chơi};
-    \pic at (7.55,-5.6) {actor}; \node[align=center] at (7.55,-6.1) {Dịch vụ\\đồng bộ};
-    \pic at (15.0,-2.2) {actor}; \node[align=center] at (15.0,-2.7) {Người dùng\\máy tính};
-    \foreach \i in {1,...,7} { \draw[lnk] (0.3,-2.75) -- (d\i.west); }
-    \draw[lnk] (7.35,-5.3) -- (d6.east); \draw[lnk] (7.35,-5.3) -- (d7.east);
-    \foreach \i in {8,...,12} { \draw[lnk] (14.75,-1.9) -- (p\i.east); }
-    \draw[inc] (d1.south east) to[bend left=40] node[right, font=\tiny]{«include»} (d2.north east);
-    \draw[inc] (d7.north east) to[bend right=40] node[right, font=\tiny]{«include»} (d6.south east);
+    \draw[sys] (2.3,1.0) rectangle (12.2,-6.65);
+    \node[font=\footnotesize\bfseries, text=haitayblue, anchor=north west] at (2.4,0.95) {Hệ thống Haitay};
+    \node[uc] (u1) at (6.8,-0.6)  {\textbf{UC1 Bấm giờ lượt giải}\\{\scriptsize bấm kiểu Stackmat, thấy ngay kết quả và phong độ}};
+    \node[uc] (u2) at (6.8,-2.3) {\textbf{UC2 Theo dõi tiến bộ}\\{\scriptsize xu hướng Ao5, Ao12, Ao100 qua nhiều tuần}};
+    \node[uc] (u3) at (6.8,-4.0)  {\textbf{UC3 Sao lưu lịch sử luyện tập}\\{\scriptsize không bao giờ mất một lượt giải}};
+    \node[uc] (u4) at (6.8,-5.7) {\textbf{UC4 Chuyển thiết bị cho người khác}\\{\scriptsize dùng chung một timer mà không lẫn dữ liệu}};
+    \pic at (0.7,-3.0) {actor}; \node[align=center] at (0.7,-3.55) {Người chơi};
+    \pic at (13.6,-5.4) {actor}; \node[align=center] at (13.6,-5.95) {Người chơi\\kế tiếp};
+    \foreach \i in {1,...,4} { \draw[lnk] (0.95,-2.65) -- (u\i.west); }
+    \draw[lnk] (13.35,-5.1) -- (u4.east);
+    \draw[inc] (u4.north east) to[bend right=45] (u3.south east);
+    \node[font=\scriptsize, black!60, anchor=west] at (11.15,-4.85) {«include»};
 \end{tikzpicture}
+
+\smallskip
+\footnotesize Mỗi use case là một nhu cầu. Giữ tay 1,5~s, chọn +2, xem Ao, sửa lượt cũ là các bước bên trong UC1.
 \end{frame}
 
 % ================================================================ 3a
-\begin{frame}{3. UC01 Bấm giờ: máy trạng thái kiểu Stackmat}
+\begin{frame}{3. UC1 Bấm giờ lượt giải: máy trạng thái}
 \centering
 \begin{tikzpicture}[
     scale=0.85, transform shape,
@@ -163,7 +160,7 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
     \draw[tr] (ready) -- node[lb, above=4pt]{nhả ít nhất\\một pad: $t_0$} (run);
     \draw[tr] (run) -- node[lb, right=6pt]{hai pad cùng\\chạm lại: $t_1$} (stop);
     \draw[tr] (stop) -| (idle);
-    \node[lb] at (5.4,-3.15) {chọn OK, +2 hoặc DNF; ghi FRAM; cập nhật Ao5, Ao12, Ao100};
+    \node[lb] at (5.4,-3.15) {chọn OK, +2 hoặc DNF; ghi flash; cập nhật Ao5, Ao12, Ao100};
 \end{tikzpicture}
 
 \bigskip
@@ -223,7 +220,7 @@ Kiểm chứng: máy phân tích logic, relay cắt nguồn, ngắt Bluetooth 20
     \node[lay] at (-0.4,-3.6) {Server\\\scriptsize\mdseries lớp trung gian};
     \node[lay] at (-0.4,-5.4) {Ứng dụng\\\scriptsize\mdseries lớp ứng dụng};
     \node[ext] (pad) at (3.0,0)  {\textbf{Hai pad lá đồng}\\cảm biến chạm};
-    \node[own] (mcu) at (8.0,0)  {\textbf{ESP32-S3}\\đo giờ, FRAM, DS3231};
+    \node[own] (mcu) at (8.0,0)  {\textbf{ESP32-S3}\\đo giờ, flash, DS3231};
     \node[own] (br)  at (8.0,-1.8) {\textbf{Bridge BLE}\\Python, bleak};
     \node[own] (api) at (8.0,-3.6) {\textbf{Ingest và API}\\Python, FastAPI};
     \node[ext] (db)  at (11.9,-3.6) {\textbf{SQLite}\\một tệp cục bộ};
@@ -253,7 +250,7 @@ Kiểm chứng: máy phân tích logic, relay cắt nguồn, ngắt Bluetooth 20
     bck/.style={-{Stealth[length=2mm]}, thick, haitayorange, dashed},
     m/.style={font=\scriptsize, align=center}
 ]
-    \node[blk] (d) at (0,0)    {Thiết bị\\[-0.2em]\scriptsize\mdseries FRAM};
+    \node[blk] (d) at (0,0)    {Thiết bị\\[-0.2em]\scriptsize\mdseries flash};
     \node[blk] (b) at (3.9,0)  {Bridge BLE};
     \node[blk] (a) at (7.8,0)  {Ingest};
     \node[blk] (s) at (11.3,0) {SQLite};
@@ -288,13 +285,13 @@ Chỉ ACK phần đã nằm trên đĩa & \texttt{ACK} gửi sau khi giao dịch
 \midrule
 \srow Bo ESP32-S3 (1 dự phòng) & 2 & 295.000 \\
 TFT 1,54 inch ST7789, SPI & 1 & 85.000 \\
-\srow FRAM FM24CL64B, 8~KB & 2 & 153.000* \\
+\srow Flash trong module, nhật ký 12~KB & 1 & 0 \\
 DS3231 kèm pin CR2032 & 1 & 44.000 \\
 \srow MPR121 (dự phòng cảm biến) & 1 & 25.000 \\
 Lá đồng, dây, ba nút nhấn & 1 & 130.000* \\
 \srow Vỏ in 3D, hai lần in & 2 & 96.000 \\
 \midrule
-\textbf{Tổng (đã gồm số lượng)} & & \textbf{1.372.000} \\
+\textbf{Tổng (đã gồm số lượng)} & & \textbf{1.066.000} \\
 \bottomrule
 \end{tabular}
 
@@ -302,7 +299,7 @@ Lá đồng, dây, ba nút nhấn & 1 & 130.000* \\
 \column{0.33\textwidth}
 \textbf{Lợi ích dự kiến}
 \begin{itemize}\footnotesize
-\item Một bộ hoàn chỉnh khoảng 803.000 đồng; Stackmat G5 giá 0,9 đến 1,0 triệu.
+\item Một bộ hoàn chỉnh khoảng 650.000 đồng; Stackmat G5 giá 0,9 đến 1,0 triệu.
 \item Không nhập tay từ lượt solve tới biểu đồ.
 \item Dữ liệu ở lại máy người chơi, không phí dịch vụ.
 \end{itemize}
@@ -320,7 +317,7 @@ Lá đồng, dây, ba nút nhấn & 1 & 130.000* \\
 \midrule
 \srow Truyền thông & Bluetooth LE & Wi-Fi, Zigbee & Vài mét, vài KB mỗi buổi; USB-C dự phòng \\
 Vi điều khiển & ESP32-S3 N8 & Pico 2 W; STM32WB55 dự phòng & Chạm và BLE có sẵn; hệ sinh thái trưởng thành \\
-\srow Lưu trên thiết bị & FRAM & EEPROM; flash dự phòng & Ghi từng byte, không xóa sector; rút cáp chỉ hỏng bản ghi mới nhất \\
+\srow Lưu trên thiết bị & Flash trong chip & Chip nhớ ngoài & 0 đồng; ghi thêm và CRC chịu rút cáp \\
 Gateway tới server & HTTP/REST & MQTT & Trả seq đã lưu sau COMMIT; MQTT cần thêm broker \\
 \srow Cơ sở dữ liệu & SQLite & InfluxDB & Vài MB, cần quan hệ và khóa chống trùng \\
 Backend & Python: bleak, FastAPI & Web Bluetooth & Chạy nền, tự nối lại; Web Bluetooth phải bấm mỗi lần \\
@@ -343,7 +340,7 @@ Linh kiện chưa về đủ, nên nhóm chạy cả luồng bằng \textbf{mô 
     hd/.style={font=\footnotesize\bfseries, text=haitayblue},
     arr/.style={-{Stealth[length=2mm]}, thick, haitayblue}
 ]
-    \foreach \px/\nm/\hdr/\txt in {0/s/Cảm biến/{Tín hiệu hai pad 1~kHz, trễ 2 đến 10~ms; máy trạng thái, FRAM ảo},
+    \foreach \px/\nm/\hdr/\txt in {0/s/Cảm biến/{Tín hiệu hai pad 1~kHz, trễ 2 đến 10~ms; máy trạng thái, bộ nhớ ảo},
                              3.4/p/Giao thức/{Khung LOG 11 bản ghi, \texttt{ACK}, \texttt{SET\_TIME} qua BLE ảo},
                              6.8/d/Cơ sở dữ liệu/{SQLite, khóa \texttt{(device\_id, seq)}, ACK sau COMMIT},
                              10.2/u/Giao diện/{Truy vấn Ao5, Ao12, Ao100; biểu đồ xuất tệp tĩnh}} {
@@ -398,24 +395,25 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 % ================================================================ 7d
 \begin{frame}{7. Mô phỏng Wokwi trên ESP32-S3}
 \begin{columns}[T]
-\column{0.53\textwidth}
+\column{0.57\textwidth}
 \centering
-\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{wokwi_circuit.png}\\
+\includegraphics[width=\linewidth]{figures/wokwi_circuit_full.png}\\
 {\scriptsize Mạch: ESP32-S3, hai nút thay pad, ba nút chức năng}
-\column{0.45\textwidth}
-\centering
-\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{wokwi_serial.png}\\
-{\scriptsize Cổng nối tiếp: dòng \texttt{REC} cho mỗi lượt đã chốt}
-\end{columns}
 
-\medskip
-\raggedright\footnotesize
+\smallskip
+{\scriptsize \url{https://wokwi.com/projects/480535692769291265}}
+\column{0.41\textwidth}
+\centering
+\includegraphics[width=0.72\linewidth]{figures/wokwi_serial_crop.png}\\
+{\scriptsize Cổng nối tiếp lúc đồng bộ}
+
+\raggedright\scriptsize
 \begin{itemize}
-\item 6 lượt solve, 12 dòng \texttt{REC} (6 khi chốt, 6 gửi lại khi đồng bộ), 0 lỗi CRC, 6 hàng trong SQLite.
-\item Ao5 bằng 3,30~s trên thiết bị và trên máy tính.
-\item Tín hiệu pad được lập trình sẵn (AUTOPLAY) vì Wokwi không giữ được hai phím cùng lúc; nút +2 và Đồng bộ được bấm thật.
+\item 6 lượt, 12 dòng \texttt{REC}, 0 lỗi CRC, 6 hàng SQLite.
+\item Ao5 3,30~s trên thiết bị và máy tính.
+\item Pad lập trình sẵn (AUTOPLAY) vì Wokwi không giữ hai phím; nút +2 và Đồng bộ bấm thật.
 \end{itemize}
-Link Wokwi: \url{https://wokwi.com/projects/480535692769291265}
+\end{columns}
 \end{frame}
 
 % ================================================================ 8
@@ -439,7 +437,7 @@ Kho mã: \url{https://github.com/moonshineTP/Haitay}
 \column{0.42\textwidth}
 \textbf{Khó khăn và rủi ro lớn nhất}
 \begin{itemize}\footnotesize
-\item FRAM FM24CL64B không bán trong nước, giao 1 đến 3 tuần.
+\item Xóa sector flash treo task 45 đến 400~ms, nên chỉ xóa lúc Chờ.
 \item Bluetooth LE dễ trễ tiến độ; giao thức đã chốt và kiểm thử trước.
 \item Đo độ trễ tuyệt đối cần thiết bị tham chiếu.
 \item Cảm biến chạm có thể kích hoạt sai khi tay ẩm hoặc gần bộ sạc.

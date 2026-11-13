@@ -38,12 +38,12 @@ Sổ chất lượng & \texttt{.jidoka/} (gate G1 đến G4, rủi ro \texttt{ri
 \midrule
 1 & Giới thiệu, thành viên & S2 / bìa, 1.1 & Timer hai pad kiểu Stackmat, tự lưu và tính Ao5, Ao12, Ao100\\
 2 & Vấn đề, người dùng & S3 / 2.1, 3.1.1 (tr.~21) & Bỏ nhập tay và cáp csTimer; người tự luyện, CLB, phụ huynh\\
-3 & Yêu cầu chức năng, phi chức năng & S4 đến S6 / 1.2, 1.3, 3.1.4 (tr.~23) & 12 use case; N1 đến N12 có chỉ tiêu và cách đo\\
+3 & Yêu cầu chức năng, phi chức năng & S4 đến S6 / 1.2, 1.3, 3.1.4 (tr.~23) & 4 use case theo nhu cầu; N1 đến N12 có chỉ tiêu và cách đo\\
 4 & Kiến trúc bốn lớp & S7, S8 / 3.3 (tr.~28) & BLE GATT, HTTP/REST 127.0.0.1, SQL, REST và SSE\\
-5 & Thiết bị, chi phí, lợi ích & S9 / 3.4.1 (tr.~30) & 1.372.000 đ có dự phòng; một bộ 803.000 đ; G5 0,9 đến 1,0 triệu\\
+5 & Thiết bị, chi phí, lợi ích & S9 / 3.4.1 (tr.~30) & 1.066.000 đ có dự phòng; một bộ 650.000 đ; G5 0,9 đến 1,0 triệu\\
 6 & Lựa chọn công nghệ & S10 / 2.4, 3.6 (tr.~17, 39) & Ứng viên, ngân sách, độ đơn giản, ablation, stack ở điểm gãy\\
 7 & Tiến độ, luồng dữ liệu & S11 đến S14 / 4.4 đến 4.7 (tr.~47) & Mô phỏng 17/17, ablation A1 đến A6, Wokwi tới SQLite\\
-8 & Phân công, repo, khó khăn & S15 / 5.1 đến 5.3 (tr.~54) & Chia theo lớp; FRAM phải đặt ngoài; BLE dễ trễ\\
+8 & Phân công, repo, khó khăn & S15 / 5.1 đến 5.3 (tr.~54) & Chia theo lớp; xóa flash chỉ lúc Chờ; BLE dễ trễ\\
 \bottomrule
 \end{tabular}
 
@@ -116,6 +116,7 @@ Sao không dùng MQTT? & PUBACK chỉ báo broker nhận, chưa báo CSDL đã l
 Đây đâu phải dữ liệu thật? & Wokwi chạy firmware thật; chỉ tín hiệu pad là kịch bản; phần cứng là mốc M2 (4.7, 5.4)\\
 Độ trễ thật bao nhiêu? & 2 đến 10~ms mỗi cạnh là ước lượng; mô phỏng chỉ chứng minh firmware không cộng thêm sai số (4.4)\\
 Có dùng thi đấu được không? & Không, là timer luyện tập, ngoài danh sách WCA chấp thuận\\
+Sao bỏ FRAM? & Không bán sẵn trong nước; flash trong chip đủ nhờ ghi thêm và CRC (3.4.4, 3.6)\\
 Pin? & Không có pin nuôi; USB-C 5~V; CR2032 chỉ giữ đồng hồ thực\\
 \bottomrule
 \end{tabular}
@@ -123,7 +124,7 @@ Pin? & Không có pin nuôi; USB-C 5~V; CR2032 chỉ giữ đồng hồ thực\\
 \blk{Còn mở}
 \begin{itemize}
 \item Phân công: Hưng trưởng nhóm, đặc tả, thiết kế, mô phỏng, frontend dashboard, định nghĩa dữ liệu hiển thị; Giang backend phần cứng và triển khai logic thiết bị; Bảo backend phần mềm và triển khai logic; Minh kiểm thử và QA phần cứng.
-\item Chương 3, năm điểm chờ nhóm quyết: mặc định OK khi dừng, bảng màn hình thiết bị, bản ghi FRAM hỏng khi nằm yên, lý do loại ESP32 cổ điển, kiểm thử UC12 sao lưu.
+\item Chương 3, năm điểm chờ nhóm quyết: mặc định OK khi dừng, bảng màn hình thiết bị, bản ghi flash hỏng khi nằm yên, lý do loại ESP32 cổ điển, kiểm thử UC12 sao lưu.
 \item Wokwi sketch, một blocker: \texttt{later()} so sánh có dấu 32 bit, nên sau 36 phút nhàn rỗi lượt đầu có thể sai; demo dưới 1 phút không bị ảnh hưởng. Bốn lỗi major xem \texttt{code/wokwi/RESULTS.md}.
 \item Slide: chưa so với timer Bluetooth giá rẻ (QiYi, GAN); chữ trong hình use case và biểu đồ hơi nhỏ trên máy chiếu.
 \end{itemize}

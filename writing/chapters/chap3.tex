@@ -32,7 +32,7 @@ Chương trước đã trả lời câu hỏi Haitay cần làm gì và chọn l
 Yêu cầu ở Chương~1 mới là danh sách việc hệ thống phải làm. Pha này gắn mỗi việc với một người thực hiện và một kịch bản cụ thể, để thiết kế phía sau có điểm tựa kiểm chứng được.
 
 \subsection{Tác nhân}
-Haitay có ba tác nhân. Người chơi và người dùng máy tính thường là cùng một người, nhưng được tách ra vì họ tương tác với hai hệ thống con khác nhau, ở hai thời điểm khác nhau.
+Haitay phục vụ người chơi, và chỉ có thêm một tác nhân khi thiết bị đổi chủ. Phần mềm trên máy tính, bridge Bluetooth và đồng hồ thực đều nằm trong ranh giới hệ thống, nên chúng không phải tác nhân.
 
 \begin{table}[H]
     \centering
@@ -45,54 +45,47 @@ Haitay có ba tác nhân. Người chơi và người dùng máy tính thường
         \textcolor{white}{Tác nhân} & \textcolor{white}{Loại} & \textcolor{white}{Vai trò} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Người chơi & Con người, chính & Thao tác trên thiết bị: bấm giờ, đánh dấu kết quả, xem thống kê, quản lý lượt solve và session \\
-        Người dùng máy tính & Con người, chính & Quản lý người dùng, gắn session, xem dashboard, sao lưu dữ liệu \\
-        \rowcolor{haitayblue!8}
-        Dịch vụ đồng bộ & Hệ thống, phụ & Phần mềm trên máy tính, phía bên kia của use case đồng bộ và chuyển người dùng \\
+        Người chơi & Con người, chính & Luyện giải trên thiết bị, xem tiến bộ trên máy tính, sao lưu dữ liệu của mình \\
+        Người chơi kế tiếp & Con người, phụ & Nhận thiết bị từ người chơi trước, chọn hoặc tạo hồ sơ của mình trên máy tính \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 \subsection{Biểu đồ use case}
-Hình~\ref{fig:usecase} chia use case theo hai ranh giới hệ thống. Bảy use case thuộc thiết bị, năm use case thuộc phần mềm trên máy tính, và Dịch vụ đồng bộ là cầu nối giữa hai bên.
+Mỗi use case gói một nhu cầu của người dùng và được đặt tên theo dạng động từ cộng tân ngữ. Các việc phục vụ cùng một nhu cầu, như giữ tay chờ sẵn sàng, chọn phạt, xem Ao hay sửa một lượt, trở thành bước hoặc luồng thay thế trong cùng use case. Nhờ vậy, Haitay chỉ có bốn use case, như Hình~\ref{fig:usecase} cho thấy.
 
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
         font=\scriptsize,
-        uc/.style={draw=haitayblue, fill=haitayblue!8, ellipse, minimum width=3.9cm, minimum height=0.62cm, inner sep=1pt},
+        uc/.style={draw=haitayblue, fill=haitayblue!8, ellipse, minimum width=5.0cm, minimum height=0.95cm, inner sep=1pt, align=center},
         sys/.style={draw=haitayblue, thick, rounded corners=4pt},
         lnk/.style={black!55},
         inc/.style={-{Stealth[length=1.6mm]}, dashed, black!60},
         actor/.pic={\draw[thick] (0,0.62) circle (0.14); \draw[thick] (0,0.48)--(0,0.12) (-0.22,0.36)--(0.22,0.36) (0,0.12)--(-0.17,-0.16) (0,0.12)--(0.17,-0.16);}
     ]
-        \draw[sys] (1.2,0.55) rectangle (6.4,-6.65);
-        \node[font=\footnotesize\bfseries, text=haitayblue] at (3.8,0.25) {Thiết bị Haitay};
-        \foreach \i/\t in {1/{UC01 Bấm giờ lượt solve}, 2/{UC02 Đánh dấu OK, +2, DNF}, 3/{UC03 Xem thống kê nhanh}, 4/{UC04 Xem, xóa, sửa lượt solve}, 5/{UC05 Mở session mới}, 6/{UC06 Đồng bộ dữ liệu}, 7/{UC07 Chuyển người dùng}} {
-            \node[uc] (d\i) at (3.8,-0.88*\i+0.15) {\t};
-        }
-        \draw[sys] (8.7,0.55) rectangle (13.9,-4.9);
-        \node[font=\footnotesize\bfseries, text=haitayblue] at (11.3,0.25) {Phần mềm máy tính};
-        \foreach \i/\t in {8/{UC08 Quản lý người dùng}, 9/{UC09 Gắn session với người dùng}, 10/{UC10 Xem dashboard xu hướng}, 11/{UC11 Đăng nhập bằng PIN}, 12/{UC12 Sao lưu, khôi phục}} {
-            \node[uc] (p\i) at (11.3,-0.88*\i+7.19) {\t};
-        }
-        \pic at (0,-3.1) {actor}; \node[align=center] (pl) at (0,-3.6) {Người\\chơi};
-        \pic at (7.55,-5.6) {actor}; \node[align=center] (sv) at (7.55,-6.1) {Dịch vụ\\đồng bộ};
-        \pic at (14.75,-2.2) {actor}; \node[align=center] (us) at (14.75,-2.7) {Người dùng\\máy tính};
-        \foreach \i in {1,...,7} { \draw[lnk] (0.3,-2.75) -- (d\i.west); }
-        \draw[lnk] (7.35,-5.3) -- (d6.east); \draw[lnk] (7.35,-5.3) -- (d7.east);
-        \foreach \i in {8,...,12} { \draw[lnk] (14.5,-1.9) -- (p\i.east); }
-        \draw[inc] (d1.south east) to[bend left=40] node[right, font=\tiny]{«include»} (d2.north east);
-        \draw[inc] (d7.north east) to[bend right=40] node[right, font=\tiny]{«include»} (d6.south east);
+        \draw[sys] (2.4,0.6) rectangle (10.6,-5.0);
+        \node[font=\footnotesize\bfseries, text=haitayblue] at (6.5,0.3) {Hệ thống Haitay};
+        \node[uc] (u1) at (6.5,-0.55) {\textbf{UC1 Bấm giờ lượt giải}\\{\tiny thực hiện trên thiết bị}};
+        \node[uc] (u2) at (6.5,-1.8) {\textbf{UC2 Theo dõi tiến bộ}\\{\tiny dashboard trên máy tính, lịch sử trên thiết bị}};
+        \node[uc] (u3) at (6.5,-3.05) {\textbf{UC3 Sao lưu lịch sử luyện tập}\\{\tiny thiết bị, bridge và máy chủ}};
+        \node[uc] (u4) at (6.5,-4.3) {\textbf{UC4 Chuyển thiết bị cho người khác}\\{\tiny thiết bị và máy tính}};
+        \pic at (0.6,-2.2) {actor}; \node[align=center] at (0.6,-2.7) {Người\\chơi};
+        \pic at (12.4,-4.0) {actor}; \node[align=center] at (12.4,-4.5) {Người chơi\\kế tiếp};
+        \foreach \i in {1,...,4} { \draw[lnk] (0.85,-1.85) -- (u\i.west); }
+        \draw[lnk] (12.15,-3.75) -- (u4.east);
+        \draw[inc] (u4.north east) to[bend right=50] node[right, font=\tiny]{«include»} (u3.south east);
     \end{tikzpicture}
-    \caption{Biểu đồ use case của Haitay}
+    \caption{Biểu đồ use case của Haitay. Dòng chữ nhỏ ghi phần hệ thống hiện thực use case.}
     \label{fig:usecase}
 \end{figure}
 
-\subsection{Đặc tả use case}
-Ba use case dưới đây mang rủi ro cao nhất, nên được đặc tả đầy đủ. Các use case còn lại là thao tác đọc hoặc quản lý đơn giản, và luồng của chúng đã rõ từ tên gọi.
+UC4 gọi lại UC3 vì thiết bị chỉ được xóa sau khi máy tính đã lưu đủ dữ liệu. UC2 chỉ thấy những lượt đã đi qua UC3, nên hai use case này nối với nhau qua dữ liệu chứ không qua quan hệ «include».
 
-\newcommand{\ucspec}[7]{%
+\subsection{Đặc tả use case}
+Bốn use case đều được đặc tả theo cùng một khuôn. Dòng đầu nêu nhu cầu của người dùng, và các dòng sau mô tả cách hệ thống đáp ứng nhu cầu đó.
+
+\newcommand{\ucspec}[8]{%
 \begin{table}[H]
     \centering
     \small
@@ -104,41 +97,55 @@ Ba use case dưới đây mang rủi ro cao nhất, nên được đặc tả đ
         \multicolumn{2}{l}{\textcolor{white}{\textbf{#1}}} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Tác nhân & #2 \\
-        Tiền điều kiện & #3 \\
+        Nhu cầu & #2 \\
+        Tác nhân & #3 \\
         \rowcolor{haitayblue!8}
-        Luồng chính & #4 \\
-        Luồng thay thế & #5 \\
+        Tiền điều kiện & #4 \\
+        Luồng chính & #5 \\
         \rowcolor{haitayblue!8}
-        Hậu điều kiện & #6 \\
-        Yêu cầu liên quan & #7 \\
+        Luồng thay thế & #6 \\
+        Hậu điều kiện & #7 \\
+        \rowcolor{haitayblue!8}
+        Yêu cầu liên quan & #8 \\
         \bottomrule
     \end{tabular}
 \end{table}}
 
-\ucspec{UC01 Bấm giờ lượt solve}
+\ucspec{UC1 Bấm giờ lượt giải}
+{Đo một lượt giải theo cách của Stackmat và biết ngay kết quả cùng phong độ hiện tại}
 {Người chơi}
-{Thiết bị đang ở trạng thái Chờ; vòng đệm còn ô trống hoặc ô đã được xác nhận}
-{1. Người chơi đặt hai tay lên hai pad. 2. Thiết bị chuyển sang Đang giữ. 3. Sau 1,5 giây, thiết bị báo Sẵn sàng. 4. Người chơi nhấc ít nhất một tay; thiết bị ghi mốc $t_0$ và chạy đồng hồ. 5. Người chơi giải xong, đặt lại hai tay; thiết bị ghi mốc $t_1$. 6. Thiết bị hiện $t_1 - t_0$ và chuyển sang UC02.}
-{1a. Vòng đệm đã đầy 512 bản ghi chưa xác nhận: thiết bị không vào Đang giữ, báo cần đồng bộ (UC06). 3a. Người chơi nhấc tay trước 1,5 giây: thiết bị quay về Chờ, không ghi gì.}
-{Một bản ghi 16 byte đã chốt trong FRAM; Ao5, Ao12, Ao100 được cập nhật}
-{Đo thời gian, độ phân giải dưới 1~ms, độ trễ phát hiện chạm 2 đến 10~ms}
+{Thiết bị đang ở trạng thái Chờ; vòng đệm còn ô trống hoặc ô đã được máy tính xác nhận}
+{1. Người chơi đặt hai tay lên hai pad và giữ 1,5 giây; thiết bị báo Sẵn sàng. 2. Người chơi nhấc ít nhất một tay; thiết bị ghi mốc $t_0$ và chạy đồng hồ. 3. Giải xong, người chơi đặt lại hai tay; thiết bị ghi mốc $t_1$ và hiện $t_1 - t_0$. 4. Người chơi chọn OK, +2 hoặc DNF bằng nút Chọn. 5. Thiết bị ghi bản ghi vào flash, cập nhật best, mean, Ao5, Ao12, Ao100 rồi quay về Chờ.}
+{1a. Vòng đệm đã đầy 512 bản ghi chưa xác nhận: thiết bị không cho giữ tay, báo cần sao lưu (UC3). 1b. Người chơi nhấc tay trước 1,5 giây: thiết bị quay về Chờ, không ghi gì. 5a. Người chơi muốn sửa một lượt cũ: mở lịch sử bằng nút Session, đổi kết quả hoặc xóa; thiết bị ghi một bản ghi sửa. 5b. Người chơi bắt đầu buổi tập mới: nhấn nút Session, thiết bị tăng số session.}
+{Một bản ghi 16 byte đã chốt trong flash; thống kê trên màn hình đã cập nhật}
+{Đo thời gian, thống kê nhanh, quản lý lượt solve, lưu trữ cục bộ; N1 đến N4, N8}
 
-\ucspec{UC06 Đồng bộ dữ liệu}
-{Dịch vụ đồng bộ (khởi tạo), Người chơi (bấm nút Đồng bộ)}
-{Thiết bị và máy tính đã ghép đôi Bluetooth; dịch vụ trên máy tính đang chạy}
-{1. Dịch vụ kết nối, đọc Info và State. 2. Dịch vụ gửi \texttt{SET\_TIME}. 3. Dịch vụ gửi \texttt{SYNC}. 4. Thiết bị gửi các khung LOG từ \texttt{last\_ack}$\,+\,1$. 5. Với mỗi khung, dịch vụ kiểm tra CRC và tính liên tục của seq, lưu trong một giao dịch, rồi gửi \texttt{ACK}. 6. Thiết bị gửi khung END.}
-{4a. Kết nối rơi: dịch vụ kết nối lại và quay về bước 1; thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. 5a. Khung chứa bản ghi sai CRC hoặc lệch seq: dịch vụ ngừng ACK và quay về bước 3. 5b. Bản ghi đã có trong CSDL: bỏ qua theo khóa \texttt{(device\_id, seq)}.}
+\ucspec{UC2 Theo dõi tiến bộ}
+{Thấy xu hướng Ao5, Ao12, Ao100 qua nhiều tuần, lọc theo session và khoảng thời gian}
+{Người chơi}
+{Dữ liệu đã được sao lưu lên máy tính (UC3); nếu hồ sơ có PIN thì người chơi đã đăng nhập}
+{1. Người chơi mở dashboard trong trình duyệt. 2. Người chơi chọn hồ sơ, khoảng ngày và session. 3. Dashboard gọi \texttt{/stats/rolling}, vẽ chuỗi AoN và bảng session. 4. Khi có lô dữ liệu mới, máy chủ phát sự kiện SSE và dashboard vẽ lại.}
+{1a. Không có máy tính bên cạnh: người chơi xem lịch sử và các chỉ số Ao trên màn hình thiết bị. 2a. Hồ sơ có PIN: dashboard yêu cầu đăng nhập trước. 3a. Chưa đủ $n$ lượt: AoN hiện là chưa xác định.}
+{Dữ liệu không đổi; dashboard hiện đúng khoảng đã chọn}
+{Dashboard tương tác, quản lý theo người dùng, thống kê nhanh; N8}
+
+\ucspec{UC3 Sao lưu lịch sử luyện tập}
+{Giữ mọi lượt giải lâu dài trên máy tính, không mất khi rút cáp hay rớt kết nối}
+{Người chơi (bấm nút Đồng bộ, hoặc chỉ cần để máy tính trong tầm Bluetooth)}
+{Thiết bị và máy tính đã ghép đôi Bluetooth; dịch vụ Haitay trên máy tính đang chạy}
+{1. Bridge kết nối, đọc Info và State. 2. Bridge gửi \texttt{SET\_TIME}. 3. Bridge gửi \texttt{SYNC}. 4. Thiết bị gửi các khung LOG từ \texttt{last\_ack}$\,+\,1$. 5. Với mỗi khung, dịch vụ kiểm tra CRC và tính liên tục của seq, lưu trong một giao dịch, rồi gửi \texttt{ACK}. 6. Thiết bị gửi khung END; dashboard nhận sự kiện có dữ liệu mới.}
+{4a. Kết nối rơi: bridge kết nối lại và quay về bước 1; thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. 5a. Khung chứa bản ghi sai CRC hoặc lệch seq: dịch vụ ngừng ACK và quay về bước 3. 5b. Bản ghi đã có trong CSDL: bỏ qua theo khóa \texttt{(device\_id, seq)}. 6a. Người chơi muốn có bản sao ngoài: dịch vụ chép tệp \texttt{haitay.db} bằng SQLite backup API.}
 {Mọi bản ghi tới seq cuối nằm trong SQLite; \texttt{last\_ack} của thiết bị bằng seq cuối}
-{Đồng bộ không mất dữ liệu khi gián đoạn; sao lưu dài hạn}
+{Kết nối máy tính, đồng bộ, sao lưu dài hạn, mốc giờ thực; N5, N7}
 
-\ucspec{UC07 Chuyển người dùng}
-{Người chơi, Dịch vụ đồng bộ}
-{Người dùng mới đã được tạo trên máy tính (UC08)}
-{1. Người chơi chọn chuyển người dùng. 2. Hệ thống thực hiện UC06. 3. Dịch vụ gửi \texttt{WIPE}. 4. Thiết bị xóa vòng đệm, mở session mới. 5. Dashboard chọn người dùng mới làm người dùng hiện hành.}
-{3a. Còn bản ghi chưa xác nhận: thiết bị trả lời từ chối, giữ nguyên dữ liệu và yêu cầu đồng bộ lại.}
-{Bộ nhớ thiết bị trống, seq tiếp tục tăng; session tiếp theo được gắn với người dùng mới}
-{Chuyển user, chỉ xóa sau khi máy tính xác nhận}
+\ucspec{UC4 Chuyển thiết bị cho người khác}
+{Nhiều người dùng chung một timer mà dữ liệu của mỗi người không lẫn vào nhau}
+{Người chơi (người giao), Người chơi kế tiếp}
+{Người chơi kế tiếp đã có hồ sơ trên máy tính, hoặc tạo hồ sơ ở bước 1}
+{1. Người chơi kế tiếp chọn hoặc tạo hồ sơ của mình trên dashboard. 2. Người giao chọn chuyển người dùng trên thiết bị. 3. Hệ thống thực hiện UC3 cho phần dữ liệu còn lại. 4. Dịch vụ gửi \texttt{WIPE}. 5. Thiết bị xóa vòng đệm và mở session mới. 6. Ở lần sao lưu sau, session mới được gắn với hồ sơ người chơi kế tiếp.}
+{4a. Còn bản ghi chưa xác nhận: thiết bị từ chối, giữ nguyên dữ liệu và yêu cầu sao lưu lại. 6a. Session bị gắn nhầm người: người chơi đổi chủ session trên dashboard.}
+{Bộ nhớ thiết bị trống, seq tiếp tục tăng; dữ liệu cũ thuộc hồ sơ người giao}
+{Chuyển user, quản lý theo người dùng, chỉ xóa sau khi máy tính xác nhận; N5}
 
 \subsection{Đặc tả phi chức năng đo được}
 Bảng yêu cầu phi chức năng ở Chương~1 còn vài dòng định tính như gọn, bền hay dễ đọc. Pha phân tích chuyển mỗi dòng thành một chỉ tiêu có con số và một cách kiểm chứng, để nhóm và giảng viên cùng thống nhất thế nào là đạt.
@@ -193,20 +200,20 @@ Bảng~\ref{tab:trace} nối từng yêu cầu ở Chương~1 với use case và
         \textcolor{white}{Yêu cầu} & \textcolor{white}{Use case} & \textcolor{white}{Cơ chế thiết kế} & \textcolor{white}{Kiểm tra} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Đo thời gian & UC01 & GPTimer 1~MHz, ngắt chạm và nhả, chống nảy có lùi mốc (mục~\ref{sec:fw}) & T1, T2 \\
-        Lưu trữ cục bộ & UC01, UC04 & FRAM 512 ô, bản ghi ghi thêm có CRC (mục~\ref{sec:record}) & S3, S5 \\
+        Đo thời gian & UC1 & GPTimer 1~MHz, ngắt chạm và nhả, chống nảy có lùi mốc (mục~\ref{sec:fw}) & T1, T2 \\
+        Lưu trữ cục bộ & UC1 & Vòng đệm flash, 512 bản ghi chưa đồng bộ, ghi thêm có CRC (mục~\ref{sec:record}) & S3, S5 \\
         \rowcolor{haitayblue!8}
-        Thống kê nhanh & UC03 & Ao kiểu csTimer dùng chung cho thiết bị và máy tính & U1 đến U4 \\
-        Quản lý lượt solve & UC04, UC05 & Bản ghi sửa trỏ tới seq đích & S8 \\
+        Thống kê nhanh & UC1, UC2 & Ao kiểu csTimer dùng chung cho thiết bị và máy tính & U1 đến U4 \\
+        Quản lý lượt solve & UC1 & Bản ghi sửa trỏ tới seq đích & S8 \\
         \rowcolor{haitayblue!8}
-        Kết nối, đồng bộ & UC06 & ACK sau COMMIT, khóa \texttt{(device\_id, seq)} (mục~\ref{sec:flow}) & S1, S2, S4 \\
-        Chuyển user & UC07 & \texttt{WIPE} chỉ khi \texttt{last\_ack} bằng seq đầu vòng đệm & S7 \\
+        Kết nối, đồng bộ & UC3 & ACK sau COMMIT, khóa \texttt{(device\_id, seq)} (mục~\ref{sec:flow}) & S1, S2, S4 \\
+        Chuyển user & UC4 & \texttt{WIPE} chỉ khi \texttt{last\_ack} bằng seq đầu vòng đệm & S7 \\
         \rowcolor{haitayblue!8}
-        Quản lý theo người dùng & UC08, UC09 & Người dùng chỉ ở máy tính, gắn qua session & S7 \\
-        Dashboard tương tác & UC10 & API \texttt{/stats/rolling}, SSE & D1 \\
+        Quản lý theo người dùng & UC2, UC4 & Người dùng chỉ ở máy tính, gắn qua session & S7 \\
+        Dashboard tương tác & UC2 & API \texttt{/stats/rolling}, SSE & D1 \\
         \rowcolor{haitayblue!8}
-        Mốc giờ thực & UC06 & DS3231, \texttt{SET\_TIME}, quy đổi theo \texttt{boot\_id} & S6 \\
-        Sao lưu dài hạn & UC12 & Toàn bộ dữ liệu trong một tệp SQLite; sao lưu là chép tệp & Chưa có \\
+        Mốc giờ thực & UC3 & DS3231, \texttt{SET\_TIME}, quy đổi theo \texttt{boot\_id} & S6 \\
+        Sao lưu dài hạn & UC3 & Toàn bộ dữ liệu trong một tệp SQLite; sao lưu là chép tệp & Chưa có \\
         \rowcolor{haitayblue!8}
         Smart Cube (tùy chọn) & Chưa có & Ngoài phạm vi Checkpoint 1; dịch vụ GATT để ngỏ đặc tính mới & Chưa có \\
         \bottomrule
@@ -245,8 +252,8 @@ Hình~\ref{fig:domain} cho thấy sáu khái niệm và quan hệ giữa chúng.
     \label{fig:domain}
 \end{figure}
 
-\subsection{Biểu đồ hoạt động của UC01}
-Hình~\ref{fig:activity} chia luồng UC01 thành hai làn: việc người chơi làm và việc thiết bị làm. Cách vẽ này cho thấy hai điểm rẽ nhánh của đặc tả, là vòng đệm đầy và nhả tay sớm, cùng mỗi lần quyền điều khiển đổi bên.
+\subsection{Biểu đồ hoạt động của UC1}
+Hình~\ref{fig:activity} chia luồng UC1 thành hai làn: việc người chơi làm và việc thiết bị làm. Cách vẽ này cho thấy hai điểm rẽ nhánh của đặc tả, là vòng đệm đầy và nhả tay sớm, cùng mỗi lần quyền điều khiển đổi bên.
 
 \begin{figure}[H]
     \centering
@@ -263,7 +270,7 @@ Hình~\ref{fig:activity} chia luồng UC01 thành hai làn: việc người chơ
         \fill[haitayblue] (2.4,-0.75) circle (0.12);
         \node[act] (p1) at (2.4,-1.6) {Đặt hai tay lên hai pad};
         \node[dec] (d1) at (8.0,-1.6) {Vòng đệm\\còn ô?};
-        \node[act, text width=2.2cm] (full) at (11.9,-1.6) {Báo cần đồng bộ (UC06)};
+        \node[act, text width=2.2cm] (full) at (11.9,-1.6) {Báo cần sao lưu (UC3)};
         \node[act] (a2) at (8.0,-2.9) {Đếm thời gian giữ hai pad};
         \node[dec] (d2) at (8.0,-4.05) {Giữ đủ\\1,5~s?};
         \node[act] (a3) at (8.0,-5.2) {Báo Sẵn sàng};
@@ -272,7 +279,7 @@ Hình~\ref{fig:activity} chia luồng UC01 thành hai làn: việc người chơ
         \node[act] (p3) at (2.4,-7.2) {Giải xong, đặt lại hai tay};
         \node[act] (a5) at (8.0,-7.2) {Ghi mốc $t_1$, hiện $t_1 - t_0$};
         \node[act] (p4) at (2.4,-8.3) {Chọn OK, +2 hoặc DNF};
-        \node[act] (a6) at (8.0,-8.3) {Ghi 16 byte vào FRAM, cập nhật Ao5, Ao12, Ao100};
+        \node[act] (a6) at (8.0,-8.3) {Ghi 16 byte vào flash, cập nhật Ao5, Ao12, Ao100};
         \draw[fl] (2.4,-0.87) -- (p1);
         \draw[fl] (p1) -- (d1);
         \draw[fl] (d1) -- node[yn, above]{không} (full);
@@ -291,7 +298,7 @@ Hình~\ref{fig:activity} chia luồng UC01 thành hai làn: việc người chơ
         \draw[fl] (full) -- (11.9,-2.45);
         \draw[thick, haitayblue] (11.9,-2.6) circle (0.15); \fill[haitayblue] (11.9,-2.6) circle (0.09);
     \end{tikzpicture}
-    \caption{Biểu đồ hoạt động của UC01 Bấm giờ lượt solve, chia làn theo tác nhân}
+    \caption{Biểu đồ hoạt động của UC1 Bấm giờ lượt giải, chia làn theo tác nhân}
     \label{fig:activity}
 \end{figure}
 
@@ -316,15 +323,15 @@ Hành vi đo giờ là một máy trạng thái, mở rộng Bảng~\ref{tab:sta
         \draw[tr] (hold) to[bend left=35] node[lb, below=1pt]{nhả trước 1,5~s} (idle);
         \draw[tr] (ready) -- node[lb, above=2pt]{nhả ít nhất\\một pad: $t_0$} (run);
         \draw[tr] (run) -- node[lb, right=2pt]{hai pad cùng\\chạm lại: $t_1$} (stop);
-        \draw[tr] (stop) -| node[lb, pos=0.25, below=2pt]{chọn OK, +2 hoặc DNF; ghi FRAM; cập nhật Ao} (idle);
+        \draw[tr] (stop) -| node[lb, pos=0.25, below=2pt]{chọn OK, +2 hoặc DNF; ghi flash; cập nhật Ao} (idle);
     \end{tikzpicture}
     \caption{Biểu đồ trạng thái đo giờ. Thời gian solve bằng $t_1 - t_0$.}
     \label{fig:fsm}
 \end{figure}
 
-\subsection{Biểu đồ tuần tự của use case đồng bộ}
+\subsection{Biểu đồ tuần tự của UC3}
 \label{sec:flow}
-Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đoạn tách rời. Giai đoạn đầu diễn ra ngay trên thiết bị và không cần máy tính. Giai đoạn sau là UC06, chạy khi có kết nối theo cơ chế lưu rồi chuyển tiếp.
+Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đoạn tách rời. Giai đoạn đầu diễn ra ngay trên thiết bị và không cần máy tính. Giai đoạn sau là UC3, chạy khi có kết nối theo cơ chế lưu rồi chuyển tiếp.
 
 \begin{figure}[H]
     \centering
@@ -338,7 +345,7 @@ Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đo�
             \node[head] (\n) at (\x,0) {\t};
             \draw[black!35, dashed] (\x,-0.3) -- (\x,-10.1);
         }
-        \node[note, anchor=west] at (0.15,-0.9) {1. Dừng đồng hồ, chọn OK, +2 hoặc DNF\\2. Ghi 16 byte vào FRAM: bản ghi đã chốt};
+        \node[note, anchor=west] at (0.15,-0.9) {1. Dừng đồng hồ, chọn OK, +2 hoặc DNF\\2. Ghi 16 byte vào flash: bản ghi đã chốt};
         \draw[msg] (4.2,-1.9) -- node[above]{đọc Info, State} (0,-1.9);
         \draw[msg] (4.2,-2.6) -- node[above, font=\tiny]{write \texttt{SET\_TIME(unix)}, \texttt{SYNC}} (0,-2.6);
         \draw[msg] (0,-3.3) -- node[above, font=\tiny]{notify LOG: 11 bản ghi, seq $k+1 \ldots k+11$} (4.2,-3.3);
@@ -351,7 +358,7 @@ Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đo�
         \node[note, anchor=center, text width=11.5cm] at (6.3,-8.6) {Lặp lại cho đến khung END. Nếu kết nối rơi hoặc một khung sai CRC, bridge dừng gửi ACK, kết nối lại và thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. Bản ghi trùng bị loại theo khóa \texttt{(device\_id, seq)}.};
         \node[note, anchor=center, text width=11.5cm] at (6.3,-9.6) {Sau mỗi lô, dịch vụ ingest phát một sự kiện SSE; dashboard trong trình duyệt nhận sự kiện và tải lại khoảng đang xem.};
     \end{tikzpicture}
-    \caption{Biểu đồ tuần tự của UC06 cho một lô bản ghi}
+    \caption{Biểu đồ tuần tự của UC3 Sao lưu lịch sử luyện tập, cho một lô bản ghi}
     \label{fig:seq}
 \end{figure}
 
@@ -395,7 +402,7 @@ Môn học gọi bốn lớp này theo hai cách. Chương~1 của bài giảng 
     ]
         \node[lay] at (-0.3,0.5) {Lớp cảm nhận\\\scriptsize\mdseries (thiết bị)};
         \node[ext, text width=2.3cm] (pad) at (3.7,0.5) {\textbf{Hai pad lá đồng}\\cảm biến chạm điện dung};
-        \node[own] (mcu) at (9.0,0.5) {\textbf{Firmware ESP32-S3}\\đo giờ, FRAM, DS3231, màn hình TFT};
+        \node[own] (mcu) at (9.0,0.5) {\textbf{Firmware ESP32-S3}\\đo giờ, flash, DS3231, màn hình TFT};
         \node[lay] at (-0.3,-2.3) {Lớp mạng\\\scriptsize\mdseries (gateway)};
         \node[own] (br) at (9.0,-2.3) {\textbf{Bridge BLE}\\Python, thư viện bleak};
         \node[lay] at (-0.3,-4.6) {Lớp trung gian\\\scriptsize\mdseries (server)};
@@ -461,7 +468,7 @@ Kiến trúc bốn lớp cho biết khối nào nói chuyện với khối nào.
         \draw[haitayblue, thick] (0,0) -- (0.25,0.25) -- (4.25,0.25) -- (4.0,0) (4.25,0.25) -- (4.25,-4.35) -- (4.0,-4.6);
         \node[font=\footnotesize\bfseries, text=haitayblue, align=center] at (2.0,-0.45) {«thiết bị»\\ESP32-S3};
         \node[art] (fw) at (2.0,-1.6) {firmware \texttt{haitay.bin}\\ESP-IDF, NimBLE};
-        \node[art] (fr) at (2.0,-2.7) {FRAM: 512 ô bản ghi\\NVS: \texttt{last\_ack}, \texttt{boot\_id}};
+        \node[art] (fr) at (2.0,-2.7) {Flash: vòng đệm 12~KB\\NVS: \texttt{last\_ack}, \texttt{boot\_id}};
         \node[art] (rt) at (2.0,-3.8) {DS3231 và CR2032};
         % pc node
         \draw[haitayblue, thick, fill=haitayblue!3] (6.0,0) rectangle (15.6,-4.6);
@@ -505,7 +512,7 @@ Thiết bị được lắp từ các module bán sẵn trên bo mạch cắm, v
         Bo phát triển ESP32-S3 & Bluetooth LE 5.0, 14 kênh chạm, USB-C & 2 & 295.000 & Mục 2.3; một bo dự phòng \\
         Màn hình TFT IPS 1,54 inch ST7789 & 240$\times$240, SPI & 1 & 85.000 & Đọc rõ hơn OLED 0,96 inch, không chiếm bus I2C \\
         \rowcolor{haitayblue!8}
-        FRAM FM24CL64B & 8~KB, I2C, $10^{14}$ lần ghi & 2 & 153.000* & Chịu rút cáp giữa lúc ghi \\
+        Phân vùng flash 12~KB trong module & 768 ô, xóa theo sector 4~KB & 1 & 0 & Có sẵn, không phải đặt ngoài \\
         Module DS3231 kèm pin CR2032 & $\pm 2$~ppm, I2C & 1 & 44.000 & Giữ giờ khi rút cáp \\
         \rowcolor{haitayblue!8}
         Module MPR121 & 12 kênh chạm, I2C & 1 & 25.000 & Dự phòng nếu cảm biến có sẵn nhiễu \\
@@ -513,15 +520,15 @@ Thiết bị được lắp từ các module bán sẵn trên bo mạch cắm, v
         \rowcolor{haitayblue!8}
         Vỏ in 3D & Khoảng 120~g nhựa, hai lần in & 2 & 96.000 & Thân máy dạng thanh ngang \\
         \midrule
-        \multicolumn{3}{l}{\textbf{Tổng (đã gồm số lượng)}} & \textbf{1.372.000} & Chưa gồm vận chuyển \\
+        \multicolumn{3}{l}{\textbf{Tổng (đã gồm số lượng)}} & \textbf{1.066.000} & Chưa gồm vận chuyển \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Tổng trên gồm một bộ dự phòng và hai lần in vỏ. Bỏ bộ dự phòng và MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 803.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Haitay là timer luyện tập, không nằm trong danh sách timer được WCA chấp thuận, nên nó bổ trợ chứ không thay Stackmat trong thi đấu. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
+Tổng trên gồm một bộ dự phòng và hai lần in vỏ. Bỏ bộ dự phòng và MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 650.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Haitay là timer luyện tập, không nằm trong danh sách timer được WCA chấp thuận, nên nó bổ trợ chứ không thay Stackmat trong thi đấu. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
 
 \subsection{Bảng chân kết nối}
-Nhóm chia ngoại vi thành hai bus để màn hình không bao giờ chặn việc ghi bản ghi. Với phương án OLED 128$\times$64 dùng chung bus, một khung hình đầy đủ trên I2C 400~kHz mất khoảng 15 đến 23~ms, đủ lâu để một lần rút cáp rơi đúng vào lúc FRAM đang chờ bus. Vì vậy màn hình đi trên SPI, còn FRAM và DS3231 dùng chung bus I2C chỉ dành cho dữ liệu.
+Nhóm chia ngoại vi thành hai bus để màn hình không chiếm bus của đồng hồ thực. Với phương án OLED 128$\times$64 dùng chung bus, một khung hình đầy đủ trên I2C 400~kHz mất khoảng 15 đến 23~ms. Vì vậy màn hình đi trên SPI, còn bus I2C chỉ dành cho DS3231. Nhật ký solve nằm trong flash của module, nên không chiếm chân nào.
 
 \begin{table}[H]
     \centering
@@ -538,8 +545,8 @@ Nhóm chia ngoại vi thành hai bus để màn hình không bao giờ chặn vi
         4 & TOUCH4 & Pad trái & Dây ngắn, đi xa đường SPI \\
         5 & TOUCH5 & Pad phải & Như trên \\
         \rowcolor{haitayblue!8}
-        8 & I2C0 SDA & FRAM, DS3231 & Điện trở kéo lên 4,7~k$\Omega$ lên 3,3~V \\
-        9 & I2C0 SCL & FRAM, DS3231 & 400~kHz; FRAM địa chỉ 0x50, DS3231 0x68 \\
+        8 & I2C0 SDA & DS3231 & Điện trở kéo lên 4,7~k$\Omega$ lên 3,3~V \\
+        9 & I2C0 SCL & DS3231 & 400~kHz; DS3231 địa chỉ 0x68 \\
         \rowcolor{haitayblue!8}
         10 & SPI2 CS & TFT CS & \\
         11 & SPI2 MOSI & TFT SDA & 40~MHz \\
@@ -573,15 +580,13 @@ Một số chân được cố ý tránh. GPIO 0, 3, 45 và 46 là chân strappi
         \node[mod] (pl) at (-5,1.6) {Pad trái\\lá đồng};
         \node[mod] (pr) at (-5,-0.2) {Pad phải\\lá đồng};
         \node[mod] (btn) at (-5,-2.0) {Ba nút nhấn\\Chọn, Session, Đồng bộ};
-        \node[mod] (fram) at (6.2,2.0) {FRAM FM24CL64B\\0x50};
         \node[mod] (rtc) at (6.2,0.6) {DS3231 và CR2032\\0x68};
         \node[mod] (tft) at (6.2,-0.9) {TFT ST7789\\240$\times$240};
         \node[mod] (usb) at (6.2,-2.3) {Cổng USB-C\\5~V};
         \draw[bus] (pl) -- node[above]{GPIO4} (mcu.west |- pl);
         \draw[bus] (pr) -- node[above]{GPIO5} (mcu.west |- pr);
         \draw[bus] (btn) -- node[above]{GPIO15, 16, 17} (mcu.west |- btn);
-        \draw[bus] (mcu.east |- fram) -- node[above, font=\tiny]{I2C0: GPIO8, 9} (fram);
-        \draw[bus] (4.2,2.0) |- (rtc);
+        \draw[bus] (mcu.east |- rtc) -- node[above, font=\tiny]{I2C0: GPIO8, 9} (rtc);
         \draw[bus] (mcu.east |- tft) -- node[above, font=\tiny]{SPI2: GPIO10 đến 14, 21} (tft);
         \draw[pwr] (usb) -- node[above, font=\tiny]{5~V, GPIO19, 20} (mcu.east |- usb);
     \end{tikzpicture}
@@ -608,7 +613,7 @@ Firmware viết trên ESP-IDF với FreeRTOS, và được chia thành các modu
         \texttt{touch} & Hàm ngắt trong IRAM: đọc GPTimer 1~MHz, đẩy sự kiện (pad, chạm hay nhả, mốc giờ) vào hàng đợi & Ngắt, lõi 1 & Cao nhất \\
         \texttt{timing} & Máy trạng thái ở Hình~\ref{fig:fsm}, chống nảy, tính thời gian solve & Tác vụ, lõi 1 & Cao \\
         \rowcolor{haitayblue!8}
-        \texttt{store} & Ghi bản ghi 16 byte vào FRAM, quét vòng đệm khi khởi động, lưu \texttt{last\_ack} vào NVS & Tác vụ, lõi 1 & Trung bình \\
+        \texttt{store} & Ghi bản ghi 16 byte vào flash, quét vòng đệm khi khởi động, lưu \texttt{last\_ack} vào NVS & Tác vụ, lõi 1 & Trung bình \\
         \texttt{stats} & Tính best, mean, Ao5, Ao12, Ao100 từ các bản ghi đã chốt & Gọi từ \texttt{store} & Trung bình \\
         \rowcolor{haitayblue!8}
         \texttt{ui} & Vẽ màn hình 10 lần mỗi giây khi đồng hồ chạy, đọc ba nút & Tác vụ, lõi 1 & Thấp \\
@@ -653,7 +658,7 @@ Bản ghi trên thiết bị phải nhỏ, tự kiểm tra được và sống s
 
 Nhật ký được thiết kế theo kiểu chỉ ghi thêm. Khi người chơi đổi một lượt cũ thành +2 hoặc xóa nó, thiết bị không sửa ô cũ mà ghi một bản ghi sửa mới trỏ tới seq của lượt đó. Nhờ quy tắc này, một lần rút cáp chỉ có thể làm hỏng bản ghi mới nhất, vốn chưa được chốt, và CRC sẽ phát hiện nó. Phương án sửa tại chỗ bị loại vì một lần ghi dở ở byte \texttt{flags} sẽ phá hỏng một bản ghi đã chốt từ trước.
 
-FRAM được chia thành 512 ô, và bản ghi seq $n$ nằm ở ô $(n-1) \bmod 512$. Vòng đệm không có phần đầu lưu con trỏ, vì cập nhật cùng lúc bản ghi và con trỏ sẽ tạo ra một khoảnh khắc hai nơi không khớp nhau. Thay vào đó, mỗi lần khởi động firmware quét 512 ô, coi seq lớn nhất có CRC hợp lệ là đầu vòng đệm. Đầu vòng đệm lấy giá trị lớn hơn giữa seq đó và \texttt{last\_ack}, nên seq vẫn tăng sau \texttt{WIPE} hoặc khi vòng đệm trống. Chỉ hai giá trị nhỏ nằm trong NVS của flash: \texttt{last\_ack} và \texttt{boot\_id}. NVS của ESP-IDF tự bảo đảm tính nguyên tử khi ghi, và hai giá trị này chỉ đổi khi đồng bộ hoặc khi bật máy.
+Nhật ký nằm trong một phân vùng flash 12~KB của module, gồm 3 sector 4~KB và 768 ô 16 byte, và bản ghi seq $n$ nằm ở ô $(n-1) \bmod 768$. Flash phải xóa cả sector trước khi ghi lại, nên firmware chỉ xóa một sector khi mọi bản ghi trong đó đã được ACK, và chỉ xóa lúc thiết bị đang Chờ. Lệnh xóa mất 45 đến 400~ms và tạm dừng cache của CPU, nhưng ngắt chạm và GPTimer nằm trong IRAM nên mốc giờ vẫn đúng. Luật xóa này giữ đúng 512 bản ghi chưa đồng bộ như N6. Vòng đệm không có phần đầu lưu con trỏ, vì cập nhật cùng lúc bản ghi và con trỏ sẽ tạo ra một khoảnh khắc hai nơi không khớp nhau. Thay vào đó, mỗi lần khởi động firmware quét 768 ô, coi seq lớn nhất có CRC hợp lệ là đầu vòng đệm. Đầu vòng đệm lấy giá trị lớn hơn giữa seq đó và \texttt{last\_ack}, nên seq vẫn tăng sau \texttt{WIPE} hoặc khi vòng đệm trống. Chỉ hai giá trị nhỏ nằm trong NVS của flash: \texttt{last\_ack} và \texttt{boot\_id}. NVS của ESP-IDF tự bảo đảm tính nguyên tử khi ghi, và hai giá trị này chỉ đổi khi đồng bộ hoặc khi bật máy.
 
 \subsection{Giao thức Bluetooth LE}
 \label{sec:gatt}
@@ -844,17 +849,17 @@ Mọi điểm cuối có tiền tố \texttt{/api/v1}, nhận và trả JSON. Tr
         POST & /users & \texttt{name}, PIN tùy chọn & 201; 409 trùng tên \\
         GET & /sessions & \texttt{user\_id}, \texttt{from}, \texttt{to}, \texttt{cursor}, \texttt{limit} $\le 500$ & 200; 400 \\
         \rowcolor{haitayblue!8}
-        PATCH & /sessions/\{id\} & \texttt{user\_id}: gắn session cho người khác (UC09) & 200; 404 \\
+        PATCH & /sessions/\{id\} & \texttt{user\_id}: gắn session cho người khác (UC4) & 200; 404 \\
         GET & /solves & \texttt{user\_id}, \texttt{from}, \texttt{to}, \texttt{cursor}, \texttt{limit} $\le 1000$ & 200; 400 \\
         \rowcolor{haitayblue!8}
         GET & /stats/rolling & \texttt{user\_id}, \texttt{n} thuộc \{5, 12, 100\}, \texttt{from}, \texttt{to}; chuỗi AoN theo thời gian & 200; 400 \\
         GET & /devices/\{id\} & Phiên bản firmware, \texttt{last\_ack}, lần đồng bộ cuối & 200; 404 \\
         \rowcolor{haitayblue!8}
         GET & /events & Luồng Server-Sent Events báo có dữ liệu mới & 200 \\
-        POST & /auth/login & \texttt{user\_id}, PIN; trả token phiên trong cookie HttpOnly (UC11) & 200; 401 \\
+        POST & /auth/login & \texttt{user\_id}, PIN; trả token phiên trong cookie HttpOnly (UC2) & 200; 401 \\
         \rowcolor{haitayblue!8}
-        PATCH, DELETE & /users/\{id\} & Đổi tên, đặt lại PIN; xóa người dùng chưa có session (UC08) & 200; 404; 409 \\
-        POST & /backup & Chép \texttt{haitay.db} bằng SQLite backup API (UC12) & 201 \\
+        PATCH, DELETE & /users/\{id\} & Đổi tên, đặt lại PIN; xóa người dùng chưa có session (UC4) & 200; 404; 409 \\
+        POST & /backup & Chép \texttt{haitay.db} bằng SQLite backup API (UC3) & 201 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -875,7 +880,7 @@ Dashboard là một trang duy nhất, xếp thông tin theo thứ tự người 
             \node[tile, anchor=north west] at (0.2+2.75*\i,-1.1) {\textbf{\t}\\giá trị hiện tại};
         }
         \node[box, minimum width=13.6cm, minimum height=3.2cm, anchor=north west] at (0.2,-2.3) {Biểu đồ time-series: Ao5, Ao12, Ao100 trên cùng trục thời gian\\đánh dấu các mốc kỷ lục cá nhân};
-        \node[box, minimum width=8.6cm, minimum height=2.3cm, anchor=north west] at (0.2,-5.7) {Bảng session: ngày, số lượt, mean, Ao5 tốt nhất,\\người dùng sở hữu (sửa được, UC09)};
+        \node[box, minimum width=8.6cm, minimum height=2.3cm, anchor=north west] at (0.2,-5.7) {Bảng session: ngày, số lượt, mean, Ao5 tốt nhất,\\người dùng sở hữu (sửa được, UC4)};
         \node[box, minimum width=4.8cm, minimum height=2.3cm, anchor=north west] at (9.0,-5.7) {Danh sách lượt solve\\của session đang chọn};
     \end{tikzpicture}
     \caption{Khung bố cục dashboard}
@@ -911,12 +916,12 @@ Với mỗi quyết định, nhóm liệt kê các ứng viên rồi chấm theo
          & & nRF52840 hoặc STM32WB55 & $+50.000$ (nRF52840) & Thêm bộ công cụ mới & Không thêm yêu cầu nào được phủ \\
         \rowcolor{haitayblue!8}
         Cảm biến & Chạm có sẵn & Thêm MPR121 & $+25.000$ & Thêm một chip I2C & Chỉ cần khi cảm biến có sẵn nhiễu \\
-        Lưu trữ & FRAM FM24CL64B & Flash với LittleFS & $-153.000$ & Bớt một chip & Xóa theo sector, ghi dở khi rút cáp; vỡ N4 \\
+        Lưu trữ & Flash trong chip, ghi thêm & FRAM FM24CL64B & $+153.000$ & Thêm một chip I2C, phải đặt ngoài & Không phủ thêm yêu cầu; N4 đã đạt nhờ CRC và ghi thêm \\
         \rowcolor{haitayblue!8}
          & & EEPROM I2C & [EST] rẻ hơn & Như nhau & Ghi trang mất vài ms, trang có thể ghi dở; rủi ro N4 \\
         Đồng hồ thực & DS3231, CR2032 & Không có, chỉ dùng \texttt{SET\_TIME} & $-44.000$ & Bớt một module & Mọi lượt trước lần đồng bộ sau khi rút cáp chỉ có giờ ước lượng (A6) \\
         \rowcolor{haitayblue!8}
-        Màn hình & TFT ST7789, SPI & OLED 0,96 inch, I2C & $-20.000$ & Như nhau & Chặn bus FRAM 15 đến 23~ms mỗi khung; chữ nhỏ, rủi ro N8 \\
+        Màn hình & TFT ST7789, SPI & OLED 0,96 inch, I2C & $-20.000$ & Như nhau & Chiếm bus I2C 15 đến 23~ms mỗi khung; chữ nhỏ, rủi ro N8 \\
         Liên kết & Bluetooth LE & Cáp USB nối tiếp & 0 & Bớt ngăn xếp BLE & Vỡ yêu cầu kết nối không dây ở Chương~1 \\
         \rowcolor{haitayblue!8}
          & & Wi-Fi & 0 & Thêm mạng và cấu hình & Phụ thuộc mạng ngoài, ngoài phạm vi \\
@@ -977,7 +982,7 @@ Gộp hai phép thử lại, stack được chọn gồm các thành phần dư�
         \textcolor{white}{Lớp} & \textcolor{white}{Thành phần} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Cảm nhận (thiết bị) & ESP32-S3-WROOM-1 N8, chạm điện dung có sẵn, FRAM FM24CL64B, DS3231, TFT ST7789 trên SPI, USB-C 5~V \\
+        Cảm nhận (thiết bị) & ESP32-S3-WROOM-1 N8, chạm điện dung có sẵn, nhật ký trên flash trong module, DS3231, TFT ST7789 trên SPI, USB-C 5~V \\
         Mạng (gateway) & Bluetooth LE GATT trên NimBLE; bridge Python với bleak \\
         \rowcolor{haitayblue!8}
         Trung gian (server) & FastAPI trên 127.0.0.1, SQLite một tệp \\
@@ -998,18 +1003,18 @@ Gộp hai phép thử lại, stack được chọn gồm các thành phần dư�
         \draw[-{Stealth[length=2mm]}, black!60] (0,0) -- (0,5.3) node[above, font=\scriptsize]{số khối phần cứng và phần mềm};
         \foreach \x in {0,500,1000,1500,2000,2500} { \draw[black!40] (\x/250,0) -- (\x/250,-0.08) node[below, font=\tiny]{\x}; }
         \foreach \y in {6,8,10,12,14} { \draw[black!40] (0,\y*0.55-2.75) -- (-0.08,\y*0.55-2.75) node[left, font=\tiny]{\y}; }
-        \node[pt] (a) at (603/250, 8*0.55-2.75) {}; \node[lb, above] at (a) {Mức A: 603\\thiếu FRAM, DS3231};
+        \node[pt] (a) at (603/250, 8*0.55-2.75) {}; \node[lb, above] at (a) {Mức A: 603\\thiếu DS3231};
         \node[pt] (b) at (1284/250, 10*0.55-2.75) {}; \node[lb, above left] at (b) {Mức B: 1.284\\pin, hai màn hình};
         \node[pt] (c) at (2485/250, 13*0.55-2.75) {}; \node[lb, below left] at (c) {Mức C: 2.485\\nRF52840, mạch in};
-        \node[circle, fill=haitayblue, inner sep=2.6pt] (h) at (1372/250, 9*0.55-2.75) {};
-        \node[lb, below right, text=haitayblue, font=\scriptsize\bfseries] at (h) {Haitay: 1.372};
+        \node[circle, fill=haitayblue, inner sep=2.6pt] (h) at (1066/250, 8*0.55-2.75) {};
+        \node[lb, below right, text=haitayblue, font=\scriptsize\bfseries] at (h) {Haitay: 1.066};
         \draw[dashed, haitayblue] (a) -- (h) -- (c);
     \end{tikzpicture}
     \caption{Giá và độ phức tạp của ba mức trong báo cáo nghiên cứu nền và của stack được chọn. Giá gồm một bộ dự phòng; giá các mức có phí vận chuyển, giá Haitay thì chưa; trục đứng là ước lượng của nhóm.}
     \label{fig:knee}
 \end{figure}
 
-Stack được chọn nằm ở điểm gãy của đường cong giá và độ phức tạp. So với mức A, nó chi thêm khoảng 770.000 đồng, chủ yếu cho ESP32-S3 thay ESP32 cổ điển, FRAM, DS3231 và màn hình, để phủ N4 và mốc giờ thực. So với mức B, nó bỏ pin, mạch sạc và màn hình thứ hai theo quyết định nguồn của nhóm, rồi thêm hai chip FRAM, nên đắt hơn khoảng 90.000 đồng nhưng phủ được N4. Đi tiếp tới mức C tốn thêm khoảng 1,1 triệu đồng mà không phủ thêm yêu cầu nào.
+Stack được chọn nằm ở điểm gãy của đường cong giá và độ phức tạp. So với mức A, nó chi thêm khoảng 460.000 đồng, chủ yếu cho ESP32-S3 thay ESP32 cổ điển, DS3231 và màn hình, để phủ N2 và mốc giờ thực. So với mức B, nó bỏ pin, mạch sạc và màn hình thứ hai theo quyết định nguồn của nhóm, nên rẻ hơn khoảng 220.000 đồng mà vẫn phủ N4 nhờ nhật ký ghi thêm trên flash. Đi tiếp tới mức C tốn thêm khoảng 1,4 triệu đồng mà không phủ thêm yêu cầu nào.
 
 \subsection{Quyết định kỹ thuật và phương án bị loại}
 Bảng~\ref{tab:decisions} gom các quyết định chi tiết của chương này. Lựa chọn linh kiện và công nghệ truyền thông đã được lập luận ở chương trước, nên không lặp lại ở đây.
@@ -1032,10 +1037,10 @@ Bảng~\ref{tab:decisions} gom các quyết định chi tiết của chương n�
         Bridge BLE & Python với bleak & Web Bluetooth trong trình duyệt & Bridge chạy nền và tự kết nối lại, còn Web Bluetooth cần người dùng bấm mỗi lần và chỉ có trên trình duyệt nhân Chromium \\
         Cập nhật dashboard & SSE & WebSocket, hỏi định kỳ & Chỉ cần một chiều từ máy chủ tới trình duyệt; SSE tự kết nối lại và không cần thư viện thêm \\
         \rowcolor{haitayblue!8}
-        Bus màn hình & TFT trên SPI & OLED chung I2C với FRAM & Khung hình I2C 15 đến 23~ms chặn bus của FRAM; SPI 40~MHz tách hẳn hai luồng \\
+        Bus màn hình & TFT trên SPI & OLED chung I2C với DS3231 & Khung hình I2C 15 đến 23~ms chiếm bus; SPI 40~MHz tách hẳn hai luồng \\
         Sửa lượt solve & Bản ghi sửa ghi thêm & Sửa tại chỗ & Ghi thêm chỉ có thể làm hỏng bản ghi chưa chốt \\
         \rowcolor{haitayblue!8}
-        Con trỏ vòng đệm & Quét khi khởi động & Phần đầu trong FRAM & Không có hai nơi phải cập nhật cùng lúc; quét 8~KB qua I2C 400~kHz chỉ mất cỡ 0,2~s \\
+        Con trỏ vòng đệm & Quét khi khởi động & Con trỏ lưu trong flash & Không có hai nơi phải cập nhật cùng lúc; quét 12~KB flash chỉ mất vài mili giây \\
         Chống trùng & Khóa \texttt{(device\_id, seq)} & Băm nội dung bản ghi & Hai lượt solve khác nhau có thể trùng nội dung; seq là định danh tự nhiên do thiết bị cấp \\
         \bottomrule
     \end{tabular}

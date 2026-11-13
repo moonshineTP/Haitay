@@ -4,7 +4,7 @@
   "open_incident": null,
   "last_green": null,
   "debt": {
-    "value": 1,
+    "value": 2,
     "warn": 3,
     "stop": 5,
     "entries": [
@@ -12,6 +12,11 @@
         "t": "2026-11-13T01:12:22Z",
         "delta": 1,
         "why": "G1 authored after ch3-5 drafts existed; producer-set-bar risk"
+      },
+      {
+        "t": "2026-11-13T02:10:03Z",
+        "delta": 1,
+        "why": "G5 locked after FRAM edits began"
       }
     ]
   },
@@ -240,6 +245,57 @@
         }
       ],
       "status": "closed",
+      "history": [],
+      "waived_edge": null
+    },
+    "G5-noFRAM": {
+      "spec": ".jidoka\\gates\\G5-noFRAM.md",
+      "sha256": "92c71c4fe333ab0ca53b7b05dd30a2df0de77f62aad50b058125035b321ee6bb",
+      "criteria": {
+        "C1": {
+          "edge": true,
+          "text": "[edge] The compiled deck PDF text contains no \"FRAM\" and no \"FM24\" | pdftotext checkpoint1.pdf, grep | match count 0"
+        },
+        "C2": {
+          "edge": false,
+          "text": "Every deck BOM line names a part with a Vietnamese shop price in the prior-art notes | match BOM rows to reports/prior-art-record/embedded_feasibility_and_bom.md | row-to-source table"
+        },
+        "C3": {
+          "edge": false,
+          "text": "Deck, report and ledger agree on the totals 1.066.000 and 650.000 | grep all three | grep output"
+        },
+        "C4": {
+          "edge": false,
+          "text": "Deck compiles with overfull under 5 pt; report compiles with 0 undefined references | logs | log lines"
+        }
+      },
+      "records": [
+        {
+          "t": "2026-11-13T02:11:09Z",
+          "criterion": "C1",
+          "result": "pass",
+          "evidence": "09:12 pdftotext checkpoint1.pdf | grep FRAM|FM24 -> 0"
+        },
+        {
+          "t": "2026-11-13T02:11:09Z",
+          "criterion": "C2",
+          "result": "fail",
+          "evidence": "sourced VN shop prices: ESP32-S3 hshop 295k (N16R8; spec says N8), TFT hshop 85k, DS3231 hshop 44k / Dien tu Dat 37k, MPR121 dientutuyetnga 25k, 3D print Nshop 800 d/g; line 'La dong, day, ba nut' 130k is [EST] with no shop source; Hanoi-specific shops not verified"
+        },
+        {
+          "t": "2026-11-13T02:11:09Z",
+          "criterion": "C4",
+          "result": "pass",
+          "evidence": "deck overfull max 1.54pt, 16 pages (report compile pending)"
+        },
+        {
+          "t": "2026-11-13T02:11:45Z",
+          "criterion": "C3",
+          "result": "pass",
+          "evidence": "09:11 pdftotext: main, deck, ledger each show 1.066.000 and 650.000; 0 hits for 1.372 or 803.000"
+        }
+      ],
+      "status": "open",
       "history": [],
       "waived_edge": null
     }

@@ -20,7 +20,7 @@ Nhóm chia mã mô phỏng thành hai phần với vai trò khác nhau. Phần l
         \midrule
         \rowcolor{haitayblue!8}
         Đo giờ & Máy trạng thái năm trạng thái, chống nảy ba mẫu, mốc giờ lùi về đầu chuỗi ổn định & Tín hiệu hai pad lấy mẫu 1~kHz; mỗi cạnh trễ ngẫu nhiên 2 đến 10~ms, kèm một mẫu chập chờn \\
-        Lưu trữ & Bố cục bản ghi 16 byte, CRC16, vòng đệm 512 ô, quét khi khởi động, bản ghi sửa ghi thêm & FRAM là tệp 8~KB ghi từng byte, có thể cắt ở byte bất kỳ; NVS là tệp JSON thay thế nguyên tử \\
+        Lưu trữ & Bố cục bản ghi 16 byte, CRC16, vòng đệm 512 ô, quét khi khởi động, bản ghi sửa ghi thêm & Bộ nhớ nhật ký là tệp ghi từng byte, có thể cắt ở byte bất kỳ; NVS là tệp JSON thay thế nguyên tử \\
         \rowcolor{haitayblue!8}
         Bluetooth LE & Khung LOG và END, bốn lệnh, 11 bản ghi mỗi khung ở MTU 185 & Kênh truyền trong bộ nhớ, có thể rơi kết nối, lật một byte hoặc làm mất một ACK \\
         Máy tính & Lược đồ SQLite, ingest một giao dịch mỗi khung, ACK sau COMMIT, quy đổi giờ, gắn session với người dùng & Bridge và dịch vụ chạy chung một tiến trình, gọi hàm thay cho HTTP \\
@@ -72,7 +72,7 @@ for frame in link.stream():
 \section{Mô hình hóa sự cố}
 Một mô phỏng chỉ có giá trị khi nó biết cách hỏng giống thiết bị thật. Nhóm vì vậy đầu tư vào ba mô hình sự cố, mỗi mô hình bám vào một hiện tượng vật lý cụ thể.
 
-Mô hình mất điện dựa trên đặc điểm của FRAM: dữ liệu được ghi ngay khi từng byte đi qua bus, không có bộ đệm hay thời gian chờ. Vì thế lần rút cáp được mô phỏng bằng cách dừng ghi sau $k$ byte, với $k$ ngẫu nhiên từ 0 đến 15. Ô nhớ bị cắt giữ lại $k$ byte mới và phần còn lại của bản ghi cũ, đúng như trên chip thật.
+Mô hình mất điện xé bản ghi theo từng byte, kiểu hỏng thường gặp khi một lần ghi bị cắt giữa chừng. Trên flash, một page ghi dở còn có thể để lại bit tùy ý, và CRC16 chỉ bỏ sót một trường hợp như vậy với xác suất khoảng $2^{-16}$. Vì thế lần rút cáp được mô phỏng bằng cách dừng ghi sau $k$ byte, với $k$ ngẫu nhiên từ 0 đến 15. Ô nhớ bị cắt giữ lại $k$ byte mới và phần còn lại của bản ghi cũ, đúng như trên chip thật.
 
 Mô hình Bluetooth có ba kiểu hỏng. Kết nối có thể rơi sau một số khung, một khung có thể bị lật một byte, và một lệnh ACK có thể không tới được thiết bị. Kiểu thứ ba cũng đại diện cho trường hợp dịch vụ trên máy tính dừng đột ngột ngay sau COMMIT, trước khi kịp gửi ACK.
 
@@ -234,7 +234,7 @@ Mô phỏng đã trả lời được câu hỏi lớn nhất của giai đoạn
         \midrule
         \rowcolor{haitayblue!8}
         Đo giờ & Firmware không thêm sai số ngoài độ trễ cảm biến; chạm ngắn không kích hoạt & Đo độ trễ thật bằng máy phân tích logic và camera 240 hình mỗi giây \\
-        Lưu trữ & Không mất bản ghi đã chốt qua 100 lần cắt điện & Lặp lại 50 đến 100 lần cắt điện bằng relay trên FRAM thật \\
+        Lưu trữ & Không mất bản ghi đã chốt qua 100 lần cắt điện & Lặp lại 50 đến 100 lần cắt điện bằng relay trên flash của bo thật \\
         \rowcolor{haitayblue!8}
         Đồng bộ & Không mất, không trùng qua rơi kết nối, khung hỏng, mất ACK & Đo thông lượng và tỉ lệ rơi kết nối với bleak trên máy tính trình diễn \\
         Máy tính & Lược đồ, quy đổi giờ, gắn người dùng, truy vấn Ao chạy đúng & Bọc \texttt{PcService} bằng FastAPI theo Bảng~\ref{tab:api}, nối dashboard Chart.js \\

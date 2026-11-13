@@ -56,7 +56,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Toàn vẹn dữ liệu: 0 bản ghi đã chốt bị mất qua 100 lần cắt điện, 0 mất và 0 trùng khi rơi Bluetooth.
 
 **Trang 7. Kiến trúc bốn lớp (1:10)**
-- Lớp cảm nhận: hai pad lá đồng nối kênh chạm của ESP32-S3; firmware đo giờ, ghi FRAM, giữ giờ bằng DS3231.
+- Lớp cảm nhận: hai pad lá đồng nối kênh chạm của ESP32-S3; firmware đo giờ, ghi nhật ký vào flash trong chip, giữ giờ bằng DS3231.
 - Chặng thiết bị tới gateway là Bluetooth LE, dịch vụ GATT: notify bản ghi, write lệnh.
 - Gateway là bridge Python dùng bleak, gửi HTTP/REST JSON tới dịch vụ FastAPI chỉ nghe trên 127.0.0.1; dữ liệu nằm trong SQLite.
 - Dashboard web truy vấn bằng REST và nhận báo dữ liệu mới qua SSE; ba lớp trên cùng chạy trên máy tính người chơi.
@@ -67,13 +67,13 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Gửi lại không tạo bản sao nhờ khóa chính (device_id, seq).
 
 **Trang 9. Thiết bị, chi phí (0:50)**
-- Tổng vật tư 1.372.000 đồng, gồm một bo dự phòng và hai lần in vỏ; dòng có dấu sao là ước lượng.
-- Bỏ bộ dự phòng và MPR121, một bộ hoàn chỉnh khoảng 803.000 đồng, trong khi Stackmat G5 giá 0,9 đến 1,0 triệu và không lưu lịch sử.
+- Tổng vật tư 1.066.000 đồng, gồm một bo dự phòng và hai lần in vỏ; dòng có dấu sao là ước lượng.
+- Bỏ bộ dự phòng và MPR121, một bộ hoàn chỉnh khoảng 650.000 đồng, trong khi Stackmat G5 giá 0,9 đến 1,0 triệu và không lưu lịch sử.
 - Lợi ích chính: không nhập tay từ lượt solve tới biểu đồ, dữ liệu ở lại máy người chơi.
 
 **Trang 10. Công nghệ (0:50)**
 - Bluetooth LE vì thiết bị và máy tính cách vài mét, mỗi buổi chỉ vài KB, máy tính có sẵn bộ thu; USB-C làm dự phòng.
-- FRAM vì ghi tức thì và chịu rút cáp; HTTP/REST thay MQTT vì PUBACK chỉ báo broker đã nhận, chưa báo cơ sở dữ liệu đã lưu.
+- Nhật ký trên flash trong chip vì không tốn linh kiện, mua đâu cũng có, và ghi thêm cùng CRC giữ bản ghi khi rút cáp; HTTP/REST thay MQTT vì PUBACK chỉ báo broker đã nhận, chưa báo cơ sở dữ liệu đã lưu.
 - SQLite vì dữ liệu vài MB, cần quan hệ và khóa chống trùng; SSE vì dashboard chỉ cần nhận một chiều.
 
 **Trang 11. Luồng đầu cuối (0:50)**
@@ -102,7 +102,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 **Trang 15. Phân công, khó khăn (0:50)**
 - Phân công: Hưng trưởng nhóm, đặc tả, thiết kế, mô phỏng, frontend dashboard, định nghĩa dữ liệu hiển thị; Giang backend phần cứng và triển khai logic thiết bị; Bảo backend phần mềm và triển khai logic; Minh kiểm thử và QA phần cứng.
 - Kho mã chung github.com/moonshineTP/Haitay, nhánh riêng, xem chéo trước khi hợp nhất.
-- Khó khăn và rủi ro lớn nhất: FRAM phải đặt ngoài 1 đến 3 tuần, Bluetooth LE dễ trễ tiến độ, đo trễ tuyệt đối cần thiết bị tham chiếu, cảm biến chạm có thể kích hoạt sai khi tay ẩm.
+- Khó khăn và rủi ro lớn nhất: xóa sector flash phải đợi lúc rảnh, Bluetooth LE dễ trễ tiến độ, đo trễ tuyệt đối cần thiết bị tham chiếu, cảm biến chạm có thể kích hoạt sai khi tay ẩm.
 
 **Trang 16. Cảm ơn (0:10)**
 - Cảm ơn thầy và các bạn, nhóm sẵn sàng nhận câu hỏi.

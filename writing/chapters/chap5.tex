@@ -71,7 +71,7 @@ Rủi ro lớn nhất của Haitay nằm ở phần cứng và Bluetooth, vì m�
         \textcolor{white}{Mã} & \textcolor{white}{Rủi ro} & \textcolor{white}{Mức} & \textcolor{white}{Biện pháp} \\
         \midrule
         \rowcolor{haitayblue!8}
-        R1 & FRAM FM24CL64B không bán trong nước, thời gian giao 1 đến 3 tuần & Cao & Đặt hàng ngay; trong lúc chờ, dùng flash với LittleFS theo cùng bố cục bản ghi \\
+        R1 & Lệnh xóa sector flash làm treo task 45 đến 400~ms & Trung bình & Chỉ xóa sector đã ACK lúc thiết bị Chờ; ngắt chạm và GPTimer đặt trong IRAM \\
         R2 & Bluetooth LE mất nhiều thời gian hơn dự kiến & Cao & Giao thức đã chốt và kiểm thử bằng mô phỏng; dựng GATT tối thiểu trong tuần đầu; cáp USB-C là đường dự phòng \\
         \rowcolor{haitayblue!8}
         R3 & Cảm biến chạm kích hoạt sai khi tay ẩm hoặc gần bộ sạc & Trung bình & Hiệu chuẩn ngưỡng khi khởi động, hysteresis, chống nảy; MPR121 dự phòng \\
@@ -131,7 +131,7 @@ Báo cáo này đóng vai trò bản đặc tả chung của nhóm. Những đi�
         Chặng gateway tới server & HTTP/REST thay MQTT & Backend, bài lab của môn \\
         \rowcolor{haitayblue!8}
         Chỉ tiêu N7, N8 & Đồng bộ 512 bản ghi dưới 10~s; đọc được ở 60~cm & Kiểm thử \\
-        Đặt hàng & Mua theo Bảng~\ref{tab:bom}, gồm một bộ dự phòng & Ngân sách khoảng 1,4 triệu đồng \\
+        Đặt hàng & Mua theo Bảng~\ref{tab:bom}, gồm một bộ dự phòng & Ngân sách khoảng 1,1 triệu đồng \\
         \rowcolor{haitayblue!8}
         Kho mã & Một kho chung, nhánh riêng, xem chéo trước khi hợp nhất & Quy trình làm việc \\
         \bottomrule
