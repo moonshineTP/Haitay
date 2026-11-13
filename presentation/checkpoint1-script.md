@@ -101,7 +101,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Link Wokwi công khai: https://wokwi.com/projects/480535692769291265 (mở được khi chưa đăng nhập).
 
 **Trang tiếp theo. Wokwi, một lượt giải UC1 (0:20)**
-- Hình động 10 khung: giữ tay, GO!, đồng hồ chạy, dừng ở 2,87 s, in dòng `REC`.
+- Hình động 11 khung: chờ, giữ tay, GO!, đồng hồ chạy, chốt lượt trước, dừng ở 2,42 s, chọn +2, rồi đồng bộ 6 dòng `REC`; OLED hiện Ao5 3,30 s.
 - Hình động chỉ chạy trong Adobe Reader hoặc Okular; nếu máy chiếu dùng trình duyệt, mở GIF trên GitHub hoặc link Wokwi.
 
 **Trang 15. Phân công, khó khăn (0:50)**
