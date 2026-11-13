@@ -1,0 +1,12 @@
+[
+ {"id": "R1-placeholders-live (repo link, roles unconfirmed on slide 8)", "probability": 5, "impact": 3},
+ {"id": "R2-number-mismatch report vs slides vs sim", "probability": 3, "impact": 4},
+ {"id": "R3-lecturer: simulation is not real sensor data", "probability": 4, "impact": 3},
+ {"id": "R4-overrun past 09:15 +07", "probability": 3, "impact": 4},
+ {"id": "R5-final compile breaks after merge", "probability": 2, "impact": 5},
+ {"id": "R6-wokwi PoC not running by 08:50", "probability": 3, "impact": 3},
+ {"id": "R7-concurrent edits same file or build dir", "probability": 2, "impact": 4},
+ {"id": "R8-overclaim modeled latency as measured", "probability": 2, "impact": 4},
+ {"id": "R9-demo laptop lacks python or matplotlib", "probability": 2, "impact": 3},
+ {"id": "R10-chap3 bloat and style drift", "probability": 2, "impact": 2}
+]

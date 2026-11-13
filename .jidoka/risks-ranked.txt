@@ -1,0 +1,12 @@
+Rank ID                              Prob   Imp Score
+-----------------------------------------------------
+1    R1-placeholders-live (repo link, roles unconfirmed on slide 8)     5     3    15
+2    R2-number-mismatch report vs slides vs sim     3     4    12
+3    R3-lecturer: simulation is not real sensor data     4     3    12
+4    R4-overrun past 09:15 +07          3     4    12
+5    R5-final compile breaks after merge     2     5    10
+6    R6-wokwi PoC not running by 08:50     3     3     9
+7    R7-concurrent edits same file or build dir     2     4     8
+8    R8-overclaim modeled latency as measured     2     4     8
+9    R9-demo laptop lacks python or matplotlib     2     3     6
+10   R10-chap3 bloat and style drift     2     2     4

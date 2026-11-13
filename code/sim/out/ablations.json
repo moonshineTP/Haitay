@@ -1,0 +1,35 @@
+{
+ "run": "20261113-080402",
+ "ablations": {
+  "A1 no debounce": {
+   "baseline": "0/200 sai",
+   "ablated": "198/200 sai",
+   "requirement_broken": "N2, N3"
+  },
+  "A2 ACK before COMMIT": {
+   "baseline": "mất 0 bản ghi",
+   "ablated": "mất 11 bản ghi",
+   "requirement_broken": "N5, F5"
+  },
+  "A3 in-place edit": {
+   "baseline": "0 lượt đã chốt bị mất / 200 lần cắt điện",
+   "ablated": "28 lượt đã chốt bị mất / 200 lần cắt điện",
+   "requirement_broken": "N4"
+  },
+  "A4 no CRC": {
+   "baseline": "0 bản ghi rác được nhận (184 lần ghi dở bị CRC chặn)",
+   "ablated": "184 bản ghi rác được nhận",
+   "requirement_broken": "N4"
+  },
+  "A5 no (device_id, seq) key": {
+   "baseline": "0 bản ghi trùng",
+   "ablated": "11 bản ghi trùng",
+   "requirement_broken": "N5"
+  },
+  "A6 no RTC": {
+   "baseline": "0/20 mốc giờ phải ước lượng (DS3231 giữ giờ)",
+   "ablated": "20/20 mốc giờ phải ước lượng",
+   "requirement_broken": "Mốc giờ thực cho dashboard"
+  }
+ }
+}

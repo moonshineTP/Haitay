@@ -1,0 +1,24 @@
+\input{preamble}
+
+\begin{document}
+\begingroup
+    \pagestyle{empty}
+    % Nếu chưa có file titlepage.tex, bạn hãy comment dòng bên dưới lại
+    \include{titlepage} 
+\endgroup
+
+\begingroup
+    \tableofcontents
+    \thispagestyle{empty}
+\endgroup
+
+\pagestyle{fancy}
+\include{chapters/chap1} % Đã include file Giới thiệu đề tài vào đây
+\include{chapters/chap2} % Mở comment khi bạn có các file này
+\include{chapters/chap3}
+\include{chapters/chap4}
+\include{chapters/chap5}
+% \include{chapters/references}
+
+\label{LastPage}
+\end{document}

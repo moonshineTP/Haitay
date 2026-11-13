@@ -1,0 +1,99 @@
+\documentclass[a4paper, 12pt]{report}
+
+% --- CÁC THƯ VIỆN ĐƯỢC THÊM TỪ FILE 1 ---
+\usepackage[T5]{fontenc} % Hỗ trợ hiển thị tiếng Việt chuẩn
+\usepackage{lmodern}     % Font chữ mượt hơn
+\usepackage{microtype}   % Căn chỉnh typo tự động cho đẹp
+\usepackage{parskip}     % Cách dòng đoạn văn (thay thế cho thụt đầu dòng)
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+% ----------------------------------------
+
+\usepackage{a4wide}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage[left=2.50cm, right=2.50cm, top=2.50cm, bottom=2.5cm]{geometry}
+\usepackage{wrapfig} % Cho phép văn bản bao quanh hình ảnh
+\usepackage{titlesec} % Tuỳ chỉnh định dạng tiêu đề (chapter, section, subsection)
+\usepackage{graphicx} % Chèn hình ảnh vào tài liệu
+\usepackage{listings} % Chèn code
+\usepackage{alltt} % Hiển thị đúng định dạng theo src code
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{mdframed}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{lipsum}
+\usepackage{caption, subcaption}  
+\usepackage{xcolor} % Sử dụng màu sắc trong báo cáo
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{titlefoot}
+\usepackage{tcolorbox}
+\usepackage{float}
+\usepackage{fancyhdr} % Tuỳ chỉnh header and footer
+\usepackage{lastpage}
+\usepackage{etoolbox} % Để tùy chỉnh page style sau \include
+\usepackage{ocg-p}
+\usepackage{booktabs} % Tạo bảng đẹp hơn
+\usepackage{multirow} % Gộp ô theo hàng dọc
+\usepackage{makecell} % Căn chỉnh nội dung ô bảng
+\usepackage{array}    % Tùy chỉnh cột bảng
+\usepackage{colortbl} % Tô màu hàng và ô trong bảng
+\usepackage{longtable} % Bảng dài có thể tách qua nhiều trang
+\usepackage{tocloft}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds,shapes.geometric}
+
+% Subsubsection
+\titleformat{\subsubsection}
+  {\color{red}}
+  {\thesubsubsection}
+  {1em}
+  {}
+
+\renewcommand{\cftsubsecfont}{\color{blue}}
+
+% Header
+\fancyhead[L]{\small \leftmark}
+\fancyhead[R]{\small \thepage}
+
+% Spacing
+\titlespacing*{\section}
+{0pt}
+{6.0ex}
+{3.0ex}
+\titlespacing*{\subsection}
+{0pt}
+{4.5ex}
+{2.0ex}
+
+% Codespace
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{codeframe}{rgb}{0.45,0.45,0.45}
+
+% Màu chủ đạo của Haitay
+\definecolor{haitayblue}{RGB}{31,78,121}
+\lstdefinestyle{treeStyle}{
+    backgroundcolor=\color{codegray},
+    basicstyle=\ttfamily\small,  % Font Monospace nhỏ gọn
+    breakatwhitespace=false,     
+    breaklines=true,                 
+    keepspaces=true,                 
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=single,               % Viền đơn
+    rulecolor=\color{codeframe},% Màu viền
+    framerule=0.5pt,            % Độ dày viền
+    framesep=5pt                % Khoảng cách nội dung và viền
+}
+
+% Mathspace
+\newtheorem{theorem}{Định lý}[chapter] % Đánh số theo chương
+\newtheorem{lemma}{Bổ đề}[chapter]
+\newtheorem{proposition}{Mệnh đề}[chapter]
+\renewcommand{\proofname}{\textbf{Chứng minh}}

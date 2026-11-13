@@ -1,0 +1,88 @@
+{
+ "run": "20261113-074258",
+ "passed": 17,
+ "total": 17,
+ "results": {
+  "U1 Ao5 with one DNF = 9.83 s": {
+   "pass": true,
+   "got": 9830
+  },
+  "U2 Ao5 with two DNF = DNF": {
+   "pass": true
+  },
+  "U3 Ao5 with 4 solves undefined": {
+   "pass": true
+  },
+  "U4 Ao100 trims 5 per side": {
+   "pass": true
+  },
+  "U5 CRC-16/CCITT-FALSE check value": {
+   "pass": true
+  },
+  "U6 records per BLE notify at MTU 185": {
+   "pass": true,
+   "per_frame": 11
+  },
+  "T1 timing error within +-10 ms, no missed solve": {
+   "pass": true,
+   "n": 400,
+   "missed": 0,
+   "mean_ms": -0.01,
+   "sd_ms": 3.26,
+   "min_ms": -7,
+   "max_ms": 7,
+   "p95_abs_ms": 6
+  },
+  "T2 touch shorter than 1.5 s does not arm": {
+   "pass": true
+  },
+  "S1 normal sync of 120 solves": {
+   "pass": true,
+   "frames": 11,
+   "acked": 120
+  },
+  "S2 BLE drop and lost ACK: no loss, no duplicate": {
+   "pass": true,
+   "attempts": 3,
+   "drops": 2,
+   "resent_dup": 11,
+   "rows": 200
+  },
+  "S3 power cut during write: committed records intact, torn record never valid": {
+   "pass": true,
+   "trials": 100,
+   "partial_writes": 92,
+   "committed_lost": 0,
+   "torn_accepted_as_valid": 0
+  },
+  "S4 corrupted frame rejected, then resent": {
+   "pass": true,
+   "frames_bad": 1,
+   "attempts": 2
+  },
+  "S5 full log refuses solve 513 until sync": {
+   "pass": true
+  },
+  "S6 RTC unset: same-boot records converted exactly, older boot flagged": {
+   "pass": true,
+   "same_boot_exact": true,
+   "older_boot_estimated": 3
+  },
+  "S7 user switch: wipe only after ACK, seq continues, data split per user": {
+   "pass": true,
+   "per_user": {
+    "A": 30,
+    "B": 12
+   },
+   "next_seq": 43
+  },
+  "S8 edits after sync (+2, delete) replay idempotently; device and PC agree": {
+   "pass": true,
+   "device_ao12": 21990
+  },
+  "D1 seeded 90-day dataset synced daily": {
+   "pass": true,
+   "solves": 3443
+  }
+ }
+}

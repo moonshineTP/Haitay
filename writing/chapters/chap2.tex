@@ -1,0 +1,10 @@
+\chapter{Phân tích hệ thống}
+
+Haitay là một hệ thống hai lớp: thiết bị nằm trên bàn luyện tập và phần mềm chạy trên máy tính. Mỗi lượt solve bắt đầu bằng một cú chạm tay của người chơi và kết thúc bằng một điểm dữ liệu trên biểu đồ tiến bộ.
+
+\input{chapters/chap2/general}
+% Bài tập 6 chỉ gồm mục 2.1 và 2.4: bai6.tex định nghĩa \skipcontext và \skipdevice.
+\ifdefined\skipcontext\else\input{chapters/chap2/context}\fi
+\ifdefined\skipdevice\else\input{chapters/chap2/device}\fi
+% Bài tập 5 chỉ gồm mục 2.1 đến 2.3: bai5.tex định nghĩa \skipcomm để bỏ mục 2.4.
+\ifdefined\skipcomm\else\input{chapters/chap2/comm}\fi

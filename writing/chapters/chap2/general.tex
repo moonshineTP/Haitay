@@ -1,0 +1,28 @@
+\section{Mô tả chung}
+Haitay phục vụ một người chơi ngồi luyện tập tại bàn, với một thiết bị và một máy tính trong tầm tay. Toàn bộ dữ liệu nằm trên hai thiết bị đó, và người chơi thấy tiến bộ của mình mà không cần ghi chép hay tính toán.
+
+\subsection{Tình huống sử dụng}
+Một buổi luyện tập của người chơi diễn ra theo trình tự quen thuộc. Người chơi bật thiết bị và giải liên tiếp nhiều lượt trong một session. Sau mỗi lượt, thiết bị hiện ngay thời gian cùng các chỉ số best, mean, Ao5, Ao12 và Ao100, nên người chơi nắm được phong độ ngay tại bàn. Khi kết thúc buổi, hoặc khi người khác muốn dùng chung thiết bị, dữ liệu được đồng bộ sang máy tính, nơi nó được gắn với một người dùng và lưu lâu dài. Lúc ngồi trước máy tính, người chơi mở dashboard để xem xu hướng qua nhiều tuần và nhiều tháng.
+
+\subsection{Hai lớp của hệ thống}
+Hệ thống chia việc cho hai lớp, và mỗi lớp giữ một loại dữ liệu có vòng đời riêng. Thiết bị giữ các session gần nhất mà không biết chủ của chúng, đủ để tính Ao100 và không phải sao lưu liên tục. Máy tính gắn session với người dùng và giữ dữ liệu của mọi người dùng trong nhiều tháng và nhiều năm.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Vai trò của hai lớp trong Haitay}
+    \label{tab:layers}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{2.8cm} >{\raggedright\arraybackslash}m{5.8cm} >{\raggedright\arraybackslash}m{5.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Lớp} & \textcolor{white}{Nhiệm vụ} & \textcolor{white}{Dữ liệu giữ} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Thiết bị & Đo thời gian solve, hiển thị thống kê, lưu trung hạn, gửi dữ liệu khi đồng bộ & Hơn 100 lượt solve gần nhất, tổ chức theo session, không kèm thông tin người dùng \\
+        Máy tính & Nhận và xác nhận dữ liệu, gắn session với người dùng, lưu lâu dài, vẽ dashboard & Toàn bộ lịch sử và danh tính của mọi người dùng \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Phạm vi}
+Haitay gồm một thiết bị và một máy tính, kết nối trực tiếp với nhau. Dữ liệu ở lại trên chính hai thiết bị đó, nên hệ thống hoạt động đầy đủ mà không cần dịch vụ trung gian nào. Danh tính chỉ tồn tại trên máy tính, và xác thực người dùng là tùy chọn, dành cho trường hợp nhiều người chia sẻ một máy tính. Haitay là công cụ luyện tập hằng ngày và giữ vai trò bổ trợ cho các timer dùng trong thi đấu.

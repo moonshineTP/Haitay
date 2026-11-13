@@ -1,0 +1,19 @@
+\input{preamble}
+
+\begin{document}
+\newcommand{\hwnumber}{6}
+\newcommand{\hwtitle}{Chọn công nghệ truyền thông}
+\begingroup
+    \pagestyle{empty}
+    \include{titlepage-bai}
+\endgroup
+
+\pagestyle{fancy}
+% Bài tập 6 chỉ gồm mục 2.1 và 2.4 của chương 2, nên đặt bộ đếm chương trước chương 2.
+\setcounter{chapter}{1}
+\newcommand{\skipcontext}{}
+\newcommand{\skipdevice}{}
+\include{chapters/chap2}
+
+\label{LastPage}
+\end{document}

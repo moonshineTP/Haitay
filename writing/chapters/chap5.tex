@@ -1,0 +1,141 @@
+\chapter{Kế hoạch và đồng thuận}
+
+Một bản thiết kế chỉ thành sản phẩm khi mỗi phần có người nhận và mỗi điểm còn mở có người chốt. Chương này đề xuất cách chia việc, liệt kê rủi ro đang thấy, và gom các quyết định cần cả nhóm đồng thuận trước khi bước vào giai đoạn xây dựng.
+
+\section{Phân công theo lớp kiến trúc}
+Nhóm chia việc theo đúng bốn lớp của Hình~\ref{fig:arch}, để mỗi người sở hữu một ranh giới giao tiếp rõ ràng. Bảng dưới đây là đề xuất, và cột cuối ghi sản phẩm mà mỗi vai trò chịu trách nhiệm nộp.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.4}
+    \caption{Đề xuất phân công, chờ nhóm xác nhận}
+    \label{tab:roles}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.0cm} >{\raggedright\arraybackslash}m{3.0cm} >{\raggedright\arraybackslash}m{4.0cm} >{\raggedright\arraybackslash}m{4.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Thành viên} & \textcolor{white}{Vai trò} & \textcolor{white}{Phạm vi} & \textcolor{white}{Sản phẩm chịu trách nhiệm} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Phạm Gia Hưng & Điều phối và tích hợp & Đặc tả, mô phỏng, kiểm thử tích hợp, báo cáo & Báo cáo, bộ mô phỏng, biên bản kiểm thử \\
+        Đỗ Trường Giang & Phụ trách thiết bị & Lắp mạch, firmware ESP-IDF, đo độ trễ & Bảng chân kết nối, mã firmware, nhật ký đo \\
+        \rowcolor{haitayblue!8}
+        Dương Thanh Minh & Phụ trách backend & Bridge BLE, dịch vụ ingest, SQLite & Lược đồ CSDL, danh sách API, bộ kiểm thử API \\
+        Nguyễn Anh Bảo & Phụ trách giao diện & Dashboard web, kịch bản demo & Giao diện, ảnh chụp màn hình, video dự phòng \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Ranh giới giữa các vai trò chính là các hợp đồng dữ liệu đã chốt ở Chương~3. Thiết bị và backend gặp nhau ở bố cục bản ghi và dịch vụ GATT, còn backend và giao diện gặp nhau ở danh sách điểm cuối API. Mã mô phỏng giữ vai trò bản tham chiếu chung, nên mỗi người có thể kiểm tra phần mình mà không cần chờ người khác.
+
+\section{Kho mã nguồn}
+Kho mã chung được tổ chức theo lớp, khớp với cách chia việc ở trên. Mỗi thay đổi đi qua nhánh riêng và được một thành viên khác xem trước khi hợp nhất.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Cấu trúc kho mã}
+    \label{tab:repo}
+    \begin{tabular}{>{\ttfamily\raggedright\arraybackslash}m{3.4cm} >{\raggedright\arraybackslash}m{10.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Thư mục} & \textcolor{white}{Nội dung} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        code/sim & Bộ mô phỏng luồng dữ liệu và 17 phép kiểm tra (đã có) \\
+        code/wokwi & Sketch ESP32-S3 cho Wokwi và sơ đồ \texttt{diagram.json} (đã có, chưa chạy thử) \\
+        \rowcolor{haitayblue!8}
+        code/firmware & Firmware ESP-IDF (chưa bắt đầu) \\
+        code/pc & Bridge, dịch vụ FastAPI, dashboard (chưa bắt đầu) \\
+        \rowcolor{haitayblue!8}
+        writing, reports & Báo cáo LaTeX, báo cáo nghiên cứu nền \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Đường dẫn kho mã công khai: \url{https://github.com/moonshineTP/Haitay}.
+
+\section{Rủi ro và khó khăn}
+Rủi ro lớn nhất của Haitay nằm ở phần cứng và Bluetooth, vì mô phỏng chưa chạm tới hai phần này. Bảng~\ref{tab:risks} xếp rủi ro theo mức ảnh hưởng, mỗi dòng kèm biện pháp đã chọn.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Sổ rủi ro hiện tại}
+    \label{tab:risks}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{0.8cm} >{\raggedright\arraybackslash}m{5.0cm} >{\centering\arraybackslash}m{1.2cm} >{\raggedright\arraybackslash}m{7.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Mã} & \textcolor{white}{Rủi ro} & \textcolor{white}{Mức} & \textcolor{white}{Biện pháp} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        R1 & FRAM FM24CL64B không bán trong nước, thời gian giao 1 đến 3 tuần & Cao & Đặt hàng ngay; trong lúc chờ, dùng flash với LittleFS theo cùng bố cục bản ghi \\
+        R2 & Bluetooth LE mất nhiều thời gian hơn dự kiến & Cao & Giao thức đã chốt và kiểm thử bằng mô phỏng; dựng GATT tối thiểu trong tuần đầu; cáp USB-C là đường dự phòng \\
+        \rowcolor{haitayblue!8}
+        R3 & Cảm biến chạm kích hoạt sai khi tay ẩm hoặc gần bộ sạc & Trung bình & Hiệu chuẩn ngưỡng khi khởi động, hysteresis, chống nảy; MPR121 dự phòng \\
+        R4 & Đo độ trễ tuyệt đối cần thiết bị tham chiếu & Trung bình & Dùng máy phân tích logic giá rẻ và camera 240 hình mỗi giây \\
+        \rowcolor{haitayblue!8}
+        R5 & Wokwi không mô phỏng cảm ứng điện dung và Bluetooth & Thấp & Dùng nút nhấn thay pad, xuất bản ghi qua cổng nối tiếp rồi nạp vào mô phỏng Python \\
+        R6 & Trễ tiến độ do dồn tích hợp về cuối & Trung bình & Tích hợp hai tuần một lần trên bộ mô phỏng chung \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Mốc tiếp theo}
+Các mốc dưới đây nối tiếp kết quả mô phỏng và hướng tới buổi báo cáo tiến độ tiếp theo, nơi nhóm cần trình diễn luồng dữ liệu với thiết bị thật.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Mốc công việc sau checkpoint 1}
+    \label{tab:milestones}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{1.4cm} >{\raggedright\arraybackslash}m{6.4cm} >{\raggedright\arraybackslash}m{6.2cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Mốc} & \textcolor{white}{Nội dung} & \textcolor{white}{Bằng chứng hoàn thành} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        M1 & Đặt linh kiện; chạy sketch trên Wokwi & Hóa đơn đặt hàng; ảnh Wokwi và tệp log nạp được vào SQLite \\
+        M2 & Firmware đo giờ trên bo thật, màn hình hiện Ao5 và Ao12 & Video 12 lượt solve; số liệu T1 đo thật \\
+        \rowcolor{haitayblue!8}
+        M3 & Dịch vụ GATT và bridge bleak; ingest qua REST & Luồng thật từ pad tới SQLite; S2 chạy lại với thiết bị thật \\
+        M4 & Dashboard Chart.js với SSE trên bộ dữ liệu mẫu 90 ngày & Ảnh chụp màn hình; kịch bản demo \\
+        \rowcolor{haitayblue!8}
+        M5 & Kiểm thử cắt điện, rơi kết nối, chạy 24 giờ & Biên bản kiểm thử với các chỉ tiêu N1 đến N10 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Các điểm cần đồng thuận}
+Báo cáo này đóng vai trò bản đặc tả chung của nhóm. Những điểm dưới đây đã có đề xuất nhưng chưa được cả nhóm xác nhận, nên cần chốt trong buổi họp tới để mọi người cùng làm trên một nền.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Quyết định chờ nhóm xác nhận}
+    \label{tab:consensus}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.2cm} >{\raggedright\arraybackslash}m{6.6cm} >{\raggedright\arraybackslash}m{4.2cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Điểm} & \textcolor{white}{Đề xuất} & \textcolor{white}{Ảnh hưởng tới} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Phân công & Theo Bảng~\ref{tab:roles} & Toàn bộ kế hoạch \\
+        Màn hình & TFT 1,54 inch trên SPI thay OLED 0,96 inch trên I2C & Danh mục vật tư, bảng chân \\
+        \rowcolor{haitayblue!8}
+        Bố cục bản ghi & 16 byte, nhật ký chỉ ghi thêm, bản ghi sửa trỏ tới seq & Firmware, backend \\
+        Chặng gateway tới server & HTTP/REST thay MQTT & Backend, bài lab của môn \\
+        \rowcolor{haitayblue!8}
+        Chỉ tiêu N7, N8 & Đồng bộ 512 bản ghi dưới 10~s; đọc được ở 60~cm & Kiểm thử \\
+        Đặt hàng & Mua theo Bảng~\ref{tab:bom}, gồm một bộ dự phòng & Ngân sách khoảng 1,4 triệu đồng \\
+        \rowcolor{haitayblue!8}
+        Kho mã & Một kho chung, nhánh riêng, xem chéo trước khi hợp nhất & Quy trình làm việc \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Khi các điểm này được chốt, bản đặc tả trở thành căn cứ chung cho cả bốn vai trò. Bài trình bày checkpoint cũng được rút trực tiếp từ đây, nên mỗi slide đều có chỗ dựa trong báo cáo.

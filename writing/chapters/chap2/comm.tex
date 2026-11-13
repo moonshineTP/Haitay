@@ -1,0 +1,98 @@
+% Mục này luôn mang số 2.4. Khi bản dựng bỏ mục 2.2 và 2.3 (bai6.tex), bộ đếm được đặt lại để số mục không đổi.
+\setcounter{section}{3}
+\section{Công nghệ truyền thông}
+Thiết bị trên bàn và máy tính phải trao đổi được với nhau thì dữ liệu mới trở thành biểu đồ. Việc chọn công nghệ truyền thông vì vậy bắt đầu từ chính hoàn cảnh sử dụng của Haitay.
+
+\subsection{Sáu câu hỏi sàng lọc}
+Sáu câu hỏi dưới đây thu hẹp danh sách công nghệ trước khi so sánh. Số bản ghi trong câu 3 là giả định của nhóm cho một buổi luyện tập thông thường.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Sáu câu hỏi sàng lọc công nghệ truyền thông cho Haitay}
+    \label{tab:screening}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.3cm} >{\raggedright\arraybackslash}m{5.8cm} >{\raggedright\arraybackslash}m{5.1cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Câu hỏi} & \textcolor{white}{Trả lời cho Haitay} & \textcolor{white}{Hệ quả khi chọn công nghệ} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        1. Khoảng cách truyền thông? & Thiết bị và máy tính ở cùng một bàn hoặc một phòng, cách nhau từ vài chục centimet đến vài mét & Tầm ngắn là đủ, nên các công nghệ tầm xa không mang thêm lợi ích \\
+        2. Có sẵn điện lưới không? & Có nguồn USB-C 5~V từ bộ sạc hoặc sạc dự phòng, không có pin nuôi thiết bị & Điện năng không quyết định, nhưng sạc dự phòng vẫn đáng được tiết kiệm \\
+        \rowcolor{haitayblue!8}
+        3. Lượng dữ liệu và tần suất? & Mỗi bản ghi 16 byte; một buổi 100 lượt solve (giả định) chỉ khoảng 1,6~KB, và bộ nhớ đầy 512 bản ghi là 8~KB; dữ liệu gửi theo lô vài lần mỗi ngày & Băng thông thấp là đủ, không cần tốc độ cao \\
+        4. Có cần downlink hay điều khiển không? & Có, với lệnh nhỏ: \texttt{ACK}, \texttt{SET\_TIME}, xóa bộ nhớ sau đồng bộ, yêu cầu đồng bộ & Cần kết nối hai chiều và xác nhận được từng gói \\
+        \rowcolor{haitayblue!8}
+        5. Có bao nhiêu thiết bị? & Một thiết bị cho một máy tính, không mở rộng thành nhiều thiết bị & Không cần mạng lưới nhiều nút hay bộ điều phối \\
+        6. Ai sở hữu hạ tầng? & Người chơi sở hữu cả thiết bị lẫn máy tính, không có nhà mạng, thẻ SIM hay gateway riêng & Hạ tầng phải sẵn có trên máy tính của người chơi và không phát sinh phí \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Công nghệ ứng viên}
+Câu trả lời ở Bảng~\ref{tab:screening} loại được các công nghệ không phục vụ bài toán. LTE-M, NB-IoT và LoRaWAN cần nhà mạng hoặc gateway để phủ khoảng cách xa mà Haitay không cần, còn RFID và NFC chỉ đọc được ở khoảng vài centimet và phần lớn máy tính cá nhân không có đầu đọc. Bốn ứng viên còn lại đều dùng được cho một chiếc bàn luyện tập: Bluetooth LE, Wi-Fi, cáp USB và Zigbee, trong đó Zigbee đại diện cho cả Thread vì hai chuẩn cùng dựa trên IEEE 802.15.4.
+
+Cáp USB đáng được cân nhắc vì Stackmat cũng truyền thời gian qua một cổng dữ liệu có dây, và Haitay đã có sẵn cổng USB-C để cấp nguồn. Theo datasheet, ESP32-S3 tích hợp Wi-Fi 2,4~GHz, Bluetooth LE và giao tiếp USB OTG tốc độ full-speed, nên chỉ Zigbee cần thêm một module. Bảng~\ref{tab:comm} so sánh bốn ứng viên để thấy rõ vì sao Bluetooth LE phù hợp nhất.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.4}
+    \caption{So sánh công nghệ truyền thông ứng viên}
+    \label{tab:comm}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{2.4cm} >{\raggedright\arraybackslash}m{2.8cm} >{\raggedright\arraybackslash}m{2.8cm} >{\raggedright\arraybackslash}m{2.8cm} >{\raggedright\arraybackslash}m{2.8cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Tiêu chí} & \textcolor{white}{Bluetooth LE} & \textcolor{white}{Wi-Fi} & \textcolor{white}{Cáp USB} & \textcolor{white}{Zigbee} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Phạm vi & Ngắn, đủ cho cùng một phòng & Trung bình, phủ cả căn nhà & Bằng chiều dài cáp & Ngắn, mở rộng qua mạng nhiều nút \\
+        Tiêu thụ điện năng & Thấp & Cao & Dùng chung nguồn của cáp & Thấp \\
+        \rowcolor{haitayblue!8}
+        Tốc độ dữ liệu & Trung bình & Cao & Cao & Thấp \\
+        Hạ tầng & Bộ thu Bluetooth sẵn có trên máy tính & Điểm truy cập Wi-Fi & Cổng USB sẵn có trên máy tính & Bộ điều phối cắm thêm vào máy tính \\
+        \rowcolor{haitayblue!8}
+        Cần cáp nối với máy tính? & Không & Không & Có & Không \\
+        Có sẵn trong ESP32-S3 & Có & Có & Có & Không, cần thêm module \\
+        \rowcolor{haitayblue!8}
+        Phù hợp? & Có & Có thể & Có thể, làm dự phòng & Không \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Kết luận}
+\begin{tcolorbox}[
+    colback=haitayblue!8,
+    colframe=haitayblue,
+    arc=4pt,
+    boxrule=0.8pt
+]
+    \textbf{Chúng tôi chọn Bluetooth LE vì} thiết bị và máy tính chỉ cách nhau vài mét, dữ liệu mỗi buổi chỉ vài kilobyte, và hạ tầng cần thiết đã có sẵn trên máy tính của người chơi.
+\end{tcolorbox}
+
+Bluetooth LE khớp với cả sáu câu trả lời. Tầm ngắn đủ cho một chiếc bàn luyện tập, và mức điện năng thấp giúp sạc dự phòng dùng được lâu hơn. Kết nối cho phép máy tính gửi lệnh xuống thiết bị và xác nhận từng bản ghi, nên cơ chế xác nhận bằng \texttt{ACK} hoạt động trọn vẹn. Người chơi không cần router hay tên mạng Wi-Fi, nên Haitay dùng được ở cả những nơi không có Wi-Fi như phòng giải đấu. Danh tính và xác thực người dùng, nếu cần, nằm hoàn toàn trên máy tính và là tùy chọn, vì thiết bị chỉ gửi session cùng dữ liệu thời gian. ESP32-S3 đã tích hợp Bluetooth 5 (LE), và đề tài cũng yêu cầu kết nối máy tính qua Bluetooth. Cáp USB-C là phương án dự phòng cho trường hợp máy tính của người chơi không có Bluetooth, vì ESP32-S3 hỗ trợ USB sẵn và thiết bị đã có cổng này.
+
+Nhóm không chọn cáp làm đường chính vì nó buộc người chơi cắm dây vào máy tính mỗi lần đồng bộ, và theo báo cáo nghiên cứu nền, dây cáp là nguồn rắc rối quen thuộc khi người chơi nối Stackmat với csTimer. Wi-Fi cần điểm truy cập và tiêu thụ nhiều điện hơn, còn Zigbee cần thêm bộ điều phối và module mà một thiết bị đơn lẻ không cần.
+
+\subsection{Cách dùng Bluetooth LE}
+Thiết bị đóng vai trò ngoại vi và máy tính là bên kết nối. Bốn nhóm thông tin của thiết bị, gồm metadata, telemetry, state và commands, đi qua một dịch vụ GATT với các đặc tính nêu ở Bảng~\ref{tab:gatt}.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Cách bốn nhóm thông tin đi qua Bluetooth LE}
+    \label{tab:gatt}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.0cm} >{\raggedright\arraybackslash}m{5.4cm} >{\raggedright\arraybackslash}m{5.8cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Nhóm thông tin} & \textcolor{white}{Thao tác Bluetooth LE} & \textcolor{white}{Hướng} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Metadata & Đọc (read) một lần khi kết nối & Thiết bị tới máy tính \\
+        Telemetry & Thông báo (notify) theo từng lô bản ghi & Thiết bị tới máy tính \\
+        \rowcolor{haitayblue!8}
+        State & Đọc, và thông báo khi giá trị thay đổi & Thiết bị tới máy tính \\
+        Commands & Ghi (write) vào đặc tính điều khiển, gồm \texttt{ACK} và \texttt{SET\_TIME} & Máy tính tới thiết bị \\
+        \bottomrule
+    \end{tabular}
+\end{table}

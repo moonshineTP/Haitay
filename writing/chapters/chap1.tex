@@ -1,0 +1,166 @@
+\chapter{Giới thiệu đề tài}
+
+\begin{tcolorbox}[
+    colback=haitayblue!8,
+    colframe=haitayblue,
+    arc=4pt,
+    boxrule=0.8pt,
+    halign=center,
+    valign=center
+]
+    {\LARGE\bfseries\color{haitayblue} Haitay}\\[0.35em]
+    {\large Thiết bị bấm giờ và quản lý luyện tập speedcubing}
+\end{tcolorbox}
+
+\vspace{0.8em}
+
+
+\section{Mô tả dự án}
+Haitay là thiết bị bấm giờ và quản lý luyện tập dành cho speedcubing, phát triển từ ý tưởng Stackmat theo hướng gọn, độc lập và giàu thông tin hơn. Thiết bị mang đến một sản phẩm alternative mã nguồn mở, dễ tùy chỉnh, hướng dữ liệu và hỗ trợ luồng luyện tập thực tế của cubers.
+
+Thiết bị tập trung vào việc ghi nhận thời gian solve chính xác, tự động quản lý lịch sử. Hệ thống tổng hợp các chỉ số quen thuộc như Ao5, Ao12, Ao100 và trình bày dữ liệu trên dashboard đẹp. Lợi thế lớn nhất là người dùng có thể theo dõi phong độ mà không cần nhập liệu hay tính toán thủ công. Haitay dự kiến hỗ trợ lưu session, kỷ lục cá nhân, xu hướng tập luyện và đồng bộ thông tin với máy tính hoặc điện thoại. Nếu giao thức cho phép, thiết bị có thể kết nối với các smart cube Bluetooth để nhận trạng thái solve trực tiếp. Dự án tập trung vào hệ thống nhúng, cảm biến chạm, firmware thời gian thực, Bluetooth, lưu trữ xử lý dữ liệu và thiết kế giao diện dashboard trên thiết bị. Kỳ vọng là một công cụ luyện tập speedcubing nhỏ gọn, tiện dụng và có khả năng quản lý thông tin thông minh.
+
+
+\section{Yêu cầu chức năng}
+Haitay giúp người chơi tập trung vào từng lượt solve thay vì ghi chép thủ công. Hệ thống gồm thiết bị bấm giờ và phần mềm trên máy tính cá nhân, mỗi bên đảm nhận một vai trò riêng.
+
+\subsection{Thiết bị}
+\begin{itemize}
+    \item \textbf{Đo thời gian:} bắt đầu và kết thúc lượt solve tương tự Stackmat, đo và hiển thị thời gian với độ chính xác cao.
+    \item \textbf{Lưu trữ cục bộ:} giữ toàn bộ dữ liệu của user đang sử dụng với sức chứa đủ lớn, để không phải sao lưu liên tục.
+    \item \textbf{Chuyển user:} đồng bộ dữ liệu của user hiện tại sang máy tính, sau khi máy tính xác nhận thì xóa bộ nhớ cục bộ cho user mới.
+    \item \textbf{Thống kê nhanh:} hiển thị best, mean, Ao5, Ao12 và Ao100 ngay trên thiết bị.
+    \item \textbf{Quản lý lượt solve:} xem lại lịch sử, xóa hoặc đánh dấu từng lượt solve, chuyển giữa các session.
+    \item \textbf{Kết nối máy tính:} đồng bộ dữ liệu của user đang sử dụng sang phần mềm trên máy tính qua Bluetooth.
+    \item \textbf{Mở rộng với Smart Cube (optional):} kết nối smart cube để nhận dữ liệu thời gian hoặc trạng thái solve, nếu giao thức tương thích và có thể truy cập.
+\end{itemize}
+
+\subsection{Phần mềm trên máy tính}
+\begin{itemize}
+    \item \textbf{Sao lưu dài hạn:} lưu trữ toàn bộ dữ liệu luyện tập của mọi user qua nhiều tháng và nhiều năm, cho phép khôi phục khi thay đổi hoặc hỏng thiết bị.
+    \item \textbf{Đồng bộ:} nhận dữ liệu của user từ thiết bị và xác nhận đã lưu đủ, không mất dữ liệu khi kết nối gián đoạn.
+    \item \textbf{Quản lý theo người dùng:} tách dữ liệu theo từng user, mỗi user có session, thống kê và lịch sử riêng.
+    \item \textbf{Dashboard tương tác:} biểu đồ time-series thể hiện xu hướng Ao5, Ao12, Ao100 theo thời gian, cập nhật sau mỗi session, lọc theo user, session và khoảng thời gian.
+\end{itemize}
+
+\subsection{Ranh giới giữa thiết bị và máy tính}
+Thiết bị giữ dữ liệu của user đang sử dụng với sức chứa đủ lớn để không phải sao lưu liên tục, còn máy tính là nơi lưu trữ lâu dài cho mọi user, phân tích và trực quan hóa. Khi đổi user, thiết bị đồng bộ dữ liệu sang máy tính và chỉ xóa bộ nhớ cục bộ sau khi máy tính xác nhận đã nhận đủ.
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Phân định chức năng giữa thiết bị và máy tính}
+    \label{tab:boundary}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.4cm} >{\raggedright\arraybackslash}m{5.2cm} >{\raggedright\arraybackslash}m{5.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Chức năng} & \textcolor{white}{Thiết bị} & \textcolor{white}{Máy tính} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Đo thời gian & Chính & Không áp dụng \\
+        Lưu trữ & Cục bộ, đủ sức chứa cho user đang sử dụng & Lâu dài, đầy đủ, cho mọi user \\
+        \rowcolor{haitayblue!8}
+        Thống kê & Best, mean, Ao5, Ao12 và Ao100 trên màn hình thiết bị & Xu hướng Ao5, Ao12, Ao100 theo khoảng thời gian dài \\
+        Dashboard & Hiển thị cơ bản & Tương tác, biểu đồ time-series \\
+        \rowcolor{haitayblue!8}
+        Quản lý người dùng & Một user tại một thời điểm, chuyển user khi đồng bộ & Tách dữ liệu riêng cho từng user \\
+        Sao lưu và đồng bộ & Gửi dữ liệu của user hiện tại, xóa khi máy tính xác nhận & Nhận, lưu trữ và xác nhận đã nhận đủ \\
+        \rowcolor{haitayblue!8}
+        Smart Cube & Kết nối trực tiếp & Không áp dụng \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\section{Yêu cầu phi chức năng}
+Haitay cần đáng tin cậy trong từng nhịp luyện tập, nơi mỗi phần nghìn giây đều có ý nghĩa. Thiết bị được xây dựng để đồng hành bền bỉ cùng người chơi trên mọi chặng luyện tập.
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Yêu cầu phi chức năng của Haitay}
+    \label{tab:nfr}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.2cm} >{\raggedright\arraybackslash}m{3.3cm} >{\raggedright\arraybackslash}m{7.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Tiêu chí} & \textcolor{white}{Yêu cầu} & \textcolor{white}{Mô tả} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Hiệu năng & Độ phân giải thời gian dưới 0,001~s; độ trễ phát hiện chạm 2 đến 10~ms & Firmware ghi mốc thời gian với độ phân giải dưới 1~ms. Cảm biến chạm cần 2 đến 10~ms để phát hiện, và mức này được chấp nhận vì đo độ trễ tuyệt đối đòi hỏi thiết bị tham chiếu phức tạp. \\
+        Phần cứng & Gọn, bền, dễ mang theo & Vận hành độc lập, không phụ thuộc liên tục vào điện thoại hoặc máy tính. \\
+        \rowcolor{haitayblue!8}
+        Nguồn điện & USB Type-C 5~V & Phương án tối giản: thiết bị nhận điện trực tiếp từ bộ sạc hoặc sạc dự phòng, không dùng pin nuôi thiết bị. Một pin cúc áo nhỏ chỉ giữ đồng hồ thực. \\
+        Giao diện & Đơn giản, dễ đọc & Thuận tiện theo dõi số liệu trong lúc luyện tập. \\
+        \rowcolor{haitayblue!8}
+        Dữ liệu & Lưu trung hạn trên 100 lượt solve, lưu an toàn, khôi phục sau mất nguồn & Giữ dữ liệu của user đang sử dụng đủ lâu để tính Ao100 và không phải sao lưu liên tục, kết quả không mất khi thiết bị mất điện. \\
+        Kiến trúc firmware & Tách biệt các module & Đo thời gian, lưu trữ, giao diện và kết nối hoạt động độc lập, thuận tiện kiểm thử, bảo trì và mở rộng. \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\section{Sứ mệnh và khẩu hiệu}
+Mỗi công cụ đều có một lý do để tồn tại. Với Haitay, lý do ấy là giúp người chơi nhìn thấy tiến bộ của chính mình.
+
+\begin{tcolorbox}[
+    colback=haitayblue!8,
+    colframe=haitayblue,
+    arc=4pt,
+    boxrule=0.8pt,
+    halign=center,
+    valign=center
+]
+    {\Large\bfseries\itshape\color{haitayblue} Đo từng giây, thấy từng tiến bộ.}
+\end{tcolorbox}
+
+\textbf{Sứ mệnh.} Haitay mang sự chính xác của thiết bị đo chuyên nghiệp đến gần hơn với mỗi buổi luyện tập speedcubing. Nhờ đó, người chơi hiểu rõ phong độ của mình và định hướng cải thiện từng ngày.
+
+
+\section{Thuật ngữ}
+Các khái niệm trong báo cáo đến từ cộng đồng speedcubing và lĩnh vực IoT. Phần này gom chúng lại để người đọc tra cứu nhanh.
+
+{\small\renewcommand{\arraystretch}{1.25}%
+\begin{longtable}{>{\bfseries\raggedright\arraybackslash}m{3.8cm} >{\raggedright\arraybackslash}m{11cm}}
+        \caption{Bảng thuật ngữ của Haitay}\label{tab:glossary}\\
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Thuật ngữ} & \textcolor{white}{Giải thích} \\
+        \midrule
+        \endfirsthead
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Thuật ngữ} & \textcolor{white}{Giải thích} \\
+        \midrule
+        \endhead
+        \midrule
+        \multicolumn{2}{r}{\itshape\small Tiếp theo trang sau} \\
+        \endfoot
+        \bottomrule
+        \endlastfoot
+        \rowcolor{haitayblue!8}
+        \multicolumn{2}{l}{\textcolor{haitayblue}{\textbf{Speedcubing và cộng đồng}}} \\
+        Speedcubing & Môn giải khối Rubik và các khối xoay tương tự trong thời gian ngắn nhất, thường đo đến phần nghìn giây. \\
+        Cuber & Người tham gia speedcubing, tự luyện tập hoặc thi đấu tại các giải chính thức. \\
+        Solve & Một lượt giải khối, tính từ lúc bắt đầu đến khi hoàn thành. \\
+        Session & Chuỗi các lượt solve liên tiếp trong cùng một lần luyện tập. \\
+        Best và mean & Best là lượt solve nhanh nhất. Mean là thời gian trung bình của toàn bộ lượt solve. \\
+        Ao5, Ao12, Ao100 & Trung bình của các lượt solve liên tiếp sau khi loại lượt nhanh nhất và chậm nhất. Ao100 loại năm lượt mỗi phía. \\
+        Stackmat & Bộ hẹn giờ điện tử chuẩn cho giải đấu. Người chơi đặt hai tay lên hai bàn đạp để bắt đầu và nhấc tay để dừng. \\
+        Smart cube & Khối Rubik có cảm biến và kết nối không dây, ghi nhận chuyển động hoặc trạng thái của khối. \\
+        \rowcolor{haitayblue!8}
+        \multicolumn{2}{l}{\textcolor{haitayblue}{\textbf{Dữ liệu và phần mềm}}} \\
+        Time-series & Chuỗi giá trị được ghi theo thứ tự thời gian, dùng để vẽ xu hướng phong độ. \\
+        Dashboard & Giao diện tổng hợp chỉ số và biểu đồ, giúp người dùng nắm nhanh tình trạng luyện tập. \\
+        Đồng bộ & Cập nhật dữ liệu giữa thiết bị và máy tính để hai bên có cùng một bộ dữ liệu. \\
+        Sao lưu & Lưu một bản sao dữ liệu ở nơi khác để khôi phục khi thiết bị hỏng hoặc mất dữ liệu. \\
+        \rowcolor{haitayblue!8}
+        \multicolumn{2}{l}{\textcolor{haitayblue}{\textbf{IoT và phần cứng}}} \\
+        IoT & Mạng các thiết bị nhúng có cảm biến và kết nối, trao đổi dữ liệu với nhau hoặc với máy tính. \\
+        Thiết bị nhúng & Hệ thống máy tính chuyên dụng nằm trong một thiết bị, thực hiện một nhóm nhiệm vụ cố định. \\
+        Vi điều khiển & Mạch tích hợp gồm CPU, bộ nhớ và ngoại vi trên một chip, thường chạy firmware của thiết bị. \\
+        Firmware thời gian thực & Phần mềm nhúng xử lý sự kiện đúng hạn, giúp độ trễ đo thời gian ổn định và dự đoán được. \\
+        Bluetooth Low Energy & Chuẩn kết nối không dây tiết kiệm năng lượng, phù hợp thiết bị chạy bằng pin như bộ hẹn giờ và smart cube. \\
+        USB Type-C & Chuẩn cổng vật lý đối xứng dùng cho sạc và truyền dữ liệu, cấp nguồn 5~V cho thiết bị nhỏ như Haitay. \\
+        \bottomrule
+\end{longtable}
+}

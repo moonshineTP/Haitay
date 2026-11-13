@@ -1,0 +1,1036 @@
+\chapter{Phân tích và thiết kế}
+
+Chương trước đã trả lời câu hỏi Haitay cần làm gì và chọn linh kiện nào. Chương này đi tiếp theo trình tự quen thuộc của phân tích thiết kế hướng đối tượng: từ yêu cầu tới mô hình phân tích, rồi tới kiến trúc và thiết kế chi tiết. Mỗi quyết định đi kèm phương án đã cân nhắc và lý do loại bỏ.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Các pha phân tích thiết kế và sản phẩm của từng pha}
+    \label{tab:phases}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.0cm} >{\raggedright\arraybackslash}m{4.6cm} >{\raggedright\arraybackslash}m{5.0cm} >{\centering\arraybackslash}m{1.4cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Pha} & \textcolor{white}{Câu hỏi trả lời} & \textcolor{white}{Sản phẩm} & \textcolor{white}{Mục} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Phân tích yêu cầu & Ai dùng hệ thống, để làm gì & Tác nhân, biểu đồ use case, đặc tả use case, bảng truy vết & \ref{sec:req} \\
+        Mô hình phân tích & Hệ thống quản lý những khái niệm nào, chúng thay đổi ra sao & Mô hình miền, biểu đồ hoạt động, biểu đồ trạng thái, biểu đồ tuần tự & \ref{sec:analysis} \\
+        \rowcolor{haitayblue!8}
+        Thiết kế kiến trúc & Hệ thống chia thành những khối nào, chạy ở đâu, nối với nhau bằng gì & Kiến trúc bốn lớp, công nghệ từng chặng, biểu đồ triển khai & \ref{sec:arch} \\
+        Thiết kế chi tiết thiết bị & Lắp và lập trình thiết bị thế nào & Vật tư, chân kết nối, đấu nối, module firmware, bản ghi, giao thức & \ref{sec:dev-design} \\
+        \rowcolor{haitayblue!8}
+        Thiết kế chi tiết phần mềm máy tính & Lưu, phục vụ và hiển thị dữ liệu thế nào & Lớp thiết kế, biểu đồ thực thể liên kết, lược đồ CSDL, API, giao diện & \ref{sec:pc} \\
+        Tổng hợp quyết định & Vì sao dừng ở đúng điểm này & Độ co giãn theo giá và độ đơn giản, thử bỏ cơ chế, stack tối ưu, phương án bị loại & \ref{sec:decisions} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% =====================================================================
+\section{Phân tích yêu cầu}
+\label{sec:req}
+Yêu cầu ở Chương~1 mới là danh sách việc hệ thống phải làm. Pha này gắn mỗi việc với một người thực hiện và một kịch bản cụ thể, để thiết kế phía sau có điểm tựa kiểm chứng được.
+
+\subsection{Tác nhân}
+Haitay có ba tác nhân. Người chơi và người dùng máy tính thường là cùng một người, nhưng được tách ra vì họ tương tác với hai hệ thống con khác nhau, ở hai thời điểm khác nhau.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.4}
+    \caption{Tác nhân của Haitay}
+    \label{tab:actors}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.4cm} >{\raggedright\arraybackslash}m{2.4cm} >{\raggedright\arraybackslash}m{8.4cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Tác nhân} & \textcolor{white}{Loại} & \textcolor{white}{Vai trò} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Người chơi & Con người, chính & Thao tác trên thiết bị: bấm giờ, đánh dấu kết quả, xem thống kê, quản lý lượt solve và session \\
+        Người dùng máy tính & Con người, chính & Quản lý người dùng, gắn session, xem dashboard, sao lưu dữ liệu \\
+        \rowcolor{haitayblue!8}
+        Dịch vụ đồng bộ & Hệ thống, phụ & Phần mềm trên máy tính, phía bên kia của use case đồng bộ và chuyển người dùng \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Biểu đồ use case}
+Hình~\ref{fig:usecase} chia use case theo hai ranh giới hệ thống. Bảy use case thuộc thiết bị, năm use case thuộc phần mềm trên máy tính, và Dịch vụ đồng bộ là cầu nối giữa hai bên.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        uc/.style={draw=haitayblue, fill=haitayblue!8, ellipse, minimum width=3.9cm, minimum height=0.62cm, inner sep=1pt},
+        sys/.style={draw=haitayblue, thick, rounded corners=4pt},
+        lnk/.style={black!55},
+        inc/.style={-{Stealth[length=1.6mm]}, dashed, black!60},
+        actor/.pic={\draw[thick] (0,0.62) circle (0.14); \draw[thick] (0,0.48)--(0,0.12) (-0.22,0.36)--(0.22,0.36) (0,0.12)--(-0.17,-0.16) (0,0.12)--(0.17,-0.16);}
+    ]
+        \draw[sys] (1.2,0.55) rectangle (6.4,-6.65);
+        \node[font=\footnotesize\bfseries, text=haitayblue] at (3.8,0.25) {Thiết bị Haitay};
+        \foreach \i/\t in {1/{UC01 Bấm giờ lượt solve}, 2/{UC02 Đánh dấu OK, +2, DNF}, 3/{UC03 Xem thống kê nhanh}, 4/{UC04 Xem, xóa, sửa lượt solve}, 5/{UC05 Mở session mới}, 6/{UC06 Đồng bộ dữ liệu}, 7/{UC07 Chuyển người dùng}} {
+            \node[uc] (d\i) at (3.8,-0.88*\i+0.15) {\t};
+        }
+        \draw[sys] (8.7,0.55) rectangle (13.9,-4.9);
+        \node[font=\footnotesize\bfseries, text=haitayblue] at (11.3,0.25) {Phần mềm máy tính};
+        \foreach \i/\t in {8/{UC08 Quản lý người dùng}, 9/{UC09 Gắn session với người dùng}, 10/{UC10 Xem dashboard xu hướng}, 11/{UC11 Đăng nhập bằng PIN}, 12/{UC12 Sao lưu, khôi phục}} {
+            \node[uc] (p\i) at (11.3,-0.88*\i+7.19) {\t};
+        }
+        \pic at (0,-3.1) {actor}; \node[align=center] (pl) at (0,-3.6) {Người\\chơi};
+        \pic at (7.55,-5.6) {actor}; \node[align=center] (sv) at (7.55,-6.1) {Dịch vụ\\đồng bộ};
+        \pic at (14.75,-2.2) {actor}; \node[align=center] (us) at (14.75,-2.7) {Người dùng\\máy tính};
+        \foreach \i in {1,...,7} { \draw[lnk] (0.3,-2.75) -- (d\i.west); }
+        \draw[lnk] (7.35,-5.3) -- (d6.east); \draw[lnk] (7.35,-5.3) -- (d7.east);
+        \foreach \i in {8,...,12} { \draw[lnk] (14.5,-1.9) -- (p\i.east); }
+        \draw[inc] (d1.south east) to[bend left=40] node[right, font=\tiny]{«include»} (d2.north east);
+        \draw[inc] (d7.north east) to[bend right=40] node[right, font=\tiny]{«include»} (d6.south east);
+    \end{tikzpicture}
+    \caption{Biểu đồ use case của Haitay}
+    \label{fig:usecase}
+\end{figure}
+
+\subsection{Đặc tả use case}
+Ba use case dưới đây mang rủi ro cao nhất, nên được đặc tả đầy đủ. Các use case còn lại là thao tác đọc hoặc quản lý đơn giản, và luồng của chúng đã rõ từ tên gọi.
+
+\newcommand{\ucspec}[7]{%
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Đặc tả #1}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{2.8cm} >{\raggedright\arraybackslash}m{11.4cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \multicolumn{2}{l}{\textcolor{white}{\textbf{#1}}} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Tác nhân & #2 \\
+        Tiền điều kiện & #3 \\
+        \rowcolor{haitayblue!8}
+        Luồng chính & #4 \\
+        Luồng thay thế & #5 \\
+        \rowcolor{haitayblue!8}
+        Hậu điều kiện & #6 \\
+        Yêu cầu liên quan & #7 \\
+        \bottomrule
+    \end{tabular}
+\end{table}}
+
+\ucspec{UC01 Bấm giờ lượt solve}
+{Người chơi}
+{Thiết bị đang ở trạng thái Chờ; vòng đệm còn ô trống hoặc ô đã được xác nhận}
+{1. Người chơi đặt hai tay lên hai pad. 2. Thiết bị chuyển sang Đang giữ. 3. Sau 1,5 giây, thiết bị báo Sẵn sàng. 4. Người chơi nhấc ít nhất một tay; thiết bị ghi mốc $t_0$ và chạy đồng hồ. 5. Người chơi giải xong, đặt lại hai tay; thiết bị ghi mốc $t_1$. 6. Thiết bị hiện $t_1 - t_0$ và chuyển sang UC02.}
+{1a. Vòng đệm đã đầy 512 bản ghi chưa xác nhận: thiết bị không vào Đang giữ, báo cần đồng bộ (UC06). 3a. Người chơi nhấc tay trước 1,5 giây: thiết bị quay về Chờ, không ghi gì.}
+{Một bản ghi 16 byte đã chốt trong FRAM; Ao5, Ao12, Ao100 được cập nhật}
+{Đo thời gian, độ phân giải dưới 1~ms, độ trễ phát hiện chạm 2 đến 10~ms}
+
+\ucspec{UC06 Đồng bộ dữ liệu}
+{Dịch vụ đồng bộ (khởi tạo), Người chơi (bấm nút Đồng bộ)}
+{Thiết bị và máy tính đã ghép đôi Bluetooth; dịch vụ trên máy tính đang chạy}
+{1. Dịch vụ kết nối, đọc Info và State. 2. Dịch vụ gửi \texttt{SET\_TIME}. 3. Dịch vụ gửi \texttt{SYNC}. 4. Thiết bị gửi các khung LOG từ \texttt{last\_ack}$\,+\,1$. 5. Với mỗi khung, dịch vụ kiểm tra CRC và tính liên tục của seq, lưu trong một giao dịch, rồi gửi \texttt{ACK}. 6. Thiết bị gửi khung END.}
+{4a. Kết nối rơi: dịch vụ kết nối lại và quay về bước 1; thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. 5a. Khung sai CRC hoặc lệch seq: dịch vụ ngừng ACK và quay về bước 3. 5b. Bản ghi đã có trong CSDL: bỏ qua theo khóa \texttt{(device\_id, seq)}.}
+{Mọi bản ghi tới seq cuối nằm trong SQLite; \texttt{last\_ack} của thiết bị bằng seq cuối}
+{Đồng bộ không mất dữ liệu khi gián đoạn; sao lưu dài hạn}
+
+\ucspec{UC07 Chuyển người dùng}
+{Người chơi, Dịch vụ đồng bộ}
+{Người dùng mới đã được tạo trên máy tính (UC08)}
+{1. Người chơi chọn chuyển người dùng. 2. Hệ thống thực hiện UC06. 3. Dịch vụ gửi \texttt{WIPE}. 4. Thiết bị xóa vòng đệm, mở session mới. 5. Dashboard chọn người dùng mới làm người dùng hiện hành.}
+{3a. Còn bản ghi chưa xác nhận: thiết bị trả lời từ chối, giữ nguyên dữ liệu và yêu cầu đồng bộ lại.}
+{Bộ nhớ thiết bị trống, seq tiếp tục tăng; session tiếp theo được gắn với người dùng mới}
+{Chuyển user, chỉ xóa sau khi máy tính xác nhận}
+
+\subsection{Đặc tả phi chức năng đo được}
+Bảng yêu cầu phi chức năng ở Chương~1 còn vài dòng định tính như gọn, bền hay dễ đọc. Pha phân tích chuyển mỗi dòng thành một chỉ tiêu có con số và một cách kiểm chứng, để nhóm và giảng viên cùng thống nhất thế nào là đạt.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Yêu cầu phi chức năng dưới dạng chỉ tiêu kiểm chứng được}
+    \label{tab:nfr-spec}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{0.9cm} >{\raggedright\arraybackslash}m{2.6cm} >{\raggedright\arraybackslash}m{4.9cm} >{\raggedright\arraybackslash}m{5.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Mã} & \textcolor{white}{Tiêu chí} & \textcolor{white}{Chỉ tiêu} & \textcolor{white}{Cách kiểm chứng} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        N1 & Độ phân giải & Mốc giờ có độ phân giải dưới 1~ms & GPTimer 1~MHz, đọc trong hàm ngắt; kiểm tra mã \\
+        N2 & Độ trễ phát hiện chạm & 2 đến 10~ms mỗi cạnh; sai lệch thời gian solve trong $\pm 10$~ms & Máy phân tích logic, camera 240 hình mỗi giây, 60 cặp đo \\
+        \rowcolor{haitayblue!8}
+        N3 & Chống kích hoạt nhầm & Chạm hai tay dưới 1,5~s không làm đồng hồ sẵn sàng & 20 lần chạm ngắn có chủ đích \\
+        N4 & Toàn vẹn khi mất điện & 0 bản ghi đã chốt bị mất qua 100 lần cắt điện lúc ghi & Relay cắt nguồn ở thời điểm ngẫu nhiên \\
+        \rowcolor{haitayblue!8}
+        N5 & Toàn vẹn khi đồng bộ & 0 bản ghi mất, 0 bản ghi trùng sau khi rơi kết nối & Ngắt Bluetooth giữa chừng 20 đến 50 lần \\
+        N6 & Sức chứa & Trên 100 lượt, thiết kế 512 lượt chưa đồng bộ & Ghi liên tiếp 513 lượt \\
+        \rowcolor{haitayblue!8}
+        N7 & Thời gian đồng bộ & Bộ nhớ đầy 512 bản ghi lên máy tính trong dưới 10~s & Đo bằng nhật ký \texttt{sync\_log} \\
+        N8 & Giao diện & Màn hình cập nhật 10 lần mỗi giây khi chạy; đọc được ở khoảng cách 60~cm & Quay màn hình; thử với 5 người chơi \\
+        \rowcolor{haitayblue!8}
+        N9 & Độ ổn định & Chạy liên tục 24 giờ không khởi động lại & Chạy thử có đồng bộ định kỳ \\
+        N10 & Nguồn & USB-C 5~V; pin CR2032 chỉ nuôi đồng hồ thực & Kiểm tra sơ đồ, đo dòng \\
+        \rowcolor{haitayblue!8}
+        N11 & Phần cứng gọn, bền & Thân máy một thanh, đo giờ không cần máy tính; pad còn nhạy sau 10.000 lần chạm & Đo kích thước; chạy thử T1 khi tắt Bluetooth \\
+        N12 & Tách module firmware & Mỗi module ở Bảng~\ref{tab:tasks} kiểm thử riêng được; đường đo giờ không gọi \texttt{ui}, \texttt{store}, \texttt{ble} & Rà phụ thuộc trong mã; kiểm thử đơn vị từng module \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Ngưỡng số của N3, N7, N8, N9, N11 và N12 là đề xuất của nhóm, cần cả nhóm thống nhất trước khi đo. Các chỉ tiêu còn lại được rút trực tiếp từ Chương~1 và các quyết định đã chốt.
+
+\subsection{Truy vết yêu cầu}
+Bảng~\ref{tab:trace} nối từng yêu cầu ở Chương~1 với use case và cơ chế thiết kế đáp ứng nó. Cột cuối chỉ tới phép kiểm tra ở Chương~4, nên mọi yêu cầu đều có đường đi tới bằng chứng.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Truy vết từ yêu cầu tới thiết kế và kiểm thử}
+    \label{tab:trace}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.2cm} >{\raggedright\arraybackslash}m{1.6cm} >{\raggedright\arraybackslash}m{6.6cm} >{\raggedright\arraybackslash}m{2.2cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Yêu cầu} & \textcolor{white}{Use case} & \textcolor{white}{Cơ chế thiết kế} & \textcolor{white}{Kiểm tra} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Đo thời gian & UC01 & GPTimer 1~MHz, ngắt chạm và nhả, chống nảy có lùi mốc (mục~\ref{sec:fw}) & T1, T2 \\
+        Lưu trữ cục bộ & UC01, UC04 & FRAM 512 ô, bản ghi ghi thêm có CRC (mục~\ref{sec:record}) & S3, S5 \\
+        \rowcolor{haitayblue!8}
+        Thống kê nhanh & UC03 & Ao kiểu csTimer dùng chung cho thiết bị và máy tính & U1 đến U4 \\
+        Quản lý lượt solve & UC04, UC05 & Bản ghi sửa trỏ tới seq đích & S8 \\
+        \rowcolor{haitayblue!8}
+        Kết nối, đồng bộ & UC06 & ACK sau COMMIT, khóa \texttt{(device\_id, seq)} (mục~\ref{sec:flow}) & S1, S2, S4 \\
+        Chuyển user & UC07 & \texttt{WIPE} chỉ khi \texttt{last\_ack} bằng seq đầu vòng đệm & S7 \\
+        \rowcolor{haitayblue!8}
+        Quản lý theo người dùng & UC08, UC09 & Người dùng chỉ ở máy tính, gắn qua session & S7 \\
+        Dashboard tương tác & UC10 & API \texttt{/stats/rolling}, SSE & D1 \\
+        \rowcolor{haitayblue!8}
+        Mốc giờ thực & UC06 & DS3231, \texttt{SET\_TIME}, quy đổi theo \texttt{boot\_id} & S6 \\
+        Sao lưu dài hạn & UC12 & Toàn bộ dữ liệu trong một tệp SQLite; sao lưu là chép tệp & Chưa có \\
+        \rowcolor{haitayblue!8}
+        Smart Cube (tùy chọn) & Chưa có & Ngoài phạm vi Checkpoint 1; dịch vụ GATT để ngỏ đặc tính mới & Chưa có \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% =====================================================================
+\section{Mô hình phân tích}
+\label{sec:analysis}
+Mô hình phân tích mô tả thế giới của Haitay mà chưa nói tới công nghệ. Nó gồm các khái niệm hệ thống phải nhớ, luồng việc của một lượt solve, cách thiết bị đổi trạng thái, và trình tự trao đổi giữa các bên khi đồng bộ.
+
+\subsection{Mô hình miền}
+Hình~\ref{fig:domain} cho thấy sáu khái niệm và quan hệ giữa chúng. Điểm đáng chú ý là Người dùng chỉ nối với Session, và mối nối này được tạo trên máy tính, nên thiết bị không bao giờ giữ thông tin người dùng.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        cls/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, inner sep=2pt, align=left},
+        rel/.style={thick, haitayblue},
+        m/.style={font=\tiny, inner sep=1pt}
+    ]
+        \node[cls] (dev) at (0,0) {\begin{tabular}{l}\textbf{Thiết bị}\\\hline device\_id\\phiên bản firmware\\last\_ack\end{tabular}};
+        \node[cls] (ses) at (5,0) {\begin{tabular}{l}\textbf{Session}\\\hline số session\\seq đầu\\thời điểm bắt đầu\end{tabular}};
+        \node[cls] (sol) at (10,0) {\begin{tabular}{l}\textbf{Lượt solve}\\\hline seq\\thời gian (ms)\\OK, +2 hoặc DNF\\mốc giờ, đã xóa\end{tabular}};
+        \node[cls] (usr) at (5,-3.1) {\begin{tabular}{l}\textbf{Người dùng}\\\hline tên\\PIN (tùy chọn)\end{tabular}};
+        \node[cls] (edt) at (10,-3.1) {\begin{tabular}{l}\textbf{Bản ghi sửa}\\\hline seq\\seq đích\\kết quả mới, cờ xóa\end{tabular}};
+        \node[cls] (syn) at (0,-3.1) {\begin{tabular}{l}\textbf{Lần đồng bộ}\\\hline thời điểm\\số khung đúng, sai\\last\_ack sau đồng bộ\end{tabular}};
+        \draw[rel] (dev) -- node[m, above, pos=0.15]{1} node[m, above, pos=0.85]{0..*} node[m, below]{tạo} (ses);
+        \draw[rel] (ses) -- node[m, above, pos=0.15]{1} node[m, above, pos=0.85]{1..*} node[m, below]{gồm} (sol);
+        \draw[rel] (sol) -- node[m, right, pos=0.15]{1} node[m, right, pos=0.85]{0..*} node[m, left]{được sửa bởi} (edt);
+        \draw[rel] (usr) -- node[m, right, pos=0.15]{0..1} node[m, right, pos=0.85]{0..*} node[m, left]{sở hữu} (ses);
+        \draw[rel] (dev) -- node[m, right, pos=0.15]{1} node[m, right, pos=0.85]{0..*} node[m, left]{trải qua} (syn);
+    \end{tikzpicture}
+    \caption{Mô hình miền của Haitay. Quan hệ Người dùng sở hữu Session chỉ tồn tại trên máy tính.}
+    \label{fig:domain}
+\end{figure}
+
+\subsection{Biểu đồ hoạt động của UC01}
+Hình~\ref{fig:activity} chia luồng UC01 thành hai làn: việc người chơi làm và việc thiết bị làm. Cách vẽ này cho thấy hai điểm rẽ nhánh của đặc tả, là vòng đệm đầy và nhả tay sớm, cùng mỗi lần quyền điều khiển đổi bên.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        act/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=6pt, text width=3.1cm, minimum height=0.6cm, align=center},
+        dec/.style={draw=haitayblue, fill=white, diamond, aspect=2.6, inner sep=1pt, align=center},
+        fl/.style={-{Stealth[length=1.6mm]}, thick, haitayblue},
+        yn/.style={font=\tiny, fill=white, inner sep=1pt}
+    ]
+        \draw[black!35] (0,0.3) rectangle (4.8,-9.5) (4.8,0.3) rectangle (13.4,-9.5);
+        \node[font=\footnotesize\bfseries, text=haitayblue] at (2.4,0) {Người chơi};
+        \node[font=\footnotesize\bfseries, text=haitayblue] at (9.1,0) {Thiết bị};
+        \fill[haitayblue] (2.4,-0.75) circle (0.12);
+        \node[act] (p1) at (2.4,-1.6) {Đặt hai tay lên hai pad};
+        \node[dec] (d1) at (8.0,-1.6) {Vòng đệm\\còn ô?};
+        \node[act, text width=2.2cm] (full) at (11.9,-1.6) {Báo cần đồng bộ (UC06)};
+        \node[act] (a2) at (8.0,-2.9) {Đếm thời gian giữ hai pad};
+        \node[dec] (d2) at (8.0,-4.05) {Giữ đủ\\1,5~s?};
+        \node[act] (a3) at (8.0,-5.2) {Báo Sẵn sàng};
+        \node[act] (p2) at (2.4,-6.1) {Nhấc ít nhất một tay, bắt đầu giải};
+        \node[act] (a4) at (8.0,-6.1) {Ghi mốc $t_0$, chạy đồng hồ};
+        \node[act] (p3) at (2.4,-7.2) {Giải xong, đặt lại hai tay};
+        \node[act] (a5) at (8.0,-7.2) {Ghi mốc $t_1$, hiện $t_1 - t_0$};
+        \node[act] (p4) at (2.4,-8.3) {Chọn OK, +2 hoặc DNF};
+        \node[act] (a6) at (8.0,-8.3) {Ghi 16 byte vào FRAM, cập nhật Ao5, Ao12, Ao100};
+        \draw[fl] (2.4,-0.87) -- (p1);
+        \draw[fl] (p1) -- (d1);
+        \draw[fl] (d1) -- node[yn, above]{không} (full);
+        \draw[fl] (d1) -- node[yn, right]{có} (a2);
+        \draw[fl] (a2) -- (d2);
+        \draw[fl] (d2.west) -| node[yn, pos=0.25, above]{không: nhả sớm, về Chờ} (p1.south);
+        \draw[fl] (d2) -- node[yn, right]{có} (a3);
+        \draw[fl] (a3.south) -- ++(0,-0.2) -| (p2.north);
+        \draw[fl] (p2) -- (a4);
+        \draw[fl] (a4.south) -- ++(0,-0.22) -| (p3.north);
+        \draw[fl] (p3) -- (a5);
+        \draw[fl] (a5.south) -- ++(0,-0.22) -| (p4.north);
+        \draw[fl] (p4) -- (a6);
+        \draw[fl] (a6.east) -- (11.4,-8.3);
+        \draw[thick, haitayblue] (11.55,-8.3) circle (0.15); \fill[haitayblue] (11.55,-8.3) circle (0.09);
+        \draw[fl] (full) -- (11.9,-2.45);
+        \draw[thick, haitayblue] (11.9,-2.6) circle (0.15); \fill[haitayblue] (11.9,-2.6) circle (0.09);
+    \end{tikzpicture}
+    \caption{Biểu đồ hoạt động của UC01 Bấm giờ lượt solve, chia làn theo tác nhân}
+    \label{fig:activity}
+\end{figure}
+
+\subsection{Biểu đồ trạng thái của thiết bị}
+Hành vi đo giờ là một máy trạng thái, mở rộng Bảng~\ref{tab:states} bằng trạng thái trung gian Đang giữ. Trạng thái này là khoảng 1,5 giây người chơi đặt hai tay chờ thiết bị sẵn sàng.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        st/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=8pt, minimum width=2.1cm, minimum height=0.9cm, font=\footnotesize\bfseries},
+        tr/.style={-{Stealth[length=2mm]}, thick, haitayblue},
+        lb/.style={align=center, fill=white, inner sep=1pt}
+    ]
+        \node[st] (idle) at (0,0) {Chờ};
+        \node[st] (hold) at (3.6,0) {Đang giữ};
+        \node[st] (ready) at (7.2,0) {Sẵn sàng};
+        \node[st] (run) at (10.8,0) {Chạy};
+        \node[st] (stop) at (10.8,-2.6) {Dừng};
+        \draw[tr] (idle) -- node[lb, above=2pt]{hai pad\\cùng chạm} (hold);
+        \draw[tr] (hold) -- node[lb, above=2pt]{giữ đủ\\1,5~s} (ready);
+        \draw[tr] (hold) to[bend left=35] node[lb, below=1pt]{nhả trước 1,5~s} (idle);
+        \draw[tr] (ready) -- node[lb, above=2pt]{nhả ít nhất\\một pad: $t_0$} (run);
+        \draw[tr] (run) -- node[lb, right=2pt]{hai pad cùng\\chạm lại: $t_1$} (stop);
+        \draw[tr] (stop) -| node[lb, pos=0.25, below=2pt]{chọn OK, +2 hoặc DNF; ghi FRAM; cập nhật Ao} (idle);
+    \end{tikzpicture}
+    \caption{Biểu đồ trạng thái đo giờ. Thời gian solve bằng $t_1 - t_0$.}
+    \label{fig:fsm}
+\end{figure}
+
+\subsection{Biểu đồ tuần tự của use case đồng bộ}
+\label{sec:flow}
+Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đoạn tách rời. Giai đoạn đầu diễn ra ngay trên thiết bị và không cần máy tính. Giai đoạn sau là UC06, chạy khi có kết nối theo cơ chế lưu rồi chuyển tiếp.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        head/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, minimum width=2.6cm, minimum height=0.6cm, font=\footnotesize\bfseries},
+        msg/.style={-{Stealth[length=1.8mm]}, thick, haitayblue},
+        note/.style={draw=black!40, fill=black!4, rounded corners=2pt, align=left, font=\scriptsize}
+    ]
+        \foreach \x/\n/\t in {0/d/Thiết bị, 4.2/b/Bridge BLE, 8.4/a/Dịch vụ ingest, 12.6/s/SQLite} {
+            \node[head] (\n) at (\x,0) {\t};
+            \draw[black!35, dashed] (\x,-0.3) -- (\x,-10.1);
+        }
+        \node[note, anchor=west] at (0.15,-0.9) {1. Dừng đồng hồ, chọn OK, +2 hoặc DNF\\2. Ghi 16 byte vào FRAM: bản ghi đã chốt};
+        \draw[msg] (4.2,-1.9) -- node[above]{đọc Info, State} (0,-1.9);
+        \draw[msg] (4.2,-2.6) -- node[above]{write \texttt{SET\_TIME(unix)}, write \texttt{SYNC}} (0,-2.6);
+        \draw[msg] (0,-3.3) -- node[above]{notify LOG: 11 bản ghi, seq $k+1 \ldots k+11$} (4.2,-3.3);
+        \draw[msg] (4.2,-4.0) -- node[above]{POST \texttt{/api/v1/ingest}} (8.4,-4.0);
+        \draw[msg] (8.4,-4.7) -- node[above]{BEGIN, INSERT, COMMIT} (12.6,-4.7);
+        \draw[msg] (12.6,-5.4) -- node[above]{đã ghi xuống đĩa} (8.4,-5.4);
+        \draw[msg] (8.4,-6.1) -- node[above]{200, \texttt{last\_seq} $=k+11$} (4.2,-6.1);
+        \draw[msg] (4.2,-6.8) -- node[above]{write \texttt{ACK}$(k+11)$} (0,-6.8);
+        \node[note, anchor=west] at (0.15,-7.5) {3. Lưu \texttt{last\_ack} vào NVS; các ô có seq $\le k+11$ được phép ghi đè};
+        \node[note, anchor=center, text width=11.5cm] at (6.3,-8.6) {Lặp lại cho đến khung END. Nếu kết nối rơi hoặc một khung sai CRC, bridge dừng gửi ACK, kết nối lại và thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. Bản ghi trùng bị loại theo khóa \texttt{(device\_id, seq)}.};
+        \draw[msg, dashed] (8.4,-9.7) -- node[above]{SSE: có dữ liệu mới, dashboard vẽ lại} (12.6,-9.7);
+    \end{tikzpicture}
+    \caption{Biểu đồ tuần tự của UC06 cho một lô bản ghi. Mũi tên nét đứt là thông báo cho dashboard.}
+    \label{fig:seq}
+\end{figure}
+
+Ba bất biến giữ cho luồng này không mất và không nhân đôi dữ liệu. Mỗi bất biến được bảo đảm bởi đúng một cơ chế, nên kiểm thử chỉ cần nhắm vào cơ chế đó.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.45}
+    \caption{Ba bất biến của luồng đồng bộ}
+    \label{tab:invariants}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{4.4cm} >{\raggedright\arraybackslash}m{5.4cm} >{\raggedright\arraybackslash}m{4.4cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Bất biến} & \textcolor{white}{Cơ chế duy nhất bảo đảm} & \textcolor{white}{Lỗi mà nó chặn} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Bản ghi chưa xác nhận không bao giờ bị ghi đè & Thiết bị chỉ ghi vào ô có seq $\le$ \texttt{last\_ack}; nếu không còn ô, thiết bị từ chối lượt mới và yêu cầu đồng bộ & Mất dữ liệu khi bộ nhớ đầy \\
+        Máy tính chỉ xác nhận phần đã nằm trên đĩa & \texttt{ACK} được gửi sau khi giao dịch SQLite chứa lô đó COMMIT; phần đã xác nhận là một đoạn seq liên tục, không có lỗ & Thiết bị xóa bản ghi mà máy tính chưa lưu \\
+        \rowcolor{haitayblue!8}
+        Gửi lại không tạo bản sao & Khóa chính \texttt{(device\_id, seq)} trong bảng solve & Trùng bản ghi sau khi kết nối rơi \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+% =====================================================================
+\section{Thiết kế kiến trúc}
+\label{sec:arch}
+Haitay đi qua đủ bốn lớp của kiến trúc IoT phân tầng, dù toàn bộ hệ thống chỉ nằm trên một chiếc bàn. Thiết bị là lớp cảm nhận, còn ba lớp còn lại cùng chạy trên máy tính của người chơi dưới dạng các tiến trình tách biệt.
+
+Môn học gọi bốn lớp này theo hai cách. Chương~1 của bài giảng dùng tên cảm nhận, mạng, trung gian và ứng dụng, còn Chương~5 dùng tên thiết bị, gateway, server và ứng dụng. Hình~\ref{fig:arch} ghi cả hai tên cho từng lớp, và Bảng~\ref{tab:hops} gọi các chặng theo cách thứ hai.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\footnotesize,
+        own/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=3pt, minimum height=1.25cm, text width=3.4cm, align=center},
+        ext/.style={draw=black!45, fill=black!5, rounded corners=3pt, minimum height=1.25cm, text width=3.0cm, align=center},
+        lay/.style={font=\footnotesize\bfseries, text=haitayblue, anchor=west, text width=2.4cm, align=left},
+        arr/.style={-{Stealth[length=2.2mm]}, thick, haitayblue},
+        lbl/.style={font=\scriptsize, fill=white, inner sep=1.5pt, align=center}
+    ]
+        \node[lay] at (-0.3,0.5) {Lớp cảm nhận\\\scriptsize\mdseries (thiết bị)};
+        \node[ext, text width=2.3cm] (pad) at (3.7,0.5) {\textbf{Hai pad lá đồng}\\cảm biến chạm điện dung};
+        \node[own] (mcu) at (9.0,0.5) {\textbf{Firmware ESP32-S3}\\đo giờ, FRAM, DS3231, màn hình TFT};
+        \node[lay] at (-0.3,-2.3) {Lớp mạng\\\scriptsize\mdseries (gateway)};
+        \node[own] (br) at (9.0,-2.3) {\textbf{Bridge BLE}\\Python, thư viện bleak};
+        \node[lay] at (-0.3,-4.6) {Lớp trung gian\\\scriptsize\mdseries (server)};
+        \node[own] (api) at (9.0,-4.6) {\textbf{Dịch vụ ingest và API}\\Python, FastAPI};
+        \node[ext] (db) at (13.4,-4.6) {\textbf{SQLite}\\tệp cơ sở dữ liệu cục bộ};
+        \node[lay] at (-0.3,-6.9) {Lớp ứng dụng\\\scriptsize\mdseries (dashboard)};
+        \node[own] (ui) at (9.0,-6.9) {\textbf{Dashboard web}\\trình duyệt, Chart.js};
+        \draw[arr] (pad) -- node[lbl, above=2pt]{điện dung\\TOUCH4, TOUCH5} (mcu);
+        \draw[arr, <->] (mcu) -- node[lbl, right=3pt]{Bluetooth LE, GATT: notify bản ghi, write lệnh} (br);
+        \draw[arr, <->] (br) -- node[lbl, right=3pt]{HTTP/REST, JSON, 127.0.0.1} (api);
+        \draw[arr, <->] (api) -- node[lbl, above=2pt]{SQL} (db);
+        \draw[arr, <->] (api) -- node[lbl, right=3pt]{HTTP/REST và SSE} (ui);
+        \begin{scope}[on background layer]
+            \node[draw=haitayblue, dashed, rounded corners=6pt, fit=(br)(api)(db)(ui), inner sep=10pt,
+                  label={[font=\scriptsize\itshape, text=haitayblue, anchor=north east]south east:Máy tính của người chơi}] {};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Kiến trúc bốn lớp của Haitay. Khối nền xanh do nhóm xây dựng, khối nền xám dùng lại của bên thứ ba.}
+    \label{fig:arch}
+\end{figure}
+
+Bảng~\ref{tab:hops} ghi rõ công nghệ ở từng chặng. Kiến trúc này là kiến trúc lai: Bluetooth LE chỉ phủ chặng đầu, còn các chặng sau dùng HTTP trên giao diện mạng nội bộ của máy tính.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.4}
+    \caption{Công nghệ và người xây dựng ở từng chặng dữ liệu}
+    \label{tab:hops}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.1cm} >{\raggedright\arraybackslash}m{4.4cm} >{\raggedright\arraybackslash}m{3.6cm} >{\raggedright\arraybackslash}m{3.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Chặng} & \textcolor{white}{Công nghệ} & \textcolor{white}{Dữ liệu} & \textcolor{white}{Người xây dựng} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Pad tới vi điều khiển, trong lớp thiết bị & Cảm biến chạm có sẵn trong ESP32-S3, ngắt khi chạm và khi nhả & Trạng thái chạm của hai pad & Nhóm viết firmware \\
+        Thiết bị tới gateway (bridge BLE) & Bluetooth LE, một dịch vụ GATT riêng & Bản ghi 16 byte theo lô; lệnh \texttt{SYNC}, \texttt{ACK}, \texttt{SET\_TIME}, \texttt{WIPE} & Nhóm; ngăn xếp NimBLE và bleak của bên thứ ba \\
+        \rowcolor{haitayblue!8}
+        Gateway tới server (dịch vụ ingest) & HTTP/REST, JSON, chỉ nghe trên 127.0.0.1 & Lô bản ghi; phản hồi seq đã lưu & Nhóm; FastAPI của bên thứ ba \\
+        Server tới cơ sở dữ liệu & SQL trên SQLite & Bảng người dùng, session, solve & SQLite của bên thứ ba \\
+        \rowcolor{haitayblue!8}
+        Server tới ứng dụng (dashboard) & HTTP/REST để truy vấn, Server-Sent Events để báo dữ liệu mới & Chuỗi Ao5, Ao12, Ao100 & Nhóm; Chart.js của bên thứ ba \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Bridge được tách khỏi máy chủ vì hai việc này có nhịp sống khác nhau. Bridge giữ kết nối Bluetooth và có thể rơi bất cứ lúc nào, trong khi máy chủ phải luôn sẵn sàng phục vụ dashboard. Nhờ ranh giới REST, nhóm có thể thay bridge bằng bản đọc qua cáp USB mà không chạm vào máy chủ.
+
+\subsection{Biểu đồ triển khai}
+Kiến trúc bốn lớp cho biết khối nào nói chuyện với khối nào. Hình~\ref{fig:deploy} trả lời câu hỏi còn lại: mỗi khối là tệp hay tiến trình gì, và chạy trên nút phần cứng nào.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        nd/.style={draw=haitayblue, thick, fill=white, minimum width=#1, align=center},
+        art/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, text width=3.2cm, minimum height=0.85cm, align=center},
+        cn/.style={{Stealth[length=1.8mm]}-{Stealth[length=1.8mm]}, thick, haitayblue},
+        lb/.style={font=\tiny, fill=white, inner sep=1pt, align=center}
+    ]
+        % device node
+        \draw[haitayblue, thick, fill=haitayblue!3] (0,0) rectangle (4.0,-4.6);
+        \draw[haitayblue, thick] (0,0) -- (0.25,0.25) -- (4.25,0.25) -- (4.0,0) (4.25,0.25) -- (4.25,-4.35) -- (4.0,-4.6);
+        \node[font=\footnotesize\bfseries, text=haitayblue, align=center] at (2.0,-0.45) {«thiết bị»\\ESP32-S3};
+        \node[art] (fw) at (2.0,-1.6) {firmware \texttt{haitay.bin}\\ESP-IDF, NimBLE};
+        \node[art] (fr) at (2.0,-2.7) {FRAM: 512 ô bản ghi\\NVS: \texttt{last\_ack}, \texttt{boot\_id}};
+        \node[art] (rt) at (2.0,-3.8) {DS3231 và CR2032};
+        % pc node
+        \draw[haitayblue, thick, fill=haitayblue!3] (6.0,0) rectangle (15.6,-4.6);
+        \draw[haitayblue, thick] (6.0,0) -- (6.25,0.25) -- (15.85,0.25) -- (15.6,0) (15.85,0.25) -- (15.85,-4.35) -- (15.6,-4.6);
+        \node[font=\footnotesize\bfseries, text=haitayblue, align=center] at (10.8,-0.45) {«máy tính cá nhân»\\Windows hoặc Linux, Python 3};
+        \node[art] (br) at (8.2,-1.6) {Tiến trình \texttt{bridge}\\Python, bleak};
+        \node[art] (api) at (13.4,-1.6) {Tiến trình \texttt{server}\\FastAPI trên Uvicorn};
+        \node[art] (db) at (13.4,-3.65) {Tệp \texttt{haitay.db}\\SQLite};
+        \node[art] (ui) at (8.2,-3.65) {Trình duyệt\\trang dashboard, Chart.js};
+        \draw[cn] (fw.east) -- node[lb, above]{Bluetooth LE\\GATT} (br.west);
+        \draw[cn] (br) -- node[lb, above]{HTTP/REST,\\127.0.0.1} (api);
+        \draw[cn] (api) -- node[lb, left]{SQL, cùng\\tiến trình} (db);
+        \draw[cn] (api.south west) -- node[lb]{HTTP/REST, SSE} (ui.north east);
+    \end{tikzpicture}
+    \caption{Biểu đồ triển khai. Hai nút phần cứng, ba tiến trình trên máy tính và một tệp dữ liệu.}
+    \label{fig:deploy}
+\end{figure}
+
+Thư viện SQLite chạy ngay trong tiến trình server, nên chỉ một tiến trình ghi vào tệp \texttt{haitay.db}. Bridge không mở cơ sở dữ liệu mà luôn đi qua API, nhờ vậy mọi lần ghi đều qua cùng một chỗ kiểm tra CRC và tính liên tục của seq.
+
+% =====================================================================
+\section{Thiết kế chi tiết thiết bị}
+\label{sec:dev-design}
+Thiết bị được lắp từ các module bán sẵn trên bo mạch cắm, vì nhóm cần một nguyên mẫu chạy được trước khi nghĩ tới mạch in riêng. Các thông số dưới đây là thiết kế dự kiến và sẽ được cập nhật theo thực tế lắp ráp.
+
+\subsection{Danh mục vật tư}
+Đơn giá lấy từ báo cáo nghiên cứu nền, là giá quan sát trên trang bán hàng vào tháng 10 năm 2026 và chưa có ngày niêm yết. Dòng có dấu * là ước lượng, cần thay bằng báo giá thật.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Danh mục vật tư cho một nguyên mẫu và một bộ dự phòng}
+    \label{tab:bom}
+    \begin{tabular}{>{\raggedright\arraybackslash}m{3.6cm} >{\raggedright\arraybackslash}m{4.6cm} >{\centering\arraybackslash}m{0.7cm} >{\raggedleft\arraybackslash}m{1.7cm} >{\raggedright\arraybackslash}m{3.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Linh kiện} & \textcolor{white}{Thông số quyết định} & \textcolor{white}{SL} & \textcolor{white}{Đơn giá (đ)} & \textcolor{white}{Lý do chọn} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Bo phát triển ESP32-S3 & Bluetooth LE 5.0, 14 kênh chạm, USB-C & 2 & 295.000 & Mục 2.3; một bo dự phòng \\
+        Màn hình TFT IPS 1,54 inch ST7789 & 240$\times$240, SPI & 1 & 85.000 & Đọc rõ hơn OLED 0,96 inch, không chiếm bus I2C \\
+        \rowcolor{haitayblue!8}
+        FRAM FM24CL64B & 8~KB, I2C, $10^{14}$ lần ghi & 2 & 153.000* & Chịu rút cáp giữa lúc ghi \\
+        Module DS3231 kèm pin CR2032 & $\pm 2$~ppm, I2C & 1 & 44.000 & Giữ giờ khi rút cáp \\
+        \rowcolor{haitayblue!8}
+        Module MPR121 & 12 kênh chạm, I2C & 1 & 25.000 & Dự phòng nếu cảm biến có sẵn nhiễu \\
+        Lá đồng, dây, ba nút nhấn & Lá đồng dán, nút lõm 6~mm & 1 & 130.000* & Hai pad và ba nút chức năng \\
+        \rowcolor{haitayblue!8}
+        Vỏ in 3D & Khoảng 120~g nhựa, hai lần in & 2 & 96.000 & Thân máy dạng thanh ngang \\
+        \midrule
+        \multicolumn{3}{l}{\textbf{Tổng (đã gồm số lượng)}} & \textbf{1.372.000} & Chưa gồm vận chuyển \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Tổng trên gồm một bộ dự phòng và hai lần in vỏ. Bỏ bộ dự phòng và MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 803.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
+
+\subsection{Bảng chân kết nối}
+Nhóm chia ngoại vi thành hai bus để màn hình không bao giờ chặn việc ghi bản ghi. Với phương án OLED 128$\times$64 dùng chung bus, một khung hình đầy đủ trên I2C 400~kHz mất khoảng 15 đến 23~ms, đủ lâu để một lần rút cáp rơi đúng vào lúc FRAM đang chờ bus. Vì vậy màn hình đi trên SPI, còn FRAM và DS3231 dùng chung bus I2C chỉ dành cho dữ liệu.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Bảng chân kết nối của ESP32-S3 (thiết kế dự kiến)}
+    \label{tab:pins}
+    \begin{tabular}{>{\ttfamily\raggedright\arraybackslash}m{1.6cm} >{\raggedright\arraybackslash}m{2.6cm} >{\raggedright\arraybackslash}m{3.4cm} >{\raggedright\arraybackslash}m{6.2cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{GPIO} & \textcolor{white}{Chức năng} & \textcolor{white}{Nối tới} & \textcolor{white}{Ghi chú} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        4 & TOUCH4 & Pad trái & Dây ngắn, đi xa đường SPI \\
+        5 & TOUCH5 & Pad phải & Như trên \\
+        \rowcolor{haitayblue!8}
+        8 & I2C0 SDA & FRAM, DS3231 & Điện trở kéo lên 4,7~k$\Omega$ lên 3,3~V \\
+        9 & I2C0 SCL & FRAM, DS3231 & 400~kHz; FRAM địa chỉ 0x50, DS3231 0x68 \\
+        \rowcolor{haitayblue!8}
+        10 & SPI2 CS & TFT CS & \\
+        11 & SPI2 MOSI & TFT SDA & 40~MHz \\
+        \rowcolor{haitayblue!8}
+        12 & SPI2 SCLK & TFT SCL & \\
+        13 & GPIO ra & TFT DC & Chọn lệnh hoặc dữ liệu \\
+        \rowcolor{haitayblue!8}
+        14 & GPIO ra & TFT RST & \\
+        21 & GPIO ra & TFT BLK & Đèn nền, có thể điều chế độ rộng xung \\
+        \rowcolor{haitayblue!8}
+        15 & GPIO vào & Nút Chọn & Kéo lên trong, mức thấp khi nhấn; OK, +2, DNF \\
+        16 & GPIO vào & Nút Session & Kéo lên trong; mở session mới, xem lịch sử \\
+        \rowcolor{haitayblue!8}
+        17 & GPIO vào & Nút Đồng bộ & Kéo lên trong; yêu cầu đồng bộ, xóa lượt cuối \\
+        19, 20 & USB D$-$, D$+$ & Cổng USB-C & Cấp nguồn 5~V, đường dữ liệu dự phòng \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Một số chân được cố ý tránh. GPIO 0, 3, 45 và 46 là chân strapping, quyết định chế độ khởi động. GPIO 26 đến 32 nối với flash bên trong module, còn GPIO 43 và 44 giữ cổng UART để ghi log khi phát triển. Nếu phải chuyển sang MPR121, module này gắn thêm vào bus I2C0 ở địa chỉ 0x5A cùng chân ngắt IRQ nối vào GPIO 7.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        mod/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, minimum height=1.0cm, text width=2.6cm, align=center},
+        bus/.style={thick, haitayblue},
+        pwr/.style={thick, red!60!black}
+    ]
+        \node[mod, minimum height=5.2cm, text width=2.8cm] (mcu) at (0,0) {\textbf{ESP32-S3}\\WROOM-1 N8};
+        \node[mod] (pl) at (-5,1.6) {Pad trái\\lá đồng};
+        \node[mod] (pr) at (-5,-0.2) {Pad phải\\lá đồng};
+        \node[mod] (btn) at (-5,-2.0) {Ba nút nhấn\\Chọn, Session, Đồng bộ};
+        \node[mod] (fram) at (5,2.0) {FRAM FM24CL64B\\0x50};
+        \node[mod] (rtc) at (5,0.6) {DS3231 và CR2032\\0x68};
+        \node[mod] (tft) at (5,-0.9) {TFT ST7789\\240$\times$240};
+        \node[mod] (usb) at (5,-2.3) {Cổng USB-C\\5~V};
+        \draw[bus] (pl) -- node[above]{GPIO4} (mcu.west |- pl);
+        \draw[bus] (pr) -- node[above]{GPIO5} (mcu.west |- pr);
+        \draw[bus] (btn) -- node[above]{GPIO15, 16, 17} (mcu.west |- btn);
+        \draw[bus] (mcu.east |- fram) -- node[above]{I2C0: GPIO8, 9} (fram);
+        \draw[bus] (3.2,2.0) |- (rtc);
+        \draw[bus] (mcu.east |- tft) -- node[above]{SPI2: GPIO10 đến 14, 21} (tft);
+        \draw[pwr] (usb) -- node[above]{5~V, GPIO19, 20} (mcu.east |- usb);
+    \end{tikzpicture}
+    \caption{Sơ đồ đấu nối mức khối. Mọi module dùng chung đất và nguồn 3,3~V từ bộ ổn áp trên bo ESP32-S3.}
+    \label{fig:wiring}
+\end{figure}
+
+\subsection{Module firmware}
+\label{sec:fw}
+Firmware viết trên ESP-IDF với FreeRTOS, và được chia thành các module có ranh giới rõ. ESP32-S3 có hai lõi, nên nhóm đặt ngăn xếp Bluetooth lên lõi 0 và mọi thứ liên quan tới đo giờ lên lõi 1. Nguyên tắc chung rất đơn giản: đường đo giờ không bao giờ chờ màn hình, bộ nhớ hay Bluetooth.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Module firmware và tác vụ FreeRTOS}
+    \label{tab:tasks}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{2.4cm} >{\raggedright\arraybackslash}m{6.4cm} >{\raggedright\arraybackslash}m{2.5cm} >{\raggedright\arraybackslash}m{2.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Module} & \textcolor{white}{Nhiệm vụ} & \textcolor{white}{Tác vụ, lõi} & \textcolor{white}{Ưu tiên} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        \texttt{touch} & Hàm ngắt trong IRAM: đọc GPTimer 1~MHz, đẩy sự kiện (pad, chạm hay nhả, mốc giờ) vào hàng đợi & Ngắt, lõi 1 & Cao nhất \\
+        \texttt{timing} & Máy trạng thái ở Hình~\ref{fig:fsm}, chống nảy, tính thời gian solve & Tác vụ, lõi 1 & Cao \\
+        \rowcolor{haitayblue!8}
+        \texttt{store} & Ghi bản ghi 16 byte vào FRAM, quét vòng đệm khi khởi động, lưu \texttt{last\_ack} vào NVS & Tác vụ, lõi 1 & Trung bình \\
+        \texttt{stats} & Tính best, mean, Ao5, Ao12, Ao100 từ các bản ghi đã chốt & Gọi từ \texttt{store} & Trung bình \\
+        \rowcolor{haitayblue!8}
+        \texttt{ui} & Vẽ màn hình 10 lần mỗi giây khi đồng hồ chạy, đọc ba nút & Tác vụ, lõi 1 & Thấp \\
+        \texttt{ble} & Dịch vụ GATT trên NimBLE, đóng gói khung LOG, nhận lệnh & Tác vụ, lõi 0 & Trung bình \\
+        \rowcolor{haitayblue!8}
+        \texttt{rtc} & Đọc và đặt giờ DS3231, đánh cờ giờ chưa đặt & Gọi từ \texttt{store}, \texttt{ble} & Trung bình \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Chống nảy và độ chính xác thường kéo nhau theo hai hướng ngược chiều, vì chờ tín hiệu ổn định đồng nghĩa với ghi mốc muộn hơn. Firmware tách hai việc này ra. Tác vụ \texttt{timing} xét trạng thái chạm mỗi 1~ms, và một cạnh chỉ được công nhận khi tín hiệu giữ nguyên trong ba mẫu liên tiếp, nhưng mốc giờ ghi lại là mẫu \emph{đầu tiên} của chuỗi ổn định đó. Nhờ vậy, bộ lọc loại được những lần chạm chập chờn mà không cộng thêm độ trễ vào thời gian solve.
+
+\subsection{Cấu trúc bản ghi}
+\label{sec:record}
+Bản ghi trên thiết bị phải nhỏ, tự kiểm tra được và sống sót qua mọi lần rút cáp. Thiết kế dưới đây đạt cả ba điều với đúng 16 byte, khớp với dung lượng 512 bản ghi đã nêu ở chương trước.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Bố cục bản ghi 16 byte, thứ tự little-endian}
+    \label{tab:record}
+    \begin{tabular}{>{\centering\arraybackslash}m{1.2cm} >{\ttfamily\raggedright\arraybackslash}m{2.0cm} >{\raggedright\arraybackslash}m{1.6cm} >{\raggedright\arraybackslash}m{9.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Byte} & \textcolor{white}{Trường} & \textcolor{white}{Kiểu} & \textcolor{white}{Ý nghĩa} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        0--3 & seq & uint32 & Số thứ tự tăng dần, không bao giờ quay lại; 0 nghĩa là ô trống \\
+        4--7 & time\_ms & uint32 & Thời gian solve tính bằng mili giây; với bản ghi sửa, đây là seq của lượt bị sửa \\
+        \rowcolor{haitayblue!8}
+        8--11 & ts & uint32 & Giờ unix từ DS3231; khi giờ chưa đặt là \texttt{(boot\_id << 20) | uptime\_s} \\
+        12 & session & uint8 & Số session trên thiết bị, quay vòng sau 255 \\
+        \rowcolor{haitayblue!8}
+        13 & flags & uint8 & Bit 0--1: OK, +2, DNF; bit 2: giờ chưa đặt; bit 3: đã xóa; bit 4: bản ghi sửa \\
+        14--15 & crc16 & uint16 & CRC-16/CCITT-FALSE trên 14 byte đầu \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Nhật ký được thiết kế theo kiểu chỉ ghi thêm. Khi người chơi đổi một lượt cũ thành +2 hoặc xóa nó, thiết bị không sửa ô cũ mà ghi một bản ghi sửa mới trỏ tới seq của lượt đó. Nhờ quy tắc này, một lần rút cáp chỉ có thể làm hỏng bản ghi mới nhất, vốn chưa được chốt, và CRC sẽ phát hiện nó. Phương án sửa tại chỗ bị loại vì một lần ghi dở ở byte \texttt{flags} sẽ phá hỏng một bản ghi đã chốt từ trước.
+
+FRAM được chia thành 512 ô, và bản ghi seq $n$ nằm ở ô $(n-1) \bmod 512$. Vòng đệm không có phần đầu lưu con trỏ, vì cập nhật cùng lúc bản ghi và con trỏ sẽ tạo ra một khoảnh khắc hai nơi không khớp nhau. Thay vào đó, mỗi lần khởi động firmware quét 512 ô, coi seq lớn nhất có CRC hợp lệ là đầu vòng đệm. Chỉ hai giá trị nhỏ nằm trong NVS của flash: \texttt{last\_ack} và \texttt{boot\_id}. NVS của ESP-IDF tự bảo đảm tính nguyên tử khi ghi, và hai giá trị này chỉ đổi khi đồng bộ hoặc khi bật máy.
+
+\subsection{Giao thức Bluetooth LE}
+\label{sec:gatt}
+Giao thức giữa thiết bị và bridge cụ thể hóa Bảng~\ref{tab:gatt} của chương trước. Thiết bị là ngoại vi GATT, quảng bá tên \texttt{Haitay-XXXX} với bốn ký tự cuối của địa chỉ MAC.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Dịch vụ GATT của Haitay; UUID là 128 bit tự sinh, rút gọn ở đây}
+    \label{tab:gatt-detail}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{1.9cm} >{\ttfamily\raggedright\arraybackslash}m{1.9cm} >{\raggedright\arraybackslash}m{2.1cm} >{\raggedright\arraybackslash}m{7.8cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Đặc tính} & \textcolor{white}{UUID} & \textcolor{white}{Thao tác} & \textcolor{white}{Nội dung} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Info & ...0001 & read & JSON ngắn: \texttt{device\_id}, firmware, phần cứng, phiên bản định dạng bản ghi, số ô \\
+        State & ...0002 & read, notify & \texttt{boot\_id}, \texttt{uptime\_s}, seq đầu vòng đệm, \texttt{last\_ack}, số bản ghi chưa đồng bộ, giờ đã đặt hay chưa \\
+        \rowcolor{haitayblue!8}
+        Log & ...0003 & notify & Khung LOG: \texttt{0x10}, số bản ghi $n$, rồi $n$ bản ghi 16 byte; khung END: \texttt{0x11}, seq cuối \\
+        Control & ...0004 & write & Lệnh 5 byte: mã lệnh và tham số uint32 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Với MTU thương lượng là 185 byte, mỗi thông báo mang được $\lfloor (185 - 3 - 2) / 16 \rfloor = 11$ bản ghi. Bộ nhớ đầy 512 bản ghi vì vậy đi hết trong 47 khung. Bảng~\ref{tab:commands} liệt kê bốn lệnh máy tính gửi xuống.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Lệnh ghi vào đặc tính Control}
+    \label{tab:commands}
+    \begin{tabular}{>{\ttfamily\raggedright\arraybackslash}m{1.0cm} >{\ttfamily\raggedright\arraybackslash}m{2.6cm} >{\raggedright\arraybackslash}m{10.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Mã} & \textcolor{white}{Lệnh} & \textcolor{white}{Hành vi của thiết bị} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        0x01 & SYNC & Gửi các bản ghi có seq lớn hơn \texttt{last\_ack} theo khung LOG, kết thúc bằng khung END \\
+        0x02 & ACK(seq) & Nâng \texttt{last\_ack} lên seq nếu lớn hơn giá trị cũ, không vượt seq mới nhất, rồi lưu vào NVS \\
+        \rowcolor{haitayblue!8}
+        0x03 & SET\_TIME(unix) & Đặt giờ DS3231; máy tính đọc State trước đó để quy đổi các bản ghi mang cờ giờ chưa đặt \\
+        0x04 & WIPE & Xóa vòng đệm và mở session mới khi chuyển người dùng; từ chối nếu còn bản ghi chưa xác nhận \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Khi cờ giờ chưa đặt bật, trường \texttt{ts} mang số lần bật máy cùng số giây kể từ lúc bật. Máy tính đọc State ngay trước \texttt{SET\_TIME}, nên với bản ghi cùng lần bật, giờ thực bằng giờ hiện tại trừ đi khoảng \texttt{uptime\_s} đã trôi qua. Bản ghi từ một lần bật cũ hơn không quy đổi chính xác được, nên máy tính lấy giờ của lượt liền trước và đánh dấu là ước lượng.
+
+% =====================================================================
+\section{Thiết kế chi tiết phần mềm máy tính}
+\label{sec:pc}
+Phần mềm trên máy tính gồm bridge, dịch vụ ingest và dashboard, chạy bằng một lệnh. Dữ liệu nằm trong một tệp SQLite duy nhất, nên sao lưu chỉ là chép một tệp.
+
+\subsection{Lớp thiết kế}
+Các khái niệm trong mô hình miền được hiện thực bằng một nhóm lớp nhỏ, mỗi lớp giữ một trách nhiệm. Bảng~\ref{tab:classes} cũng chỉ ra lớp tương ứng đã chạy trong mô phỏng ở Chương~4.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Lớp thiết kế của phần mềm trên máy tính}
+    \label{tab:classes}
+    \begin{tabular}{>{\ttfamily\raggedright\arraybackslash}m{2.9cm} >{\raggedright\arraybackslash}m{4.1cm} >{\ttfamily\raggedright\arraybackslash}m{3.4cm} >{\raggedright\arraybackslash}m{3.3cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Lớp} & \textcolor{white}{Trách nhiệm} & \textcolor{white}{Phương thức chính} & \textcolor{white}{Trong mô phỏng} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        BleBridge & Quét, kết nối, nhận khung, gửi lệnh, tự kết nối lại & connect(), sync(), write\_cmd() & \texttt{Link} \\
+        IngestService & Kiểm tra CRC và tính liên tục, ghi một giao dịch mỗi lô, trả seq đã lưu & ingest(batch) & \texttt{PcService.sync} \\
+        \rowcolor{haitayblue!8}
+        SolveRepository & Truy cập SQLite: thêm lượt, áp bản ghi sửa, truy vấn theo người dùng và khoảng thời gian & insert(), apply\_edit(), solves() & \texttt{PcService.\_apply} \\
+        TimeResolver & Quy đổi bản ghi giờ chưa đặt theo \texttt{boot\_id} & resolve(rec, state, now) & \texttt{\_resolve\_ts} \\
+        \rowcolor{haitayblue!8}
+        SessionBinder & Nhận diện session theo \texttt{(device\_id, first\_seq)}, gắn người dùng & bind(rec, user) & \texttt{\_session\_for} \\
+        StatsService & Ao5, Ao12, Ao100 kiểu csTimer, chuỗi trượt & average\_of(), rolling() & \texttt{stats} \\
+        \rowcolor{haitayblue!8}
+        ApiRouter, EventHub & Điểm cuối REST, phát sự kiện SSE & các route ở Bảng~\ref{tab:api} & Chưa có \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Hình~\ref{fig:classes} bổ sung phần bảng không thể hiện được, là chiều phụ thuộc giữa các lớp. Mọi mũi tên đều đi từ lớp gọi tới lớp được gọi, và chỉ \texttt{SolveRepository} chạm vào SQLite.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        cl/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, inner sep=2pt, align=left},
+        dep/.style={-{Stealth[length=1.6mm]}, dashed, thick, haitayblue},
+        lb/.style={font=\tiny, fill=white, inner sep=1pt, align=center}
+    ]
+        \node[cl] (br) at (0,0) {\begin{tabular}{l}\textbf{BleBridge}\\\hline \texttt{connect()}\\\texttt{sync()}\\\texttt{write\_cmd(op, arg)}\end{tabular}};
+        \node[cl] (api) at (5.2,0) {\begin{tabular}{l}\textbf{ApiRouter}\\\hline \texttt{POST /ingest}\\\texttt{GET /stats/rolling}\\\texttt{GET /events}\end{tabular}};
+        \node[cl] (st) at (10.6,0) {\begin{tabular}{l}\textbf{StatsService}\\\hline \texttt{average\_of(times, n)}\\\texttt{rolling(user, n)}\end{tabular}};
+        \node[cl] (ing) at (5.2,-2.7) {\begin{tabular}{l}\textbf{IngestService}\\\hline \texttt{ingest(batch)}\\\texttt{check\_crc\_and\_seq()}\end{tabular}};
+        \node[cl] (ev) at (10.6,-2.7) {\begin{tabular}{l}\textbf{EventHub}\\\hline \texttt{publish(event)}\\\texttt{subscribe()}\end{tabular}};
+        \node[cl] (tr) at (0,-5.2) {\begin{tabular}{l}\textbf{TimeResolver}\\\hline \texttt{resolve(rec, state, now)}\end{tabular}};
+        \node[cl] (sb) at (5.2,-5.2) {\begin{tabular}{l}\textbf{SessionBinder}\\\hline \texttt{bind(rec, user)}\end{tabular}};
+        \node[cl] (rp) at (10.6,-5.2) {\begin{tabular}{l}\textbf{SolveRepository}\\\hline \texttt{insert(), apply\_edit()}\\\texttt{solves(user, from, to)}\end{tabular}};
+        \draw[dep] (br) -- node[lb, above]{HTTP} (api);
+        \draw[dep] (api) -- (st);
+        \draw[dep] (api) -- (ing);
+        \draw[dep] (api.south east) -- node[lb]{SSE} (ev.north west);
+        \draw[dep] (ing) -- node[lb, above]{có lô mới} (ev);
+        \draw[dep] (ing.south west) -- (tr.north east);
+        \draw[dep] (ing) -- (sb);
+        \draw[dep] (ing.south east) -- (rp.north west);
+        \draw[dep] (sb) -- (rp);
+        \draw[dep] (st.east) -- ++(0.5,0) |- (rp.east);
+    \end{tikzpicture}
+    \caption{Biểu đồ lớp thiết kế của phần mềm trên máy tính. Mũi tên nét đứt là quan hệ phụ thuộc.}
+    \label{fig:classes}
+\end{figure}
+
+\subsection{Lược đồ cơ sở dữ liệu}
+Mô hình miền được ánh xạ thành năm bảng, trong đó Bản ghi sửa không thành bảng riêng mà được áp thẳng vào lượt solve đích. Thời gian lưu theo giờ UTC dạng unix, và dashboard đổi sang giờ địa phương lúc hiển thị. Hình~\ref{fig:er} vẽ quan hệ giữa các bảng, còn Bảng~\ref{tab:schema} ghi khóa và chỉ số.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        ent/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, inner sep=2pt, align=left},
+        rel/.style={thick, haitayblue},
+        m/.style={font=\tiny, inner sep=1pt}
+    ]
+        \node[ent] (usr) at (0,0) {\begin{tabular}{l}\textbf{app\_user}\\\hline \underline{user\_id}\\name (duy nhất)\\pin\_hash\\created\_at\end{tabular}};
+        \node[ent] (ses) at (5.2,0) {\begin{tabular}{l}\textbf{session}\\\hline \underline{session\_id}\\device\_id (FK)\\user\_id (FK, rỗng được)\\session\_no, first\_seq\\started\_at\end{tabular}};
+        \node[ent] (dev) at (10.6,0) {\begin{tabular}{l}\textbf{device}\\\hline \underline{device\_id}\\fw\_version, hw\_version\\last\_ack\\last\_seen\end{tabular}};
+        \node[ent] (sol) at (5.2,-3.9) {\begin{tabular}{l}\textbf{solve}\\\hline \underline{device\_id, seq}\\session\_id (FK)\\time\_ms, penalty, deleted\\ts, ts\_estimated\\edit\_seq\end{tabular}};
+        \node[ent] (syn) at (10.6,-3.9) {\begin{tabular}{l}\textbf{sync\_log}\\\hline \underline{sync\_id}\\device\_id (FK)\\started\_at, last\_ack\\frames\_ok, frames\_bad\\records\_new, records\_dup\end{tabular}};
+        \draw[rel] (usr) -- node[m, above, pos=0.12]{1} node[m, above, pos=0.86]{0..*} node[m, below]{sở hữu} (ses);
+        \draw[rel] (dev) -- node[m, above, pos=0.12]{1} node[m, above, pos=0.84]{0..*} node[m, below]{tạo} (ses);
+        \draw[rel] (ses) -- node[m, right, pos=0.12]{1} node[m, right, pos=0.86]{1..*} node[m, left]{gồm} (sol);
+        \draw[rel] (dev) -- node[m, right, pos=0.12]{1} node[m, right, pos=0.86]{0..*} node[m, left]{ghi nhật ký} (syn);
+        \draw[rel] (dev.south west) -- node[m, sloped, above, pos=0.1]{1} node[m, sloped, below, pos=0.85]{0..*} node[m, sloped, above]{cấp seq} (sol.north east);
+    \end{tikzpicture}
+    \caption{Biểu đồ thực thể liên kết của cơ sở dữ liệu. Trường gạch chân là khóa chính, FK là khóa ngoại.}
+    \label{fig:er}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Lược đồ cơ sở dữ liệu SQLite}
+    \label{tab:schema}
+    \begin{tabular}{>{\ttfamily\raggedright\arraybackslash}m{1.9cm} >{\raggedright\arraybackslash}m{6.6cm} >{\raggedright\arraybackslash}m{5.4cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Bảng} & \textcolor{white}{Trường chính} & \textcolor{white}{Khóa và chỉ số} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        app\_user & \texttt{user\_id}, \texttt{name}, \texttt{pin\_hash} (tùy chọn), \texttt{created\_at} & Khóa chính \texttt{user\_id}; \texttt{name} duy nhất \\
+        device & \texttt{device\_id}, \texttt{fw\_version}, \texttt{hw\_version}, \texttt{last\_ack}, \texttt{last\_seen} & Khóa chính \texttt{device\_id} \\
+        \rowcolor{haitayblue!8}
+        session & \texttt{session\_id}, \texttt{device\_id}, \texttt{session\_no}, \texttt{first\_seq}, \texttt{user\_id}, \texttt{started\_at} & Duy nhất \texttt{(device\_id, first\_seq)}; chỉ số \texttt{(user\_id, started\_at)} cho truy vấn theo người dùng \\
+        solve & \texttt{device\_id}, \texttt{seq}, \texttt{session\_id}, \texttt{time\_ms}, \texttt{penalty}, \texttt{deleted}, \texttt{ts}, \texttt{ts\_estimated}, \texttt{edit\_seq} & Khóa chính \texttt{(device\_id, seq)} chống trùng; chỉ số \texttt{(session\_id, ts)} cho biểu đồ theo khoảng thời gian \\
+        \rowcolor{haitayblue!8}
+        sync\_log & Số khung đúng và sai, số bản ghi mới và trùng, \texttt{last\_ack} của mỗi lần đồng bộ & Khóa chính \texttt{sync\_id}; nguồn số liệu cho nhật ký vận hành \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Khi một session mới xuất hiện trong lô bản ghi, dịch vụ gắn nó với người dùng đang được chọn trên dashboard, và người chơi có thể đổi lại sau. Số session trên thiết bị quay vòng sau 255, nên session được nhận diện bằng cặp \texttt{(device\_id, first\_seq)}. Trường \texttt{edit\_seq} ghi seq của bản ghi sửa gần nhất đã áp dụng, nhờ đó một bản ghi sửa bị gửi lại không thể đè lên một lần sửa mới hơn.
+
+\subsection{Danh sách điểm cuối API}
+Mọi điểm cuối có tiền tố \texttt{/api/v1}, nhận và trả JSON. Truy vấn danh sách luôn có giới hạn khoảng thời gian và phân trang bằng con trỏ.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Điểm cuối API của dịch vụ trên máy tính}
+    \label{tab:api}
+    \begin{tabular}{>{\ttfamily\raggedright\arraybackslash}m{1.2cm} >{\ttfamily\raggedright\arraybackslash}m{3.6cm} >{\raggedright\arraybackslash}m{5.6cm} >{\raggedright\arraybackslash}m{3.4cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Lệnh} & \textcolor{white}{Đường dẫn} & \textcolor{white}{Tham số và kết quả} & \textcolor{white}{Mã trạng thái} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        POST & /ingest & \texttt{device\_id}, State, mảng bản ghi; trả \texttt{last\_seq} đã COMMIT & 200; 400 sai định dạng; 409 seq không liên tục \\
+        GET & /users & Danh sách người dùng & 200 \\
+        \rowcolor{haitayblue!8}
+        POST & /users & \texttt{name}, PIN tùy chọn & 201; 409 trùng tên \\
+        GET & /sessions & \texttt{user\_id}, \texttt{from}, \texttt{to}, \texttt{cursor}, \texttt{limit} $\le 500$ & 200; 400 \\
+        \rowcolor{haitayblue!8}
+        PATCH & /sessions/\{id\} & \texttt{user\_id}: gắn session cho người khác (UC09) & 200; 404 \\
+        GET & /solves & \texttt{user\_id}, \texttt{from}, \texttt{to}, \texttt{cursor}, \texttt{limit} $\le 1000$ & 200; 400 \\
+        \rowcolor{haitayblue!8}
+        GET & /stats/rolling & \texttt{user\_id}, \texttt{n} thuộc \{5, 12, 100\}, \texttt{from}, \texttt{to}; chuỗi AoN theo thời gian & 200; 400 \\
+        GET & /devices/\{id\} & Phiên bản firmware, \texttt{last\_ack}, lần đồng bộ cuối & 200; 404 \\
+        \rowcolor{haitayblue!8}
+        GET & /events & Luồng Server-Sent Events báo có dữ liệu mới & 200 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Thiết kế giao diện}
+Dashboard là một trang duy nhất, xếp thông tin theo thứ tự người chơi cần: chỉ số hiện tại, xu hướng, rồi chi tiết. Hình~\ref{fig:wireframe} là khung bố cục dự kiến.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        box/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=2pt, align=center},
+        tile/.style={draw=haitayblue, fill=white, rounded corners=2pt, minimum width=2.3cm, minimum height=1.0cm, align=center}
+    ]
+        \draw[black!50, rounded corners=4pt] (0,0) rectangle (14,-8.2);
+        \node[box, minimum width=13.6cm, minimum height=0.7cm, anchor=north west] at (0.2,-0.2) {Thanh lọc: người dùng \quad|\quad session \quad|\quad khoảng ngày \quad|\quad trạng thái thiết bị và lần đồng bộ cuối};
+        \foreach \i/\t in {0/Best, 1/Ao5, 2/Ao12, 3/Ao100, 4/Số lượt} {
+            \node[tile, anchor=north west] at (0.2+2.75*\i,-1.1) {\textbf{\t}\\giá trị hiện tại};
+        }
+        \node[box, minimum width=13.6cm, minimum height=3.2cm, anchor=north west] at (0.2,-2.3) {Biểu đồ time-series: Ao5, Ao12, Ao100 trên cùng trục thời gian\\đánh dấu các mốc kỷ lục cá nhân};
+        \node[box, minimum width=8.6cm, minimum height=2.3cm, anchor=north west] at (0.2,-5.7) {Bảng session: ngày, số lượt, mean, Ao5 tốt nhất,\\người dùng sở hữu (sửa được, UC09)};
+        \node[box, minimum width=4.8cm, minimum height=2.3cm, anchor=north west] at (9.0,-5.7) {Danh sách lượt solve\\của session đang chọn};
+    \end{tikzpicture}
+    \caption{Khung bố cục dashboard}
+    \label{fig:wireframe}
+\end{figure}
+
+Biểu đồ giới hạn tối đa 5.000 điểm, gộp điểm khi khoảng thời gian dài hơn, để trang không chậm dần khi lịch sử lớn lên. Khi bridge đẩy xong một lô, máy chủ phát một sự kiện SSE và dashboard tải lại đúng khoảng đang xem.
+
+\subsection{An toàn thông tin}
+Phạm vi của Haitay là một thiết bị và một máy tính, nên bề mặt tấn công khá hẹp. Dịch vụ chỉ nghe trên 127.0.0.1, vì vậy máy khác trong mạng không gọi được API. Thiết bị chỉ chấp nhận lệnh từ máy tính đã ghép đôi Bluetooth và lưu khóa liên kết, và kho mã không chứa khóa hay mật khẩu nào. Khi nhiều người dùng chung một máy tính, mỗi người có thể đặt PIN, và máy chủ chỉ lưu giá trị băm của PIN.
+
+% =====================================================================
+\section{Tổng hợp quyết định thiết kế}
+\label{sec:decisions}
+Mỗi lựa chọn trong chương này đều có thể đổi sang phương án rẻ hơn hoặc đắt hơn. Mục này cho thấy vì sao nhóm dừng ở đúng điểm đã chọn: tiết kiệm thêm thì vỡ một yêu cầu, còn chi thêm thì không mua được yêu cầu nào mới.
+
+\subsection{Phương pháp đánh giá độ co giãn}
+Với mỗi quyết định, nhóm liệt kê các ứng viên rồi chấm theo hai trục. Trục ngân sách là chênh lệch giá so với phương án chọn, lấy từ Bảng~\ref{tab:bom} và mục chi phí của báo cáo nghiên cứu nền. Trục đơn giản đếm số linh kiện, tiến trình, dịch vụ và thư viện mới mà phương án kéo theo. Sau đó nhóm thử bỏ hoặc hạ cấp từng thành phần, xem yêu cầu nào ở Bảng~\ref{tab:nfr-spec} và Chương~1 bị vỡ. Phương án được giữ là phương án rẻ nhất, đơn giản nhất mà vẫn phủ mọi yêu cầu bắt buộc.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Độ co giãn theo ngân sách và độ đơn giản ở từng lớp. Giá chênh tính theo đồng cho mỗi đơn vị linh kiện; [EST] là ước lượng.}
+    \label{tab:elasticity}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{1.7cm} >{\raggedright\arraybackslash}m{2.3cm} >{\raggedright\arraybackslash}m{2.4cm} >{\raggedright\arraybackslash}m{1.6cm} >{\raggedright\arraybackslash}m{2.1cm} >{\raggedright\arraybackslash}m{3.2cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Lớp} & \textcolor{white}{Chọn} & \textcolor{white}{Ứng viên khác} & \textcolor{white}{$\Delta$ giá} & \textcolor{white}{$\Delta$ đơn giản} & \textcolor{white}{Hệ quả} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Vi điều khiển & ESP32-S3 & ESP32 cổ điển & $-175.000$ & Như nhau & Bluetooth LE 4.2, ít kênh chạm hơn; rủi ro cho N2 \\
+         & & nRF52840 hoặc STM32WB55 & $+50.000$ (nRF52840) & Thêm bộ công cụ mới & Không thêm yêu cầu nào được phủ \\
+        \rowcolor{haitayblue!8}
+        Cảm biến & Chạm có sẵn & Thêm MPR121 & $+25.000$ & Thêm một chip I2C & Chỉ cần khi cảm biến có sẵn nhiễu \\
+        Lưu trữ & FRAM FM24CL64B & Flash với LittleFS & $-153.000$ & Bớt một chip & Xóa theo sector, ghi dở khi rút cáp; vỡ N4 \\
+        \rowcolor{haitayblue!8}
+         & & EEPROM I2C & [EST] rẻ hơn & Như nhau & Ghi trang mất vài ms, trang có thể ghi dở; rủi ro N4 \\
+        Đồng hồ thực & DS3231, CR2032 & Không có, chỉ dùng \texttt{SET\_TIME} & $-44.000$ & Bớt một module & Mọi lượt trước lần đồng bộ sau khi rút cáp chỉ có giờ ước lượng (A6) \\
+        \rowcolor{haitayblue!8}
+        Màn hình & TFT ST7789, SPI & OLED 0,96 inch, I2C & $-20.000$ & Như nhau & Chặn bus FRAM 15 đến 23~ms mỗi khung; chữ nhỏ, rủi ro N8 \\
+        Liên kết & Bluetooth LE & Cáp USB nối tiếp & 0 & Bớt ngăn xếp BLE & Vỡ yêu cầu kết nối không dây ở Chương~1 \\
+        \rowcolor{haitayblue!8}
+         & & Wi-Fi & 0 & Thêm mạng và cấu hình & Phụ thuộc mạng ngoài, ngoài phạm vi \\
+        Gateway & Bridge Python, bleak & Web Bluetooth & 0 & Bớt một tiến trình & Không chạy nền, không tự kết nối lại; rủi ro N5 \\
+        \rowcolor{haitayblue!8}
+         & & Thêm MQTT broker & 0 & Thêm một dịch vụ & PUBACK không báo đã lưu; không thêm yêu cầu nào \\
+        Cơ sở dữ liệu & SQLite & Tệp CSV & 0 & Bớt thư viện SQL & Mất giao dịch và khóa chống trùng; vỡ N5 \\
+        \rowcolor{haitayblue!8}
+         & & InfluxDB, TimescaleDB & 0 & Thêm một máy chủ & Không thêm yêu cầu nào được phủ \\
+        Dashboard & Trang tĩnh, Chart.js, SSE & Grafana & 0 & Thêm một dịch vụ & Không thêm yêu cầu nào được phủ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Bảng~\ref{tab:elasticity} cho thấy hai vùng tách bạch. Ở phía tiết kiệm, mỗi bước bớt lưu trữ, đồng hồ hay cơ sở dữ liệu đều làm vỡ một yêu cầu có mã số. Ở phía chi thêm, các phương án như nRF52840, mạch in riêng, broker hay cơ sở dữ liệu chuỗi thời gian chỉ làm hệ thống phức tạp hơn mà không phủ thêm yêu cầu nào.
+
+\subsection{Thử bỏ từng cơ chế}
+Phép thử ở trên áp cho linh kiện và công nghệ. Phép thử tương tự áp cho sáu cơ chế an toàn dữ liệu, mỗi lần bỏ đúng một cơ chế và chạy lại mô phỏng ở Chương~4 (Bảng~\ref{tab:sim-ablation}).
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Bỏ từng cơ chế trong mô phỏng, đo ngày 13/11/2026}
+    \label{tab:ablation}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{0.7cm} >{\raggedright\arraybackslash}m{3.6cm} >{\raggedright\arraybackslash}m{7.0cm} >{\raggedright\arraybackslash}m{2.2cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Mã} & \textcolor{white}{Bỏ cơ chế} & \textcolor{white}{Hệ quả đo được trong mô phỏng} & \textcolor{white}{Yêu cầu bị vi phạm} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        A1 & Chống nảy ba mẫu, còn một mẫu & 198/200 lượt đo sai, so với 0/200 khi có chống nảy & N2, N3 \\
+        A2 & Gửi \texttt{ACK} trước COMMIT, máy tính dừng giữa hai bước & Mất 11 bản ghi, đúng một khung; có cơ chế thì mất 0 & N5, đồng bộ \\
+        \rowcolor{haitayblue!8}
+        A3 & Sửa tại chỗ thay vì ghi bản ghi sửa & 28 lượt đã chốt bị mất qua 200 lần cắt điện, so với 0 & N4 \\
+        A4 & CRC của bản ghi & 184 bản ghi ghi dở bị nhận như bản ghi thật, so với 0 & N4 \\
+        \rowcolor{haitayblue!8}
+        A5 & Khóa \texttt{(device\_id, seq)} & 11 bản ghi trùng sau khi rơi kết nối và mất ACK, so với 0 & N5 \\
+        A6 & DS3231, chỉ đặt giờ bằng \texttt{SET\_TIME} & Rút cáp trước khi đồng bộ: 20/20 mốc giờ phải ước lượng, so với 0/20 & Mốc giờ thực trên dashboard \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Mỗi cơ chế gần như không tốn gì: vài byte trong bản ghi, một chỉ số, một quy tắc thứ tự, hoặc 44.000 đồng cho đồng hồ thực. Bỏ bất kỳ cơ chế nào cũng làm vỡ một yêu cầu bắt buộc, nên thiết kế hiện tại là tập cơ chế nhỏ nhất còn phủ đủ đặc tả.
+
+\subsection{Stack tối ưu}
+Gộp hai phép thử lại, stack được chọn gồm các thành phần dưới đây, mỗi lớp một dòng.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Stack được chọn theo lớp}
+    \label{tab:stack}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{3.2cm} >{\raggedright\arraybackslash}m{11.0cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Lớp} & \textcolor{white}{Thành phần} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Cảm nhận (thiết bị) & ESP32-S3-WROOM-1 N8, chạm điện dung có sẵn, FRAM FM24CL64B, DS3231, TFT ST7789 trên SPI, USB-C 5~V \\
+        Mạng (gateway) & Bluetooth LE GATT trên NimBLE; bridge Python với bleak \\
+        \rowcolor{haitayblue!8}
+        Trung gian (server) & FastAPI trên 127.0.0.1, SQLite một tệp \\
+        Ứng dụng & Trang dashboard tĩnh, Chart.js, Server-Sent Events \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        font=\scriptsize,
+        pt/.style={circle, fill=black!45, inner sep=2pt},
+        lb/.style={font=\scriptsize, align=left, inner sep=2pt}
+    ]
+        \draw[-{Stealth[length=2mm]}, black!60] (0,0) -- (10.6,0);
+        \node[anchor=north east, font=\scriptsize] at (10.6,-0.4) {giá linh kiện, nghìn đồng};
+        \draw[-{Stealth[length=2mm]}, black!60] (0,0) -- (0,5.3) node[above, font=\scriptsize]{số khối phần cứng và phần mềm};
+        \foreach \x in {0,500,1000,1500,2000,2500} { \draw[black!40] (\x/250,0) -- (\x/250,-0.08) node[below, font=\tiny]{\x}; }
+        \foreach \y in {6,8,10,12,14} { \draw[black!40] (0,\y*0.55-2.75) -- (-0.08,\y*0.55-2.75) node[left, font=\tiny]{\y}; }
+        \node[pt] (a) at (603/250, 8*0.55-2.75) {}; \node[lb, above] at (a) {Mức A: 603\\thiếu FRAM, DS3231};
+        \node[pt] (b) at (1284/250, 10*0.55-2.75) {}; \node[lb, above left] at (b) {Mức B: 1.284\\pin, hai màn hình};
+        \node[pt] (c) at (2485/250, 13*0.55-2.75) {}; \node[lb, below left] at (c) {Mức C: 2.485\\nRF52840, mạch in};
+        \node[circle, fill=haitayblue, inner sep=2.6pt] (h) at (1372/250, 9*0.55-2.75) {};
+        \node[lb, below right, text=haitayblue, font=\scriptsize\bfseries] at (h) {Haitay: 1.372};
+        \draw[dashed, haitayblue] (a) -- (h) -- (c);
+    \end{tikzpicture}
+    \caption{Giá và độ phức tạp của ba mức trong báo cáo nghiên cứu nền và của stack được chọn. Giá gồm một bộ dự phòng; giá các mức có phí vận chuyển, giá Haitay thì chưa; trục đứng là ước lượng của nhóm.}
+    \label{fig:knee}
+\end{figure}
+
+Stack được chọn nằm ở điểm gãy của đường cong giá và độ phức tạp. So với mức A, nó chi thêm khoảng 770.000 đồng, chủ yếu cho ESP32-S3 thay ESP32 cổ điển, FRAM, DS3231 và màn hình, để phủ N4 và mốc giờ thực. So với mức B, nó bỏ pin và màn hình thứ hai theo quyết định nguồn của nhóm, rồi dùng phần tiền đó cho FRAM. Đi tiếp tới mức C tốn thêm khoảng 1,1 triệu đồng mà không phủ thêm yêu cầu nào.
+
+\subsection{Quyết định kỹ thuật và phương án bị loại}
+Bảng~\ref{tab:decisions} gom các quyết định chi tiết của chương này. Lựa chọn linh kiện và công nghệ truyền thông đã được lập luận ở chương trước, nên không lặp lại ở đây.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.35}
+    \caption{Quyết định thiết kế, phương án bị loại và lý do}
+    \label{tab:decisions}
+    \begin{tabular}{>{\bfseries\raggedright\arraybackslash}m{2.4cm} >{\raggedright\arraybackslash}m{2.9cm} >{\raggedright\arraybackslash}m{2.9cm} >{\raggedright\arraybackslash}m{5.6cm}}
+        \toprule
+        \rowcolor{haitayblue}
+        \textcolor{white}{Vấn đề} & \textcolor{white}{Chọn} & \textcolor{white}{Loại} & \textcolor{white}{Lý do} \\
+        \midrule
+        \rowcolor{haitayblue!8}
+        Chặng bridge tới máy chủ & HTTP/REST & MQTT qua Mosquitto & PUBACK của MQTT chỉ báo broker đã nhận, chưa báo cơ sở dữ liệu đã lưu, nên không dùng làm căn cứ gửi ACK được; một bên gửi và một bên nhận cũng chưa cần broker \\
+        Cơ sở dữ liệu & SQLite & InfluxDB, TimescaleDB & 100.000 lượt solve chỉ cỡ vài MB; cần quan hệ người dùng, session, solve và khóa chống trùng; một tệp, không cần máy chủ riêng \\
+        \rowcolor{haitayblue!8}
+        Bridge BLE & Python với bleak & Web Bluetooth trong trình duyệt & Bridge chạy nền và tự kết nối lại, còn Web Bluetooth cần người dùng bấm mỗi lần và chỉ có trên trình duyệt nhân Chromium \\
+        Cập nhật dashboard & SSE & WebSocket, hỏi định kỳ & Chỉ cần một chiều từ máy chủ tới trình duyệt; SSE tự kết nối lại và không cần thư viện thêm \\
+        \rowcolor{haitayblue!8}
+        Bus màn hình & TFT trên SPI & OLED chung I2C với FRAM & Khung hình I2C 15 đến 23~ms chặn bus của FRAM; SPI 40~MHz tách hẳn hai luồng \\
+        Sửa lượt solve & Bản ghi sửa ghi thêm & Sửa tại chỗ & Ghi thêm chỉ có thể làm hỏng bản ghi chưa chốt \\
+        \rowcolor{haitayblue!8}
+        Con trỏ vòng đệm & Quét khi khởi động & Phần đầu trong FRAM & Không có hai nơi phải cập nhật cùng lúc; quét 8~KB qua I2C 400~kHz chỉ mất cỡ 0,2~s \\
+        Chống trùng & Khóa \texttt{(device\_id, seq)} & Băm nội dung bản ghi & Hai lượt solve khác nhau có thể trùng nội dung; seq là định danh tự nhiên do thiết bị cấp \\
+        \bottomrule
+    \end{tabular}
+\end{table}

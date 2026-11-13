@@ -1,0 +1,30 @@
+# Scratch and demoted files
+tmp/
+.trash/
+**/.trash/
+
+# LaTeX build output (the PDFs next to the .tex files stay tracked)
+**/build/
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Page-check renders
+writing/renders/*.png
+presentation/renders/
+
+# Python
+__pycache__/
+*.pyc
+
+# Simulation state (results JSON in code/sim/out/ stay tracked as evidence)
+*.sqlite
+*.bin
+
+# Secrets, never commit
+.env
+*.key

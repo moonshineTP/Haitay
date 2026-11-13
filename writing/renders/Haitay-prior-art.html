@@ -1,0 +1,1723 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Haitay-prior-art</title><style>
+@page { size: A4; margin: 16mm 15mm 18mm; @bottom-center { content: counter(page); font: 8pt 'Segoe UI', Arial, sans-serif; color: #898781; } }
+html { color-scheme: light; }
+body { font: 9.6pt/1.5 'Segoe UI', Arial, sans-serif; color: #0b0b0b; background: #fff; margin: 0; }
+h1 { font-size: 24pt; margin: 0 0 4pt; letter-spacing: -0.01em; }
+h2 { font-size: 15pt; margin: 22pt 0 6pt; padding-bottom: 3pt; border-bottom: 1.5px solid #2a78d6; break-after: avoid; }
+h3 { font-size: 11.5pt; margin: 14pt 0 4pt; break-after: avoid; }
+p { margin: 5pt 0; }
+a { color: #1c5cab; text-decoration: none; overflow-wrap: break-word; }
+code { font: 8.6pt Consolas, monospace; background: #f0efec; padding: 0 2pt; border-radius: 2px; }
+table { width: 100%; border-collapse: collapse; margin: 7pt 0 9pt; font-size: 7.9pt; line-height: 1.35; }
+thead { display: table-header-group; }
+th { background: #f0efec; text-align: left; font-weight: 600; }
+th, td { padding: 3pt 4pt; border-bottom: 1px solid #e1e0d9; vertical-align: top; overflow-wrap: break-word; }
+tr { break-inside: avoid; }
+ol, ul { margin: 4pt 0 4pt 16pt; padding: 0; }
+figure { margin: 10pt 0 12pt; padding: 8pt 10pt 6pt; background: #fcfcfb; border: 1px solid #e1e0d9; border-radius: 6px; break-inside: avoid; }
+figure svg { display: block; margin: 0 auto; height: auto; }
+.fig-title { font-weight: 600; font-size: 9.6pt; margin-bottom: 4pt; }
+figcaption { font-size: 7.9pt; color: #52514e; margin-top: 4pt; }
+</style></head><body><h1>Haitay Wins on Service</h1>
+<p><em>Prior art, domain model, class positioning and project plan for the Haitay speedcubing timer (HUST IT4735 midterm, team of two). Research date 2026-10-08.</em></p>
+<p><strong>Bottom line.</strong> Haitay's device is reproducible prior art, so its standing in class comes from the service layer and from measured claims. ESP32 touch-pad timers with BLE have existed since 2020 (<a href="https://ojdip.net/2020/11/esp32-cube-timer/">ojdip.net</a>), GAN, QiYi and MoYu sell BLE timers with apps, and csTimer, Cubeast and a new Speedsolving.com timer (August 2026) already chart Ao5 to Ao100. No searched source shows the full combination of a standalone two-pad timer, store-and-forward sync with acknowledgement, and a persistent PC time-series service; this is the defensible gap, and it rests on search results only. Cuber pain supports the service, since csTimer users report losing thousands of solves and fighting the audio-jack path. Course rubrics reward a working end-to-end demo, a written spec and measured outcomes more than novelty, so the recommended scope pairs a demo (with a visible MQTT or REST hop) with a validation chapter. At the 8-week baseline the plan holds <strong>121 person-hours of expected effort (plan figure 158 h against 160 h capacity at 10 h/person/week)</strong>, with 6- and 10-week ladders that drop features in a fixed order. Four requirement defects need fixing before build: the 15 V power line, the 0.001 s latency line, the Ao100 location conflict, and the missing numeric acceptance criteria. Haitay is a practice timer because the WCA allows only Approved Timer List timers, and the HUST rubric is unpublished, so the lecturer must confirm team size, weight and demo format.</p>
+<p>Evidence tags carried from the notes: [UNVERIFIED] lacks a fetched primary source; [SNIPPET] was seen only in a search summary; [ANECDOTAL] is a blog, forum or single course; [OWN CALC] is the notes' own computation on WCA API data; [INFERENCE] and [EST] mark this report's own reasoning and estimates. Reddit, YouTube and Facebook groups were not mined, and several fetches were model-summarised.</p>
+<h2>Prior art and establishment</h2>
+<p>Every Haitay feature exists somewhere, but the combination was absent from all searched sources. Hardware timers dominate on price and rules, software dominates on analytics, and hobby builds cover the electronics. Novelty therefore sits in the integrated pipeline and its validation.</p>
+<h3>Hardware timers</h3>
+<p>Stackmat is the de facto standard. Gen 1 debuted at World Championship 2003, the WCA adopted Stackmats in 2004, and Gen 2 left the approved list on 1 Feb 2023 (<a href="https://www.speedsolving.com/wiki/index.php/StackMat">Speedsolving wiki</a>; <a href="https://www.worldcubeassociation.org/posts/updating-the-official-list-of-approved-timers-october-2021">WCA post</a>). The G5 (2021) adds 2-pad and 4-pad modes, 0.2 s hold-to-activate buttons and a 0.5 s lock after each stop. Its output is a reverse-engineered 1200-baud 8N1 serial packet on a 2.5 mm jack: state character, time digits and a checksum, roughly every 0.15 s (<a href="https://raw.githubusercontent.com/PaddyCo/StackmatTimer/master/Protocol.md">PaddyCo Protocol.md</a>; <a href="https://jayanth-rajakumar.github.io/ledmat/">ledmat</a>). Gen 4 uses a 10-byte packet (<a href="https://github.com/m9aertner/StackMatGen4TimerTeensy">m9aertner</a>). The line-ending order is unresolved, and Speed Stacks publishes no protocol spec. The timer keeps only best stacking times, with no wireless link and no app (<a href="https://www.speedstacks.com/store/retail/speed-stacks-g5-timer/">Speed Stacks G5</a>).</p>
+<table>
+<thead>
+<tr>
+<th>Timer</th>
+<th>Price</th>
+<th>On-device memory</th>
+<th>Link and app</th>
+<th>WCA</th>
+<th>Sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Speed Stacks G5</td>
+<td>USD 29.99; 900,000-950,000 VND</td>
+<td>Best stacking times only</td>
+<td>Data port, 1200-baud serial; no wireless</td>
+<td>Approved (2-pad now, 4-pad from 2 Jan 2027)</td>
+<td><a href="https://www.speedstacks.com/store/retail/speed-stacks-g5-timer/">Speed Stacks</a>; <a href="https://rubikonline.vn/speedstacks-g5-pro-timer-dong-ho-bam-gio-rubik-cao-cap">H2 Rubik</a>; <a href="https://thegioirubik.com/danh-muc/phu-kien/timer/">thegioirubik</a></td>
+</tr>
+<tr>
+<td>GAN Halo Smart Timer</td>
+<td>USD 39.99-55; older GAN Smart Timer 680,000-750,000 VND</td>
+<td>10,000 results offline, auto Ao5 (older model holds 5)</td>
+<td>BLE to CubeStation app and cloud</td>
+<td>No</td>
+<td><a href="https://www.cubelelo.com/products/gan-halo-timer-smart">Cubelelo</a>; <a href="https://www.gancube.com/products/gan-smart-timer">GAN</a></td>
+</tr>
+<tr>
+<td>QiYi Smart Timer</td>
+<td>USD 13-20; 220,000-412,500 VND</td>
+<td>Ao5/Ao12 on device; capacity not stated</td>
+<td>BLE, Smart Player app with cloud and trends</td>
+<td>No</td>
+<td><a href="https://speedcubeshop.com/products/qiyi-smart-timer-bluetooth-xuanwu">SpeedCubeShop</a>; <a href="https://zyorubik.com/products/phu-kien-rubik-qiyi-smart-timer-new-2023-thiet-bi-bam-gio-hang-qiyi-thong-minh-ket-noi-bluetooth-zyo-rubik">ZyO</a></td>
+</tr>
+<tr>
+<td>MoYu AI timer</td>
+<td>USD 11.95-13.46</td>
+<td>Not stated</td>
+<td>BLE, WCU Cube app; reviewers report app failures</td>
+<td>No</td>
+<td><a href="https://speedcubeshop.com/products/moyu-ai-bluetooth-timer">SpeedCubeShop</a></td>
+</tr>
+<tr>
+<td>Basic touch timers</td>
+<td>115,000-235,000 VND</td>
+<td>None</td>
+<td>None</td>
+<td>No</td>
+<td><a href="https://websosanh.vn/s/gi%E1%BB%9D+rubik.htm">websosanh.vn</a> (aggregator summary, [SNIPPET])</td>
+</tr>
+</tbody>
+</table>
+<p>Stackmat complaints recur: thumb resets between the pads on Gen 2 to 4, failures to stop or start on Gen 3, and low-battery glitches such as 8:88.888 (<a href="https://www.speedsolving.com/wiki/index.php/StackMat">Speedsolving wiki</a>; <a href="https://www.speedsolving.com/threads/g5-stackmat-issues.89767/">G5 issues</a>). Forum claims vary by hardware version.</p>
+<h3>Open-source and DIY builds</h3>
+<p>About ten repositories and posts exist, in three buckets: Stackmat decoders and displays, BLE bridges or minimal timers, and one richer companion.</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Hardware</th>
+<th>What it does</th>
+<th>Maturity</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tibordp/cube-timer + ojdip.net blog (2020)</td>
+<td>ESP32, 1 capacitive pad, SH1106 OLED</td>
+<td>BLE GATT notify, Web Bluetooth demo; no on-device stats</td>
+<td>MIT, 5 commits</td>
+<td><a href="https://github.com/tibordp/cube-timer">repo</a>; <a href="https://ojdip.net/2020/11/esp32-cube-timer/">blog</a></td>
+</tr>
+<tr>
+<td>xoseperez/wisblock-smartcube-companion (2023)</td>
+<td>nRF52840, touch TFT</td>
+<td>PB, Ao5, Ao12, 4 users, 6 puzzles, smart cubes, Stackmat UART; no PC sync</td>
+<td>GPL-3.0, 15 stars</td>
+<td><a href="https://github.com/xoseperez/wisblock-smartcube-companion">repo</a></td>
+</tr>
+<tr>
+<td>liusonwood/StackmatLink</td>
+<td>ESP32-S3</td>
+<td>Stackmat audio to BLE emulating a GAN timer for csTimer</td>
+<td>MIT, updated 25 May 2026</td>
+<td><a href="https://github.com/liusonwood/StackmatLink">repo</a></td>
+</tr>
+<tr>
+<td>m9aertner/StackMatGen4TimerTeensy</td>
+<td>Teensy-LC</td>
+<td>Gen 4 packet decoder with OLED or LED display</td>
+<td>MIT, 2020</td>
+<td><a href="https://github.com/m9aertner/StackMatGen4TimerTeensy">repo</a></td>
+</tr>
+<tr>
+<td>PaddyCo/StackmatTimer, ledmat, StackHack</td>
+<td>AVR, Arduino</td>
+<td>Stackmat decoders and large displays</td>
+<td>MIT, small</td>
+<td><a href="https://github.com/PaddyCo/StackmatTimer">PaddyCo</a>; <a href="https://jayanth-rajakumar.github.io/ledmat/">ledmat</a></td>
+</tr>
+</tbody>
+</table>
+<p>The two closest references are tibordp (touch plus BLE plus OLED, no stats) and wisblock (multi-user stats, no sync). Searches for RP2040, STM32, Wi-Fi or time-series cube-timer repositories found none; this is a negative search result, not proof of absence. Academic work is thin: one ASU thesis covers a smart-cube app platform (<a href="https://keep.lib.asu.edu/items/187330">ASU</a>), and no Vietnamese thesis or capstone turned up. HUST, UET and PTIT repositories were not searched.</p>
+<h3>Software and smart-cube layer</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Provides</th>
+<th>Gap versus Haitay</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>csTimer (GPL-3.0)</td>
+<td>Stackmat input, ao5/ao12, per-session trend, multi-session, manual backup</td>
+<td>Data lives in browser storage; no cross-session long averages (issues #34, #40)</td>
+<td><a href="https://www.cstimer.net/">cstimer.net</a>; <a href="https://github.com/cs0x7f/cstimer/issues/40">#40</a>; <a href="https://github.com/cs0x7f/cstimer/issues/34">#34</a></td>
+</tr>
+<tr>
+<td>Speedsolving.com timer (thread 2 Aug 2026)</td>
+<td>Accounts, batched server sync, best Ao12 over 30d/90d/1y, PBs Ao5-Ao100, heatmap, histogram</td>
+<td>No hardware, no Stackmat or Bluetooth mention</td>
+<td><a href="https://www.speedsolving.com/threads/new-speedsolving-timer.97451/">thread</a></td>
+</tr>
+<tr>
+<td>Sub-X</td>
+<td>AO100/AO12, SD, 14-day slope, forecast, AI report, csTimer import</td>
+<td>Closest operational-analytics competitor; no device</td>
+<td><a href="https://subx.guru/">subx.guru</a></td>
+</tr>
+<tr>
+<td>Cubeast</td>
+<td>Smart-cube step analysis, external timers incl. Stackmat</td>
+<td>Closed source [UNVERIFIED]; 2026 status unverified</td>
+<td><a href="https://www.speedsolving.com/threads/cubeast-a-speedcubing-timer-for-bluetooth-cubes-with-support-for-all-bluetooth-cubes-all-timers-and-all-major-solving-methods.77406/">thread</a></td>
+</tr>
+<tr>
+<td>CubeProgression, CubeDesk</td>
+<td>csTimer-export charts; hosted accounts and stats</td>
+<td>Software only</td>
+<td><a href="https://github.com/jjangsangy/CubeProgression">CubeProgression</a>; <a href="https://github.com/kash/cubedesk">CubeDesk</a></td>
+</tr>
+</tbody>
+</table>
+<p>Smart-cube protocols are all reverse-engineered. GAN Gen2 to 4 and MoYu32 use AES with MAC-derived keys, QiYi uses a fixed-key AES-ECB, GoCube is plain, and Giiker uses light obfuscation (<a href="https://github.com/cubing/cubing.js">cubing.js</a>; <a href="https://github.com/afedotov/gan-web-bluetooth">gan-web-bluetooth</a>; <a href="https://gist.github.com/afedotov/52057533a8b27a0277598160c384ae71">MAC FAQ</a>). Web Bluetooth works in Chromium only, with no Firefox or Safari support, and needs HTTPS plus a user gesture (<a href="https://caniuse.com/web-bluetooth">caniuse</a>; <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API">MDN</a>). No ready-made ESP32 GAN-cube project turned up.</p>
+<h3>WCA constraints</h3>
+<p>Haitay cannot compete officially. Regulation 7f1a requires "an approved timer from the Approved Timer List", which secondary sources reduce to Speed Stacks G3, G4 and G5; the list PDF itself was unreadable (<a href="https://raw.githubusercontent.com/thewca/wca-regulations/official/wca-regulations.md">WCA Regulations</a>; <a href="https://www.speedcubersdigest.com/p/wca-to-implement-4-pad-timers-starting">Speedcubers Digest</a>). Puzzles with electronic components are banned (3a4), so smart cubes are practice-only. From <strong>2 Jan 2027</strong> official attempts need a G5 in 4-pad mode (<a href="https://www.worldcubeassociation.org/posts/adoption-of-4-pad-timing-august-2026">WCA post</a>). Times under 10 minutes are truncated to hundredths (9f1), so competition resolution is 10 ms. No certification path for third-party timers was found. The inspection rules (15 s, +2 at 15 s, DNF at 17 s, premature stop under 0.06 s) are the reference behaviour for any inspection mode.</p>
+<h3>Feature-gap matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Established prior art</th>
+<th>Haitay stance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Two-pad hands-on timer</td>
+<td>Stackmat, GAN, QiYi; tibordp (1 pad)</td>
+<td>Table stakes</td>
+</tr>
+<tr>
+<td>Touch hysteresis, BLE notify, OLED</td>
+<td>tibordp 2020</td>
+<td>Table stakes</td>
+</tr>
+<tr>
+<td>Device Ao5 / Ao12</td>
+<td>GAN, QiYi, wisblock</td>
+<td>Table stakes</td>
+</tr>
+<tr>
+<td>Device Ao100</td>
+<td>None found on a standalone device</td>
+<td>Weak gap, cheap to claim</td>
+</tr>
+<tr>
+<td>Multi-user local profiles</td>
+<td>wisblock (4 users); no commercial timer found</td>
+<td>Gap, scoped to one active user plus switch</td>
+</tr>
+<tr>
+<td>Browser or phone analytics</td>
+<td>csTimer, Cubeast, Speedsolving timer, Sub-X, GAN CubeStation</td>
+<td>Table stakes; value lies in capture</td>
+</tr>
+<tr>
+<td>BLE to browser logging</td>
+<td>tibordp, StackmatLink, gan-web-bluetooth</td>
+<td>Table stakes</td>
+</tr>
+<tr>
+<td>Smart-cube link</td>
+<td>csTimer, Cubeast, CubeDesk, CubeRoot; wisblock on an MCU</td>
+<td>Established; ESP32 route is Could</td>
+</tr>
+<tr>
+<td><strong>Device-side store, acknowledged sync, persistent PC time-series service</strong></td>
+<td>Not found</td>
+<td><strong>Defensible gap</strong></td>
+</tr>
+<tr>
+<td><strong>Open sync protocol with csTimer-compatible export</strong></td>
+<td>Not found (csTimer JSON is the de facto format)</td>
+<td><strong>Defensible gap</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Absence claims rest on search results. GAN CubeStation may already offer long-term charts, and commercial app internals were not tested.</p>
+<h3>Operational pain behind the service claim</h3>
+<p>Data loss is documented: one csTimer user lost a log of almost 12,000 solves and another wrote "This has happened to me 5 times" (<a href="https://www.speedsolving.com/threads/i-lost-my-cstimer-data.89015/">thread</a>); another thread reports losses of about 4,000 solves (<a href="https://www.speedsolving.com/threads/cstimer-got-reset.90778/">thread</a>). Stackmat-to-csTimer setups fail on mic gain, noisy cables and combo jacks (<a href="https://www.speedsolving.com/threads/stackmat-cstimer-issues.80169/">thread</a>). Cost complaints persist ("Stackmat timers are waaay to overpriced", <a href="https://www.speedsolving.com/threads/should-i-buy-my-son-gen-4-or-gen-5-stackmat-timer.88407/">thread</a>). These support three service features: capture without a cable, backup that survives browser clearing, and per-user separation on a shared timer. Evidence for a shared-timer club workflow is indirect (school clubs, csTimer session-per-person workarounds).</p>
+<h2>Domain model and metrics</h2>
+<p>A speedcubing session follows a short loop: arm, solve, stop, mark, record, review. Existing tools cover the loop but leave logging to external software. Haitay's objectives, actors and definitions below set the vocabulary for the plan.</p>
+<h3>Objectives and actors</h3>
+<table>
+<thead>
+<tr>
+<th>Actor</th>
+<th>Objective</th>
+<th>Haitay measure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Solo practicer (csTimer plus Stackmat or keyboard)</td>
+<td>Capture every solve; see trends without manual export</td>
+<td>Zero manual steps from solve to chart</td>
+</tr>
+<tr>
+<td>WCA competitor</td>
+<td>Practise on a Stackmat-like device</td>
+<td>Two-pad arming, optional inspection; not a competition device</td>
+</tr>
+<tr>
+<td>Child plus parent</td>
+<td>Visible progress for the buyer</td>
+<td>Dashboard by period, PB events</td>
+</tr>
+<tr>
+<td>School club (shared equipment)</td>
+<td>Many users per timer</td>
+<td>User switch with acknowledged wipe</td>
+</tr>
+<tr>
+<td>Coach</td>
+<td>Read a student's history</td>
+<td>Read-only dashboard view (no tool found with a formal coach role)</td>
+</tr>
+<tr>
+<td>Course team</td>
+<td>Meet spec with measured evidence</td>
+<td>Acceptance numbers in section "Project management layer"</td>
+</tr>
+</tbody>
+</table>
+<p>Vietnam school evidence includes Hanoi club events and class-team contests (<a href="https://doanthanhnien.vn/tin-tuc/tuoi-tre-sang-tao/quang-ngai-thu-tai-rubik-lan-iii-%E2%80%93-san-choi-toa-sang-tai-nang-tre">Quang Ngai</a>; club list is a search summary, [UNVERIFIED]).</p>
+<h3>Usual workflow end to end</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Practice flow</th>
+<th>Competition reference (WCA 2026)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Setup</td>
+<td>Select user and session; scramble from an app</td>
+<td>Scrambler, TNoodle, signed scorecard</td>
+</tr>
+<tr>
+<td>2 Inspect</td>
+<td>Optional 15 s countdown</td>
+<td>Under 15 s; judge calls 8 s and 12 s (A3)</td>
+</tr>
+<tr>
+<td>3 Arm and start</td>
+<td>Both hands on pads; release starts</td>
+<td>Timer starts when hands lift (A4d); +2 at 15 s, DNF at 17 s</td>
+</tr>
+<tr>
+<td>4 Solve</td>
+<td>Timer runs; display updates at about 10 Hz</td>
+<td>Release puzzle, then stop</td>
+</tr>
+<tr>
+<td>5 Stop</td>
+<td>Both hands flat on pads</td>
+<td>Premature stop under 0.06 s: extra attempt; 0.06 s or more: DNF (A6b)</td>
+</tr>
+<tr>
+<td>6 Mark</td>
+<td>OK, +2 or DNF; delete last</td>
+<td>Judge records; competitor signs</td>
+</tr>
+<tr>
+<td>7 Record</td>
+<td>Append to log with sequence number</td>
+<td>Score taker enters in WCA Live</td>
+</tr>
+<tr>
+<td>8 Review</td>
+<td>Ao5, Ao12 on device; trends on PC</td>
+<td>Ao5 ranks; truncation to hundredths</td>
+</tr>
+<tr>
+<td>9 Sync and switch</td>
+<td>Send log, PC acknowledges, device wipes, next user</td>
+<td>Not applicable</td>
+</tr>
+</tbody>
+</table>
+<p>Source: <a href="https://raw.githubusercontent.com/thewca/wca-regulations/official/wca-regulations.md">WCA Regulations</a>; practice flow is synthesised from csTimer features and forum practice (<a href="https://cstimer.net/">csTimer</a>). Training modes in the wild (split timing, PLL drills, daily Ao100 sessions) are phase-level and need smart cubes or splits; they sit outside the Haitay MVP. One community dissent applies to dashboard design: "I sometimes do worse when I'm thinking about big averages", so keep on-device display minimal during a solve (<a href="https://www.speedsolving.com/threads/how-do-you-track-your-solves.78339/">thread</a>).</p>
+<h3>Metric definitions and exact algorithm</h3>
+<p>The WCA defines only single, Mean of 3 and Average of 5 (best and worst removed, one DNF tolerated, two DNFs make a DNF). Ao12 and Ao100 are community conventions that trim ceil(5%) from each end (<a href="https://www.speedsolving.com/wiki/index.php/Average">Speedsolving wiki: Average</a>; <a href="https://www.worldcubeassociation.org/regulations/">WCA Regulations Art. 9</a>). Label them "csTimer-style" in the report. The rule below derives from those sources and a third-party csTimer-style reference script (<a href="https://gist.github.com/kana/1e96a2300f8479f67d1f208a57f2b9e7">kana gist</a>).</p>
+<ol>
+<li>Effective time: OK = t, +2 = t + 2000 ms, DNF = infinity. Store the penalty separately and compute the effective time once, since csTimer encodes +2 as an additive flag.</li>
+<li>Take the window of the latest n solves. Fewer than n solves gives undefined (show "-").</li>
+<li>Set cut = ceil(0.05 n): 1 for Ao5, 1 for Ao12, 5 for Ao100. Sort, then discard the cut smallest and cut largest.</li>
+<li>If an infinity remains, the result is DNF. Otherwise take the mean of the n - 2 cut survivors and round to centiseconds (integer rule: round(sum_ms / (10 k)), k = n - 2 cut).</li>
+<li>Current is the latest window. Best is the minimum over windows ending at each solve, with DNF windows excluded.</li>
+</ol>
+<p>Edge cases: Ao5 and Ao12 tolerate one DNF, Ao100 tolerates five, and a DNF is trimmed as the slowest value. Example: 9.50, 10.20, DNF, 8.90, 9.80 gives cut 1, sorted 8.90, 9.50, 9.80, 10.20, DNF, survivors 9.50, 9.80, 10.20, mean 29,500 / 3 = 9,833 ms, shown as 9.83. Two DNFs in an Ao5 give DNF. Session mean excludes DNFs, and Mo3 with any DNF is DNF. Ties do not alter the sum. WCA computes from times already truncated to hundredths, whereas csTimer's display rounding is unverified; compute from stored milliseconds and document the choice.</p>
+<h3>Devices, aspects and usual milestones</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Content</th>
+<th>Key decision</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hardware</td>
+<td>ESP32-S3, copper-foil pads, display, 1S Li-ion, printed case</td>
+<td>Native touch with ACTIVE and INACTIVE interrupts; MPR121 as fallback; reject TTP223 (60-220 ms)</td>
+<td><a href="https://docs.espressif.com/projects/esp-idf/en/v5.4/esp32s3/api-reference/peripherals/touch_pad.html">ESP-IDF touch</a>; <a href="https://files.seeedstudio.com/wiki/Grove-Touch_Sensor/res/TTP223.pdf">TTP223 datasheet</a></td>
+</tr>
+<tr>
+<td>Firmware</td>
+<td>1 MHz GPTimer timestamp in ISR; display in a low-priority task</td>
+<td>Timing path must not wait on a 15 ms I2C frame</td>
+<td><a href="https://ojdip.net/2020/11/esp32-cube-timer/">ojdip.net</a>; <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gptimer.html">GPTimer</a></td>
+</tr>
+<tr>
+<td>Protocol</td>
+<td>One GATT service, seq-numbered records, <code>ACK(last_seq)</code> write</td>
+<td>Negotiate MTU 185-247 and DLE; delete only after PC fsync</td>
+<td><a href="https://docs.espressif.com/projects/esp-faq/en/latest/software-framework/bt/ble.html">ESP-FAQ BLE</a></td>
+</tr>
+<tr>
+<td>Data</td>
+<td>16-byte record: seq, time_ms, unix_ts, flags, user, CRC16; LittleFS or CRC log</td>
+<td>100,000 solves = 1.6 MB; PC derives Ao values on the fly</td>
+<td><a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/file-system-considerations.html">File systems</a>; schema from the notes</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>Rolling Ao5/Ao12/Ao100, PB steps, histogram, session compare, heatmap</td>
+<td>Session compare and heatmap appear only in open requests or one competitor</td>
+<td><a href="https://github.com/cs0x7f/cstimer/issues/34">issue #34</a>; <a href="https://github.com/Borys35/cstimer-analyzer/issues/18">cstimer-analyzer #18</a></td>
+</tr>
+<tr>
+<td>UX</td>
+<td>Large digits, recessed buttons, no button between pads</td>
+<td>Show full resolution only at stop</td>
+<td><a href="https://www.speedsolving.com/wiki/index.php/StackMat">Speedsolving wiki</a></td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Timing, power-loss, sync-loss, user trial</td>
+<td>Numeric pass criteria written first</td>
+<td>Plan below</td>
+</tr>
+</tbody>
+</table>
+<p>Usual milestone shares for hardware plus software work are roughly: requirements and parts 8-10%, module bring-up 18-22%, integration 15-20%, firmware stabilisation 10-15%, app and dashboard 15-20%, testing 10-12%, documentation and rehearsal 10-12% [INFERENCE from COCOMO 81 and course shapes in the notes]. Standard deliverables are hardware, firmware, protocol spec, schema, dashboard, user guide, BOM, conformance table and test log.</p>
+<h2>Positioning for class standing</h2>
+<p>Peer IT4735 projects sit on a known archetype, and course rubrics elsewhere reward evidence over novelty. Haitay wins by combining a conventional pipeline with a real-time claim, an acknowledged-sync guarantee and measured results. The scope below keeps the Must set demonstrable in one sitting.</p>
+<h3>What peers build and what rubrics reward</h3>
+<p>The visible bar is an RFID kiosk: one ESP32, three readers, OLED, FastAPI with paho-mqtt and SQLite, and a React dashboard (<a href="https://github.com/nguyenLTpk/IoT-IT4735">IoT-IT4735 repo</a>). The 20251 lab repo shows weekly REST, MQTT (HiveMQ), Kafka and ESP32 Wi-Fi provisioning work (<a href="https://github.com/hunganh1310/20251-IT4735-IoT-Lab">lab repo</a>). Comparable syllabi grade a proposal (5-25%), a midpoint (10-25%), a demo (30-50%) and a report (20-40%), with peer evaluation for individual accountability (<a href="https://vanhunteradams.com/Pico/CourseMaterials/Final_Project.html">Cornell ECE 4760</a>; <a href="https://tbp.studentorg.berkeley.edu/syllabi/1548/download/">Berkeley ME 100</a>; <a href="https://homa-alem.github.io/teaching/ece_6501/6501_syllabus.pdf">UVA</a>). UVA names "techniques used for design and validation" and "measurable outcomes"; Cornell requires operation "according to a specification you write". Novelty alone is not a listed criterion in these syllabi.</p>
+<p>HUST publishes little: IT4735 is 2(2-1-0-4) with a team exercise "building a specific application", and a 2021 lecture slide shows 50% process and 50% final (<a href="https://soict.hust.edu.vn/wp-content/uploads/Bachelor-Computer-Engineering-program.pdf">SoICT program</a>; <a href="https://www.slideshare.net/slideshow/it4735iot-va-ung-dungv2021pdf/262849382">2021 slides</a>, [SNIPPET plus one fetch]). One credit equals 50 learner-hours, so the course totals about 100 hours per student (<a href="https://soict.hust.edu.vn/wp-content/uploads/QCDT.pdf">HUST regulation</a>). The lecturer's profile leans toward edge AI (<a href="https://soict.hust.edu.vn/ts-dang-tuan-linh.html">profile</a>), so on-device statistics and trend analysis may be rewarded [INFERENCE].</p>
+<h3>How to differ from conventional projects</h3>
+<table>
+<thead>
+<tr>
+<th>Lever</th>
+<th>Conventional project</th>
+<th>Haitay move</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claim type</td>
+<td>"Works"</td>
+<td>Spec with numbers, then measured pass or fail</td>
+</tr>
+<tr>
+<td>Data path</td>
+<td>Publish and display</td>
+<td>Idempotent, acknowledged, resumable sync; wipe only after ack</td>
+</tr>
+<tr>
+<td>Failure handling</td>
+<td>Shown on the happy path</td>
+<td>Live power-pull and BLE-drop in the demo</td>
+</tr>
+<tr>
+<td>Analytics</td>
+<td>Latest value chart</td>
+<td>Rolling Ao lines, PB events, session compare on a seeded 3-month dataset</td>
+</tr>
+<tr>
+<td>Interop</td>
+<td>Closed schema</td>
+<td>csTimer-JSON import and export, three third-party tools already read it</td>
+</tr>
+<tr>
+<td>Accountability</td>
+<td>Shared repo</td>
+<td>Task table with owners, git log, contribution statement</td>
+</tr>
+</tbody>
+</table>
+<h3>Scope by MoSCoW</h3>
+<p>Hours are PERT expected values in team person-hours from the WBS (section "Project management layer").</p>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Feature</th>
+<th>E (h)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Must</td>
+<td>Two-pad touch timing with 1 ms timestamp; display of last time, Ao5, Ao12; OK/+2/DNF and delete; power-safe CRC log; BLE sync with ack to PC; PC ingest, per-user store, rolling-Ao dashboard; USB-C power; validation and report</td>
+<td>143.8</td>
+</tr>
+<tr>
+<td>Should</td>
+<td>Li-ion battery path (4.3), printed enclosure and pads (8.7), hardware inspection with +2/DNF (7.7), dashboard extras: PB steps, histogram, heatmap, session compare (8.7), csTimer import and export (5.5)</td>
+<td>34.9</td>
+</tr>
+<tr>
+<td>Could</td>
+<td>Smart-cube link on the PC via Web Bluetooth (18.7), Stackmat bridge mode (11.0)</td>
+<td>29.7</td>
+</tr>
+<tr>
+<td>Won't</td>
+<td>WCA approval, custom PCB, smart-cube central role on the ESP32, cloud accounts</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>The DSDM guideline limits Must to 60% of capacity (<a href="https://www.agilebusiness.org/resource/what-is-moscow-prioritization/">Agile Business Consortium</a>). Haitay's Must needs 144 h, which is 72% of a 10-week capacity at 10 h/person/week; the pre-agreed drop ladder replaces the missing margin.</p>
+<h3>Reference architecture and minimum demo</h3>
+<p>Chain: Haitay (BLE GATT peripheral) to a PC bridge (Web Bluetooth page, or Python bleak [UNVERIFIED]) to MQTT or REST to the ingest service to SQLite to the dashboard. The visible hop maps to the course's REST and MQTT labs, so the BLE design keeps a course-taught protocol on the data path. Keep the smart cube on the PC, because GAN needs AES plus MAC extraction and no ESP32 precedent exists.</p>
+<p>Minimum end-to-end demo script (8 minutes):</p>
+<ol>
+<li>Power the device on USB-C for user A, then perform 12 real solves; show time, Ao5, Ao12; mark one DNF and delete one.</li>
+<li>Cut power during a write, reboot, and show the record count intact.</li>
+<li>Sync to the PC; drop BLE mid-transfer, reconnect, and show no duplicate or lost sequence numbers.</li>
+<li>Switch to user B; show the wipe happens after the PC acknowledgement.</li>
+<li>Open the dashboard on a seeded 3-month dataset plus today's solves; show rolling Ao5, Ao12, Ao100 and a PB event.</li>
+<li>Show the Bland-Altman plot of timing error with numbers.</li>
+</ol>
+<p>Keep a 60-90 s backup video, a spare assembled board with identical firmware, and a dataset that works without a live device (<a href="https://roboticsknowledgebase.com/wiki/robotics-project-guide/demo-day/">demo guide</a> [ANECDOTAL]).</p>
+<h2>Project management layer</h2>
+<p>The plan is parameterised by the real deadline, because the HUST rubric is unpublished. A single WBS feeds three horizons that differ only in committed scope. Estimates are PERT person-hours for two people, with a 30% reference-class allowance added for planning.</p>
+<h3>Prefeasibility by subsystem</h3>
+<table>
+<thead>
+<tr>
+<th>Subsystem</th>
+<th>Verdict</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Timing core (touch, ISR, state machine)</td>
+<td>Green</td>
+<td>Two hobby builds exist; ISR latency is a few microseconds; sensing delay of 2-10 ms per edge dominates [EST] and is characterisable</td>
+</tr>
+<tr>
+<td>Display and UI</td>
+<td>Green</td>
+<td>Decouple from timing; 15 ms I2C frame is harmless in a low-priority task</td>
+</tr>
+<tr>
+<td>On-device stats</td>
+<td>Green</td>
+<td>Algorithm fully defined above</td>
+</tr>
+<tr>
+<td>Power-safe storage</td>
+<td>Amber</td>
+<td>LittleFS documents power-fail protection, but no source tested brownout on ESP32</td>
+</tr>
+<tr>
+<td>BLE peripheral sync</td>
+<td>Amber</td>
+<td>A first BLE project reportedly overruns 3-10x (<a href="https://hubble.com/community/guides/why-your-first-ble-project-won-t-connect-and-how-to-fix-it/">Hubble</a>, [ANECDOTAL]); MTU, Web Bluetooth gestures, Chromium-only</td>
+</tr>
+<tr>
+<td>MQTT or REST hop, ingest, DB</td>
+<td>Green</td>
+<td>Taught in the course labs</td>
+</tr>
+<tr>
+<td>PC dashboard</td>
+<td>Green</td>
+<td>Many open-source comparators and a defined chart set</td>
+</tr>
+<tr>
+<td>Li-ion power with TP4056</td>
+<td>Amber</td>
+<td>No power-path charger; protected cell needed; documented as no use while charging</td>
+</tr>
+<tr>
+<td>Enclosure</td>
+<td>Green</td>
+<td>Printing costs 700-2,500 VND/g (<a href="https://nshopvn.com/dich-vu/in-3d">Nshop</a>)</td>
+</tr>
+<tr>
+<td>Smart-cube link on PC</td>
+<td>Amber</td>
+<td>Libraries exist; GAN MAC retrieval needs a Chrome flag</td>
+</tr>
+<tr>
+<td>Smart-cube central role on ESP32</td>
+<td>Red</td>
+<td>No precedent, dual-role load unmeasured, AES in firmware</td>
+</tr>
+<tr>
+<td>Custom PCB</td>
+<td>Red</td>
+<td>At least 2-week respin penalty and import lead time (<a href="https://arxiv.org/pdf/1810.07646">arXiv 1810.07646</a>, [ANECDOTAL])</td>
+</tr>
+<tr>
+<td>"Latency under 0.001 s" as written</td>
+<td>Red</td>
+<td>Sensor response and debounce are several milliseconds</td>
+</tr>
+<tr>
+<td>"15 V battery" as written</td>
+<td>Red</td>
+<td>Everything runs at 3.3 V</td>
+</tr>
+<tr>
+<td>WCA-legal competition use</td>
+<td>Red</td>
+<td>Not on the Approved Timer List</td>
+</tr>
+</tbody>
+</table>
+<h3>Technical-risk register</h3>
+<p>Scales follow the PMBOK example values: probability 0.1/0.3/0.5/0.7/0.9 and impact 0.05/0.1/0.2/0.4/0.8 (<a href="https://www.pmi.org/learning/library/risk-analysis-decisions-uncertain-times-6686">PMI</a>, [SNIPPET]). Ratings are team-level judgement [EST]; no published failure rates exist.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>P</th>
+<th>I</th>
+<th>P x I</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1</td>
+<td>"Under 0.001 s" graded literally</td>
+<td>0.7</td>
+<td>0.8</td>
+<td>0.56</td>
+<td>Rewrite spec as 1 ms resolution plus measured delay; lecturer sign-off in week 1</td>
+</tr>
+<tr>
+<td>R2</td>
+<td>Schedule overrun (30-40% average in surveys)</td>
+<td>0.7</td>
+<td>0.4</td>
+<td>0.28</td>
+<td>PERT plus 30% allowance, weekly burn-down, drop ladder</td>
+</tr>
+<tr>
+<td>R3</td>
+<td>BLE bring-up overrun</td>
+<td>0.5</td>
+<td>0.4</td>
+<td>0.20</td>
+<td>Early GATT test in week 3, one packed characteristic, 1-week timebox, Wi-Fi MQTT fallback</td>
+</tr>
+<tr>
+<td>R4</td>
+<td>Touch false triggers or missed releases</td>
+<td>0.5</td>
+<td>0.4</td>
+<td>0.20</td>
+<td>Hysteresis, per-edge debounce, two-pad AND arming, foil pads, MPR121 fallback</td>
+</tr>
+<tr>
+<td>R5</td>
+<td>Lecturer mismatch (BLE off the taught stack; no rubric)</td>
+<td>0.5</td>
+<td>0.4</td>
+<td>0.20</td>
+<td>Visible MQTT or REST hop; ask the questions in section "Open questions"</td>
+</tr>
+<tr>
+<td>R6</td>
+<td>Team capacity falls below 10 h/person/week</td>
+<td>0.5</td>
+<td>0.4</td>
+<td>0.20</td>
+<td>Pre-agreed ladder; trigger at week-4 gate</td>
+</tr>
+<tr>
+<td>R7</td>
+<td>Storage corruption on power loss</td>
+<td>0.3</td>
+<td>0.4</td>
+<td>0.12</td>
+<td>CRC log, commit marker last, brownout detector, 50-100 cut test</td>
+</tr>
+<tr>
+<td>R8</td>
+<td>Demo-day failure (laptop BLE variance)</td>
+<td>0.3</td>
+<td>0.4</td>
+<td>0.12</td>
+<td>Frozen demo laptop, backup video, seeded data, spare board</td>
+</tr>
+<tr>
+<td>R9</td>
+<td>Web Bluetooth variance and pairing gestures</td>
+<td>0.5</td>
+<td>0.2</td>
+<td>0.10</td>
+<td>Chromium on the demo laptop; test weekly</td>
+</tr>
+<tr>
+<td>R10</td>
+<td>Parts lead time or DOA</td>
+<td>0.5</td>
+<td>0.2</td>
+<td>0.10</td>
+<td>Order domestic in week 1; buy two of each module</td>
+</tr>
+<tr>
+<td>R11</td>
+<td>Scope creep to smart cube</td>
+<td>0.5</td>
+<td>0.2</td>
+<td>0.10</td>
+<td>Could list; freeze gate at about 75-80% of calendar</td>
+</tr>
+<tr>
+<td>R12</td>
+<td>"csTimer already does this" challenge</td>
+<td>0.5</td>
+<td>0.2</td>
+<td>0.10</td>
+<td>Frame as hardware-to-account pipeline; show feature-gap matrix</td>
+</tr>
+<tr>
+<td>R13</td>
+<td>ISR timing spikes with BLE or flash cache</td>
+<td>0.3</td>
+<td>0.2</td>
+<td>0.06</td>
+<td>IRAM ISR, GPTimer capture, BLE on the other core</td>
+</tr>
+<tr>
+<td>R14</td>
+<td>Li-ion charging without power path</td>
+<td>0.3</td>
+<td>0.2</td>
+<td>0.06</td>
+<td>Protected cell, no use-while-charging claim, or 5 V bank</td>
+</tr>
+<tr>
+<td>R15</td>
+<td>Data wiped before PC saved</td>
+<td>0.1</td>
+<td>0.4</td>
+<td>0.04</td>
+<td>Ack after PC fsync; resend from <code>acked_seq + 1</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Work breakdown and PERT estimates</h3>
+<p>E = (O + 4M + P) / 6 and SD = (P - O) / 6, in team person-hours (<a href="https://projectmanagementacademy.net/resources/blog/a-three-point-estimating-technique-pert/">PMA PERT note</a>, [SNIPPET]). All O, M, P values are this report's estimates [EST], to be replaced by the team's own. Owners: P1 owns the device, P2 owns protocol and PC, and shared packages split evenly.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Work package</th>
+<th>Deliverable</th>
+<th>MoSCoW</th>
+<th>Owner</th>
+<th>O</th>
+<th>M</th>
+<th>P</th>
+<th>E</th>
+<th>SD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Spec, data contract, BOM, ordering</td>
+<td>One-page spec with numbers, GATT and record format</td>
+<td>Must</td>
+<td>Both</td>
+<td>4</td>
+<td>6</td>
+<td>10</td>
+<td>6.33</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Timing core</td>
+<td>Touch, 1 ms timestamp, arming state machine, bench log</td>
+<td>Must</td>
+<td>P1</td>
+<td>8</td>
+<td>14</td>
+<td>28</td>
+<td>15.33</td>
+<td>3.33</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Display and UI</td>
+<td>3 screens, mark and delete, user switch</td>
+<td>Must</td>
+<td>P1</td>
+<td>5</td>
+<td>9</td>
+<td>18</td>
+<td>9.83</td>
+<td>2.17</td>
+</tr>
+<tr>
+<td>D</td>
+<td>On-device stats</td>
+<td>Best, mean, Ao5, Ao12 (Ao100 optional), host unit tests</td>
+<td>Must</td>
+<td>P2</td>
+<td>4</td>
+<td>6</td>
+<td>12</td>
+<td>6.67</td>
+<td>1.33</td>
+</tr>
+<tr>
+<td>E</td>
+<td>Storage</td>
+<td>CRC log, per-user store, ack pointer</td>
+<td>Must</td>
+<td>P1</td>
+<td>7</td>
+<td>12</td>
+<td>26</td>
+<td>13.50</td>
+<td>3.17</td>
+</tr>
+<tr>
+<td>F</td>
+<td>Power</td>
+<td>1S Li-ion, TP4056 USB-C</td>
+<td>Should</td>
+<td>P1</td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+<td>4.33</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>G</td>
+<td>BLE GATT and sync firmware</td>
+<td>Service, MTU/DLE, ack/resume</td>
+<td>Must</td>
+<td>P2</td>
+<td>9</td>
+<td>16</td>
+<td>40</td>
+<td>18.83</td>
+<td>5.17</td>
+</tr>
+<tr>
+<td>H</td>
+<td>PC bridge, MQTT/REST hop, ingest</td>
+<td>Bridge, broker, dedupe, ack</td>
+<td>Must</td>
+<td>P2</td>
+<td>7</td>
+<td>12</td>
+<td>28</td>
+<td>13.83</td>
+<td>3.50</td>
+</tr>
+<tr>
+<td>I</td>
+<td>Database and users</td>
+<td>Schema, per-user separation</td>
+<td>Must</td>
+<td>P2</td>
+<td>3</td>
+<td>5</td>
+<td>10</td>
+<td>5.50</td>
+<td>1.17</td>
+</tr>
+<tr>
+<td>J</td>
+<td>Dashboard core</td>
+<td>Rolling Ao5/Ao12/Ao100 with user, session, date filters</td>
+<td>Must</td>
+<td>P2</td>
+<td>7</td>
+<td>11</td>
+<td>22</td>
+<td>12.17</td>
+<td>2.50</td>
+</tr>
+<tr>
+<td>K</td>
+<td>Integration and stabilisation</td>
+<td>Solve-to-chart loop, 30 min soak</td>
+<td>Must</td>
+<td>Both</td>
+<td>7</td>
+<td>11</td>
+<td>22</td>
+<td>12.17</td>
+<td>2.50</td>
+</tr>
+<tr>
+<td>L</td>
+<td>Validation</td>
+<td>Rigs, runs, analysis, user trial</td>
+<td>Must</td>
+<td>Both</td>
+<td>7</td>
+<td>12</td>
+<td>22</td>
+<td>12.83</td>
+<td>2.50</td>
+</tr>
+<tr>
+<td>M</td>
+<td>Report, video, rehearsal</td>
+<td>Report, README, backup video</td>
+<td>Must</td>
+<td>Both</td>
+<td>7</td>
+<td>12</td>
+<td>20</td>
+<td>12.50</td>
+<td>2.17</td>
+</tr>
+<tr>
+<td>S1</td>
+<td>Enclosure and pads</td>
+<td>Two print iterations</td>
+<td>Should</td>
+<td>P1</td>
+<td>4</td>
+<td>8</td>
+<td>16</td>
+<td>8.67</td>
+<td>2.00</td>
+</tr>
+<tr>
+<td><strong>Committed at 10 weeks</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>152.49</strong></td>
+<td><strong>9.87</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Stretch pool (not committed): hardware inspection with +2/DNF (4/7/14, E 7.67, SD 1.67); dashboard extras (4/8/16, E 8.67, SD 2.00); csTimer import and export (3/5/10, E 5.50, SD 1.17); smart-cube link on the PC (8/16/40, E 18.67, SD 5.33); Stackmat bridge mode (6/10/20, E 11.00, SD 2.33). Hour split at 10 weeks: P1 about 74 h, P2 about 79 h, including half of the shared packages.</p>
+<h3>Capacity and horizons</h3>
+<p>Capacity assumption: <strong>10 h/person/week, so 20 team-hours per week</strong>. Evidence: student teams report 8-12 h/person/week alongside other courses, intensive embedded courses ask 16-20 h for 4-5 weeks, and HUST's nominal allowance is about 60-90 project hours per student (<a href="https://utdesign.utdallas.edu/partners/faq-corporate">UT Dallas</a>, <a href="https://capstone.groups.et.byu.net/wikis/doku.php?id=project-wiki%3Asyllabus%3Acapstone_time_management">BYU</a>, <a href="https://vanhunteradams.com/Pico/CourseMaterials/Final_Project.html">Cornell</a>; mostly [SNIPPET]). Software surveys show 30-40% average effort overrun, and students' worst-case estimates are often exceeded (<a href="https://cms.simula.no/sites/default/files/publications/SE.3.Moloekken-Oestvold.2004.pdf">Moloekken-Oestvold and Joergensen</a>; <a href="https://doi.org/10.1037/0022-3514.67.3.366">Buehler et al. 1994</a>, secondary summaries). The planning rule is: plan hours = E x 1.3 must not exceed weeks x 20.</p>
+<p>Per-package expected hours by horizon, with the features dropped:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>10 wk (relaxed)</th>
+<th>8 wk (baseline)</th>
+<th>6 wk (compressed)</th>
+<th>What drops</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Spec and contract</td>
+<td>6.33</td>
+<td>6.33</td>
+<td>6.33</td>
+<td>Nothing; the data contract is frozen first</td>
+</tr>
+<tr>
+<td>B Timing core</td>
+<td>15.33</td>
+<td>15.33</td>
+<td>15.33</td>
+<td>Nothing</td>
+</tr>
+<tr>
+<td>C Display and UI</td>
+<td>9.83</td>
+<td>6.00</td>
+<td>5.00</td>
+<td>8 wk: one screen plus cycle button; 6 wk: last time and Ao5 only</td>
+</tr>
+<tr>
+<td>D On-device stats</td>
+<td>6.67</td>
+<td>5.00</td>
+<td>4.00</td>
+<td>8 wk: Ao100 on PC only; 6 wk: Ao5 only, Ao12 on PC</td>
+</tr>
+<tr>
+<td>E Storage</td>
+<td>13.50</td>
+<td>10.00</td>
+<td>8.00</td>
+<td>8 wk: no archive tail; 6 wk: one active user, wipe after ack</td>
+</tr>
+<tr>
+<td>F Li-ion power</td>
+<td>4.33</td>
+<td>0</td>
+<td>0</td>
+<td>USB-C power bank instead</td>
+</tr>
+<tr>
+<td>G Transport firmware</td>
+<td>18.83</td>
+<td>18.83</td>
+<td>10.17</td>
+<td>6 wk: Wi-Fi MQTT replaces BLE (O/M/P 5/9/20, SD 2.50); same record and ack protocol</td>
+</tr>
+<tr>
+<td>H PC bridge and ingest</td>
+<td>13.83</td>
+<td>13.83</td>
+<td>7.67</td>
+<td>6 wk: broker subscriber only (4/7/14, SD 1.67)</td>
+</tr>
+<tr>
+<td>I Database and users</td>
+<td>5.50</td>
+<td>5.50</td>
+<td>4.00</td>
+<td>6 wk: user id column, no management screen</td>
+</tr>
+<tr>
+<td>J Dashboard core</td>
+<td>12.17</td>
+<td>10.00</td>
+<td>8.00</td>
+<td>8 wk: fewer filters; 6 wk: one rolling-average chart</td>
+</tr>
+<tr>
+<td>K Integration</td>
+<td>12.17</td>
+<td>10.50</td>
+<td>8.00</td>
+<td>Shorter soak</td>
+</tr>
+<tr>
+<td>L Validation</td>
+<td>12.83</td>
+<td>10.00</td>
+<td>7.00</td>
+<td>8 wk: trial of 3, informal; 6 wk: timing and power-loss only, 10-cut sync smoke</td>
+</tr>
+<tr>
+<td>M Report and demo</td>
+<td>12.50</td>
+<td>10.00</td>
+<td>8.00</td>
+<td>Shorter report, one rehearsal</td>
+</tr>
+<tr>
+<td>S1 Enclosure</td>
+<td>8.67</td>
+<td>0</td>
+<td>0</td>
+<td>Perfboard on a flat plate</td>
+</tr>
+<tr>
+<td><strong>Total E</strong></td>
+<td><strong>152.49</strong></td>
+<td><strong>121.32</strong></td>
+<td><strong>91.50</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>SD (variances summed; lite packages scaled in proportion)</td>
+<td>9.87</td>
+<td>8.74</td>
+<td>6.03</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Confidence and capacity (hours, team):</p>
+<table>
+<thead>
+<tr>
+<th>Horizon</th>
+<th>E</th>
+<th>SD</th>
+<th>P80 / P90 nominal</th>
+<th>P80 / P90 widened</th>
+<th>Plan = E x 1.3</th>
+<th>Capacity (weeks x 20)</th>
+<th>Plan h per person</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 weeks</td>
+<td>152.5</td>
+<td>9.9</td>
+<td>160.8 / 165.1</td>
+<td>167.4 / 175.2</td>
+<td>198.2</td>
+<td>200</td>
+<td>99</td>
+</tr>
+<tr>
+<td>8 weeks</td>
+<td>121.3</td>
+<td>8.7</td>
+<td>128.6 / 132.5</td>
+<td>134.5 / 141.4</td>
+<td>157.7</td>
+<td>160</td>
+<td>79</td>
+</tr>
+<tr>
+<td>6 weeks</td>
+<td>91.5</td>
+<td>6.0</td>
+<td>96.6 / 99.2</td>
+<td>100.6 / 105.4</td>
+<td>119.0</td>
+<td>120</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+<p>Nominal P80 = E + 0.84 SD and P90 = E + 1.28 SD under a normal approximation. Widened figures multiply SD by 1.8 [INFERENCE]: one source reports that nominal 90% intervals held the actual effort only 60-70% of the time (<a href="https://cms.simula.no/sites/default/files/publications/SE.3.Moloekken-Oestvold.2004.pdf">SNIPPET</a>), and a two-sided 65% coverage implies SD about 1.8 times larger. The 80-90% completion range is therefore 161-175 h at 10 weeks, 129-141 h at 8 weeks and 97-105 h at 6 weeks. The plan figure E x 1.3 sits above all of them, so the plan carries margin. The 10-week plan at 99 h per person exceeds the 60-90 h nominal allowance; the baseline at 79 h sits inside it.</p>
+<p>Weeks = plan hours / (2 x h per person per week):</p>
+<table>
+<thead>
+<tr>
+<th>Horizon</th>
+<th>h = 8</th>
+<th>h = 10</th>
+<th>h = 12</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Relaxed scope (198.2 h)</td>
+<td>12.4</td>
+<td>9.9</td>
+<td>8.3</td>
+</tr>
+<tr>
+<td>Baseline scope (157.7 h)</td>
+<td>9.9</td>
+<td>7.9</td>
+<td>6.6</td>
+</tr>
+<tr>
+<td>Compressed scope (119.0 h)</td>
+<td>7.4</td>
+<td>6.0</td>
+<td>5.0</td>
+</tr>
+</tbody>
+</table>
+<p>If the team has only 8 h/person/week, the baseline needs about 10 weeks, so choose the horizon by real hours, not by calendar alone.</p>
+<figure><div class="fig-title">Figure 1. Plan hours stay just under team capacity at every horizon</div><div style="width:100%;margin:0 auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" role="img" aria-label="Expected effort, plan hours and capacity for 6, 8 and 10 week horizons" font-family="'Segoe UI', Arial, sans-serif" font-size="11"><rect width="680" height="320" fill="#fcfcfb"/><rect x="8" y="5" width="10" height="10" rx="2" fill="#2a78d6"/><text x="24.0" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Expected effort E</text><rect x="142.3" y="5" width="10" height="10" rx="2" fill="#eb6834"/><text x="158.3" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Plan hours (E x 1.3)</text><line x1="294.3" x2="310.3" y1="10" y2="10" stroke="#52514e" stroke-width="2" stroke-linecap="round"/><text x="316.3" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Capacity at 20 h per week</text><text x="8.0" y="40.0" font-size="10" fill="#898781" text-anchor="start" font-weight="400">Team person-hours</text><line x1="56" x2="660" y1="262.0" y2="262.0" stroke="#c3c2b7" stroke-width="1"/><text x="48.0" y="266.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">0</text><line x1="56" x2="660" y1="209.5" y2="209.5" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="213.5" font-size="10" fill="#898781" text-anchor="end" font-weight="400">50</text><line x1="56" x2="660" y1="157.0" y2="157.0" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="161.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">100</text><line x1="56" x2="660" y1="104.5" y2="104.5" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="108.5" font-size="10" fill="#898781" text-anchor="end" font-weight="400">150</text><line x1="56" x2="660" y1="52.0" y2="52.0" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="56.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">200</text><path d="M131.7,262.0 V169.9 A4.0,4.0 0 0 1 135.7,165.9 H151.7 A4.0,4.0 0 0 1 155.7,169.9 V262.0 Z" fill="#2a78d6"/><path d="M157.7,262.0 V141.1 A4.0,4.0 0 0 1 161.7,137.1 H177.7 A4.0,4.0 0 0 1 181.7,141.1 V262.0 Z" fill="#eb6834"/><line x1="112.7" x2="200.7" y1="136.0" y2="136.0" stroke="#52514e" stroke-width="2"/><text x="143.7" y="159.9" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="400">91.5</text><text x="169.7" y="129.0" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="400">119.0</text><text x="156.7" y="282.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">6 weeks</text><text x="156.7" y="298.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">capacity 120 h</text><path d="M333.0,262.0 V138.6 A4.0,4.0 0 0 1 337.0,134.6 H353.0 A4.0,4.0 0 0 1 357.0,138.6 V262.0 Z" fill="#2a78d6"/><path d="M359.0,262.0 V100.4 A4.0,4.0 0 0 1 363.0,96.4 H379.0 A4.0,4.0 0 0 1 383.0,100.4 V262.0 Z" fill="#eb6834"/><line x1="314.0" x2="402.0" y1="94.0" y2="94.0" stroke="#52514e" stroke-width="2"/><text x="345.0" y="128.6" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="400">121.3</text><text x="371.0" y="87.0" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="400">157.7</text><text x="358.0" y="282.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">8 weeks</text><text x="358.0" y="298.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">capacity 160 h</text><path d="M534.3,262.0 V105.9 A4.0,4.0 0 0 1 538.3,101.9 H554.3 A4.0,4.0 0 0 1 558.3,105.9 V262.0 Z" fill="#2a78d6"/><path d="M560.3,262.0 V57.9 A4.0,4.0 0 0 1 564.3,53.9 H580.3 A4.0,4.0 0 0 1 584.3,57.9 V262.0 Z" fill="#eb6834"/><line x1="515.3" x2="603.3" y1="52.0" y2="52.0" stroke="#52514e" stroke-width="2"/><text x="546.3" y="95.9" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="400">152.5</text><text x="572.3" y="45.0" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="400">198.2</text><text x="559.3" y="282.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">10 weeks</text><text x="559.3" y="298.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">capacity 200 h</text></svg></div><figcaption>Team person-hours at 10 h per person per week. E is the PERT expected value and plan = E x 1.3; all work-package inputs are [EST] from the table above.</figcaption></figure>
+<h3>Week-by-week milestones</h3>
+<p>Baseline 8 weeks (E hours per week; capacity 20, with the 30% allowance forming the slack):</p>
+<table>
+<thead>
+<tr>
+<th>Wk</th>
+<th>Work</th>
+<th>Team E (h)</th>
+<th>Cum. E</th>
+<th>Gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>A spec and contract, order parts, B bench start, repo and broker skeleton</td>
+<td>13.8</td>
+<td>13.8</td>
+<td><strong>M0</strong> spec frozen with numeric targets; parts ordered</td>
+</tr>
+<tr>
+<td>2</td>
+<td>B timing core, D stats with host tests, record format</td>
+<td>15.0</td>
+<td>28.8</td>
+<td><strong>M1</strong> timing bench log passes</td>
+</tr>
+<tr>
+<td>3</td>
+<td>B calibration, C display, E log, early GATT hello, fixture build</td>
+<td>15.3</td>
+<td>44.2</td>
+<td>BLE hello works (R3 timebox starts)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>E storage, C UI, G sync firmware, H ingest</td>
+<td>18.0</td>
+<td>62.2</td>
+<td><strong>M2</strong> solve-to-stats loop on device; trigger: cumulative actual above 81 h means switch to the 6-week list</td>
+</tr>
+<tr>
+<td>5</td>
+<td>G sync, H bridge, J first chart</td>
+<td>18.0</td>
+<td>80.2</td>
+<td><strong>M3</strong> first data on dashboard; BLE fallback decision</td>
+</tr>
+<tr>
+<td>6</td>
+<td>G/H polish, J dashboard, K integration, L rigs</td>
+<td>18.7</td>
+<td>98.8</td>
+<td><strong>M4</strong> feature freeze</td>
+</tr>
+<tr>
+<td>7</td>
+<td>K soak, L runs and trial, M draft</td>
+<td>17.5</td>
+<td>116.3</td>
+<td><strong>M5</strong> validation data in hand</td>
+</tr>
+<tr>
+<td>8</td>
+<td>M report, video, two rehearsals</td>
+<td>5.0</td>
+<td>121.3</td>
+<td><strong>M6</strong> demo; unspent slack absorbs overrun</td>
+</tr>
+</tbody>
+</table>
+<p>Gate weeks across horizons:</p>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>6 wk</th>
+<th>8 wk</th>
+<th>10 wk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M0 Spec frozen, parts ordered</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>M1 Timing bench passes</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>M2 Solve-to-stats loop on device</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+</tr>
+<tr>
+<td>M3 First data on dashboard (BLE or MQTT)</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td>M4 Feature freeze</td>
+<td>4</td>
+<td>6</td>
+<td>8</td>
+</tr>
+<tr>
+<td>M5 Validation data in hand</td>
+<td>5</td>
+<td>7</td>
+<td>9</td>
+</tr>
+<tr>
+<td>M6 Report, video, demo</td>
+<td>6</td>
+<td>8</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<p>Cumulative checks: at baseline week 4 the plan E x 1.3 reaches 80.9 h against 80 h capacity, so the week-4 gate is the decision point.</p>
+<figure><div class="fig-title">Figure 2. In the baseline plan, cumulative hours meet capacity at the week 4 gate</div><div style="width:100%;margin:0 auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" role="img" aria-label="Cumulative expected effort, plan hours and capacity over the baseline 8-week plan" font-family="'Segoe UI', Arial, sans-serif" font-size="11"><rect width="680" height="320" fill="#fcfcfb"/><line x1="8" x2="24" y1="10" y2="10" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/><text x="30.0" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Expected effort E</text><line x1="148.3" x2="164.3" y1="10" y2="10" stroke="#eb6834" stroke-width="2" stroke-linecap="round"/><text x="170.3" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Plan hours (E x 1.3)</text><line x1="306.3" x2="322.3" y1="10" y2="10" stroke="#52514e" stroke-width="2" stroke-linecap="round"/><text x="328.3" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Capacity at 20 h per week</text><text x="8.0" y="40.0" font-size="10" fill="#898781" text-anchor="start" font-weight="400">Cumulative team person-hours</text><line x1="56" x2="560" y1="262.0" y2="262.0" stroke="#c3c2b7" stroke-width="1"/><text x="48.0" y="266.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">0</text><line x1="56" x2="560" y1="215.3" y2="215.3" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="219.3" font-size="10" fill="#898781" text-anchor="end" font-weight="400">40</text><line x1="56" x2="560" y1="168.7" y2="168.7" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="172.7" font-size="10" fill="#898781" text-anchor="end" font-weight="400">80</text><line x1="56" x2="560" y1="122.0" y2="122.0" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="126.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">120</text><line x1="56" x2="560" y1="75.3" y2="75.3" stroke="#e1e0d9" stroke-width="1"/><text x="48.0" y="79.3" font-size="10" fill="#898781" text-anchor="end" font-weight="400">160</text><text x="56.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">0</text><text x="119.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">1</text><text x="182.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">2</text><text x="245.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">3</text><text x="308.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">4</text><text x="371.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">5</text><text x="434.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">6</text><text x="497.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">7</text><text x="560.0" y="282.0" font-size="11" fill="#898781" text-anchor="middle" font-weight="400">8</text><text x="308.0" y="300.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">Week of the baseline 8-week plan</text><line x1="308.0" x2="308.0" y1="52" y2="262" stroke="#c3c2b7" stroke-width="1"/><polyline points="56.0,262.0 119.0,238.7 182.0,215.3 245.0,192.0 308.0,168.7 371.0,145.3 434.0,122.0 497.0,98.7 560.0,75.3" fill="none" stroke="#52514e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><polyline points="56.0,262.0 119.0,241.1 182.0,218.3 245.0,195.0 308.0,167.7 371.0,140.4 434.0,112.2 497.0,85.6 560.0,78.0" fill="none" stroke="#eb6834" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><polyline points="56.0,262.0 119.0,245.9 182.0,228.4 245.0,210.4 308.0,189.4 371.0,168.4 434.0,146.7 497.0,126.3 560.0,120.5" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="560.0" cy="75.3" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"/><circle cx="560.0" cy="78.0" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><circle cx="560.0" cy="120.5" r="4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><circle cx="308.0" cy="168.7" r="4" fill="#52514e" stroke="#fcfcfb" stroke-width="2"/><circle cx="308.0" cy="167.7" r="4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="296.0" y="133.7" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="600">Week 4 gate (M2)</text><text x="296.0" y="148.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="400">plan 80.9 h meets capacity 80 h</text><text x="572.0" y="69.3" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Capacity 160 h</text><text x="572.0" y="91.7" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Plan 158 h</text><text x="572.0" y="124.5" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Expected 121 h</text></svg></div><figcaption>Cumulative team hours from the week-by-week table. The week 4 gate is the decision point for switching to the 6-week list.</figcaption></figure>
+<h3>Resource cost</h3>
+<p>FX assumption: 1 USD = 25,500 VND [UNVERIFIED rate]. Prices were observed in the notes' session and are undated; lines marked V cite a page or snippet, E lines are estimates to replace with quotes. Sources: <a href="https://pyworld.vn/san-pham/esp32-devkit-v1-30pin.html">pyworld</a>, <a href="https://hshop.vn/mach-phat-trien-mke-k01-esp32-s3-dev-kit">hshop S3</a>, <a href="https://hshop.vn/lcd-oled-trang-0-96-inch-i2c">hshop OLED</a>, <a href="https://hshop.vn/panel-man-hinh-lcd-tft-ips-1-54-inch-st7789-spi-interface">hshop ST7789</a>, <a href="https://hshop.vn/mach-sac-pin-tp4056-lithium-battery-charge-controller-usb-c">hshop TP4056</a>, <a href="https://dientutuyetnga.com/products/cam-ung-dien-dung-mpr121-1">MPR121</a>, <a href="https://nshopvn.com/dich-vu/in-3d">Nshop print</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Line (qty)</th>
+<th>Tier A minimum (classic ESP32, OLED)</th>
+<th>Tier B recommended (S3, TFT, fallback sensor)</th>
+<th>Tier C premium (nRF52840, PCB)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MCU boards (spare included)</td>
+<td>2 x 120,000 = 240,000 V</td>
+<td>2 x 295,000 = 590,000 V</td>
+<td>XIAO nRF52840 345,000 V (conflicting listings) + S3 295,000 V</td>
+</tr>
+<tr>
+<td>Display</td>
+<td>OLED 65,000 V</td>
+<td>TFT 85,000 V + OLED 65,000 V</td>
+<td>TFT 85,000 + OLED 65,000 V</td>
+</tr>
+<tr>
+<td>Sensing fallback</td>
+<td>none</td>
+<td>MPR121 25,000 V</td>
+<td>2 x MPR121 50,000 V</td>
+</tr>
+<tr>
+<td>RTC</td>
+<td>none</td>
+<td>DS3231 44,000 V (stock doubtful)</td>
+<td>DS3231 44,000 V</td>
+</tr>
+<tr>
+<td>Charger, holder, cell</td>
+<td>20,000 + 13,000 V + 60,000 E</td>
+<td>20,000 + 73,000 V/E</td>
+<td>370,000 E (cells, holders, pads, misc)</td>
+</tr>
+<tr>
+<td>Pads, wires, buttons</td>
+<td>80,000 E</td>
+<td>130,000 E</td>
+<td>included above</td>
+</tr>
+<tr>
+<td>Enclosure (800 VND/g print)</td>
+<td>80,000 V</td>
+<td>2 iterations 192,000 V</td>
+<td>3 iterations 288,000 V</td>
+</tr>
+<tr>
+<td>Import and PCB</td>
+<td>none</td>
+<td>none</td>
+<td>FRAM 153,000 E, CH224K 40,000 E, 2-layer PCB 750,000 E</td>
+</tr>
+<tr>
+<td>Shipping and handling</td>
+<td>45,000 E</td>
+<td>60,000 E</td>
+<td>in misc</td>
+</tr>
+<tr>
+<td><strong>Parts total</strong></td>
+<td><strong>603,000 (US$24)</strong></td>
+<td><strong>1,284,000 (US$50)</strong></td>
+<td><strong>2,485,000 (US$97)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Tier B adds tooling and contingency (all [EST]):</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>VND</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier B parts</td>
+<td>1,284,000</td>
+</tr>
+<tr>
+<td>USB logic analyzer clone for the timing fixture</td>
+<td>150,000</td>
+</tr>
+<tr>
+<td>Fixture parts: MOSFET or relay module, wires, pulse source</td>
+<td>60,000</td>
+</tr>
+<tr>
+<td>Subtotal</td>
+<td>1,494,000</td>
+</tr>
+<tr>
+<td>Contingency 15%</td>
+<td>224,100</td>
+</tr>
+<tr>
+<td><strong>All-in Tier B</strong></td>
+<td><strong>1,718,100 (US$67; about 859,000 per person)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>All-in for the other tiers, with the same tooling and 15% contingency: Tier A about 935,000 (US$37), Tier C about 3,099,000 (US$122). Software (ESP-IDF or Arduino, PlatformIO, FastAPI or Node, SQLite, a chart library) assumes open-source cost of zero. Hosting is the demo laptop. A 240 fps phone camera is assumed owned. Oscilloscope or signal-generator loans from a lab are plausible [UNVERIFIED]; no student-project funding for IT4735 was found. A single-unit build costs about 0.6 million VND (S3 295k, TFT 85k, charger 10k, holder 13k, cell 60k, pads about 40k, case 96k) [INFERENCE], against 0.9-1.0 million VND for a G5 and 0.22-0.75 million for Bluetooth timers in Vietnam.</p>
+<p>Labour is the larger resource: 158 person-hours at baseline, shown as 79 hours per person. Parts lead time is 1-7 working days domestic and 7-20 days cross-border (<a href="https://salework.net/thoi-gian-giao-hang-shopee/">Shopee delivery note</a>, [SNIPPET]), so buy locally in week 1.</p>
+<figure><div class="fig-title">Figure 3. Tier B costs about 1.7 million VND all-in</div><div style="width:82%;margin:0 auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" role="img" aria-label="All-in cost of three bill-of-materials tiers in thousand VND" font-family="'Segoe UI', Arial, sans-serif" font-size="11"><rect width="560" height="330" fill="#fcfcfb"/><rect x="8" y="5" width="10" height="10" rx="2" fill="#2a78d6"/><text x="24.0" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Parts</text><rect x="71.5" y="5" width="10" height="10" rx="2" fill="#eb6834"/><text x="87.5" y="14.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="400">Tooling plus 15% contingency</text><text x="8.0" y="40.0" font-size="10" fill="#898781" text-anchor="start" font-weight="400">Thousand VND</text><line x1="70" x2="540" y1="262.0" y2="262.0" stroke="#c3c2b7" stroke-width="1"/><text x="62.0" y="266.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">0</text><line x1="70" x2="540" y1="202.0" y2="202.0" stroke="#e1e0d9" stroke-width="1"/><text x="62.0" y="206.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">1,000</text><line x1="70" x2="540" y1="142.0" y2="142.0" stroke="#e1e0d9" stroke-width="1"/><text x="62.0" y="146.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">2,000</text><line x1="70" x2="540" y1="82.0" y2="82.0" stroke="#e1e0d9" stroke-width="1"/><text x="62.0" y="86.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">3,000</text><rect x="136.3" y="225.8" width="24.0" height="36.2" fill="#2a78d6"/><path d="M136.3,223.8 V209.9 A4.0,4.0 0 0 1 140.3,205.9 H156.3 A4.0,4.0 0 0 1 160.3,209.9 V223.8 Z" fill="#eb6834"/><text x="148.3" y="185.9" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">935k</text><text x="148.3" y="199.9" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">US$37</text><text x="148.3" y="282.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">Tier A</text><text x="148.3" y="298.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">minimum</text><text x="148.3" y="313.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">parts 603k</text><rect x="293.0" y="185.0" width="24.0" height="77.0" fill="#2a78d6"/><path d="M293.0,183.0 V162.9 A4.0,4.0 0 0 1 297.0,158.9 H313.0 A4.0,4.0 0 0 1 317.0,162.9 V183.0 Z" fill="#eb6834"/><text x="305.0" y="138.9" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">1,718k</text><text x="305.0" y="152.9" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">US$67</text><text x="305.0" y="282.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">Tier B</text><text x="305.0" y="298.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">recommended</text><text x="305.0" y="313.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">parts 1,284k</text><rect x="449.7" y="112.9" width="24.0" height="149.1" fill="#2a78d6"/><path d="M449.7,110.9 V80.0 A4.0,4.0 0 0 1 453.7,76.0 H469.7 A4.0,4.0 0 0 1 473.7,80.0 V110.9 Z" fill="#eb6834"/><text x="461.7" y="56.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">3,099k</text><text x="461.7" y="70.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">US$122</text><text x="461.7" y="282.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="600">Tier C</text><text x="461.7" y="298.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">premium</text><text x="461.7" y="313.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="400">parts 2,485k</text></svg></div><figcaption>Thousand VND. Tooling is a logic-analyzer clone (150k) plus fixture parts (60k); contingency is 15% of the subtotal. FX 25,500 VND per USD [UNVERIFIED]; lines marked E in the BOM are estimates.</figcaption></figure>
+<h3>Validation plan</h3>
+<p>Write pass criteria into the spec before testing. Targets are proposals [EST] to confirm after the week-2 fixture run.</p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method</th>
+<th>Sample</th>
+<th>Pass criterion (proposed)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firmware timing path</td>
+<td>Signal generator or MOSFET drives touch and release; logic analyzer records both edges and the device report (<a href="https://tf.nist.gov/general/pdf/1930.pdf">NIST guidance</a>, [SNIPPET])</td>
+<td>At least 100 trials; durations 2 s, 10 s, 60 s</td>
+<td>Report mean bias and SD; calibrated mean bias within 2 ms, SD within 2 ms</td>
+</tr>
+<tr>
+<td>End-to-end timing</td>
+<td>240 fps phone camera (4.17 ms per frame) filming the device and a reference counter, Bland-Altman analysis (<a href="https://www-users.york.ac.uk/~mb55/meas/sizemeth.htm">Bland</a>, [SNIPPET])</td>
+<td>3 durations x 20 repeats = 60 pairs</td>
+<td>95% limits of agreement within 10 ms, camera frame error stated</td>
+</tr>
+<tr>
+<td>Power-loss</td>
+<td>Second MCU or relay cuts power at random offsets during a write loop</td>
+<td>50-100 cuts</td>
+<td>Zero corrupted or lost committed records; report counts</td>
+</tr>
+<tr>
+<td>Sync-loss</td>
+<td>Drop BLE at random points mid-transfer</td>
+<td>20-50 drops</td>
+<td>Zero loss, zero duplicates by (user, seq) after reconnect</td>
+</tr>
+<tr>
+<td>Soak</td>
+<td>Continuous solves with periodic sync</td>
+<td>30 minutes</td>
+<td>No reset</td>
+</tr>
+<tr>
+<td>User trial</td>
+<td>Formative round: beginner, sub-30, sub-15; tasks: start solve, delete last, switch user, view Ao12, sync; SUS (<a href="https://www.nngroup.com/articles/why-you-only-need-to-test-with-5-users/">Nielsen</a>)</td>
+<td>5 cubers</td>
+<td>Report task success and SUS; claim no statistical significance</td>
+</tr>
+</tbody>
+</table>
+<h3>Deliverables mapped to milestones</h3>
+<table>
+<thead>
+<tr>
+<th>Deliverable</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1 One-page spec with numeric targets; data contract (GATT, record, ack)</td>
+<td>M0</td>
+</tr>
+<tr>
+<td>D2 BOM and order record</td>
+<td>M0</td>
+</tr>
+<tr>
+<td>D3 Timing firmware and bench log</td>
+<td>M1</td>
+</tr>
+<tr>
+<td>D4 Device firmware with stats, storage, UI</td>
+<td>M2</td>
+</tr>
+<tr>
+<td>D5 Sync protocol spec; ingest service; first dashboard data</td>
+<td>M3</td>
+</tr>
+<tr>
+<td>D6 Dashboard with seeded dataset; enclosure (if committed)</td>
+<td>M4</td>
+</tr>
+<tr>
+<td>D7 Test report: timing, power-loss, sync-loss, trial</td>
+<td>M5</td>
+</tr>
+<tr>
+<td>D8 Final report with measurement chapter, README, user guide, contribution table</td>
+<td>M6</td>
+</tr>
+<tr>
+<td>D9 Live demo, backup video, spare board</td>
+<td>M6</td>
+</tr>
+</tbody>
+</table>
+<h2>Open questions and requirement edits</h2>
+<p>The six flagged issues below carry a recommendation each. Beyond them, the requirements need numeric acceptance targets and one internal conflict resolved.</p>
+<h3>Flagged issues</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Issue</th>
+<th>Evidence</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>"Pin 15 V hoặc sạc Type-C" is likely a drafting error; the glossary rationalises it via USB PD 15 V</td>
+<td>MCU, display and pads run at 3.3 V; a 15 V rail needs a buck converter with no benefit; 4S Li-ion is about 14.8 V (<a href="https://components101.com/ics/ch224k-usb-power-delivery-controller-ic">CH224K</a>, <a href="https://hshop.vn/mach-sac-pin-tp4056-lithium-battery-charge-controller-usb-c">TP4056 module</a>)</td>
+<td>Rewrite as single-cell Li-ion (3.7 V nominal) charged over USB-C at 5 V; confirm with the lecturer; PD trigger optional</td>
+</tr>
+<tr>
+<td>b</td>
+<td>"Độ trễ dưới 0,001 s" is indefensible as written</td>
+<td>Touch scan plus debounce adds about 2-10 ms per edge [EST]; ISR latency is microseconds; WCA resolution is 10 ms; tibordp claims about 2 ms with no data</td>
+<td>State 1 ms resolution, typical detection delay under 10 ms, characterised against a reference with bias and SD reported</td>
+</tr>
+<tr>
+<td>c</td>
+<td>Haitay is not WCA-legal</td>
+<td>7f1a Approved Timer List; 3a4 bans electronics in puzzles; G5 in 4-pad mode from 2 Jan 2027</td>
+<td>Position as a practice timer and list WCA approval as a non-goal</td>
+</tr>
+<tr>
+<td>d</td>
+<td>Course labs cover REST, MQTT and ESP32 Wi-Fi; BLE-to-PC sits outside</td>
+<td>20251 lab repo; peer kiosk uses MQTT, FastAPI, SQLite</td>
+<td>Keep BLE for the device link and add a visible MQTT or REST hop from the PC bridge; Wi-Fi MQTT is the 6-week fallback</td>
+</tr>
+<tr>
+<td>e</td>
+<td>Vietnam participation shrinks per event</td>
+<td>Table below</td>
+<td>Treat as irrelevant to grading; avoid any market-size claim beyond "a few hundred active competitors per year"</td>
+</tr>
+<tr>
+<td>f</td>
+<td>No public IT4735 rubric</td>
+<td>Only the program entry and a 2021 slide</td>
+<td>Parameterise the schedule (above) and ask the lecturer the questions below</td>
+</tr>
+</tbody>
+</table>
+<p>Vietnam registrations from public WCIF, accepted registrations, not attendance (<a href="https://www.worldcubeassociation.org/api/v0/competitions/VietnamChampionship2025/wcif/public">OWN CALC</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>VN competitions with data</th>
+<th>Registrations</th>
+<th>Unique VN accounts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2017</td>
+<td>8</td>
+<td>1,679</td>
+<td>1,173</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>7</td>
+<td>936</td>
+<td>671</td>
+</tr>
+<tr>
+<td>2019</td>
+<td>5</td>
+<td>714</td>
+<td>517</td>
+</tr>
+<tr>
+<td>2022</td>
+<td>5</td>
+<td>1,110</td>
+<td>891</td>
+</tr>
+<tr>
+<td>2023</td>
+<td>3</td>
+<td>702</td>
+<td>585</td>
+</tr>
+<tr>
+<td>2024</td>
+<td>12</td>
+<td>1,170</td>
+<td>635</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>4</td>
+<td>519</td>
+<td>389</td>
+</tr>
+<tr>
+<td>2026 (to 8 Oct)</td>
+<td>7</td>
+<td>627</td>
+<td>397</td>
+</tr>
+</tbody>
+</table>
+<p>Unique accounts fell from 1,173 (2017) to 389 (2025), and the union over 2017-2026 is about 3,600 [OWN CALC]. Worldwide the WCA reports 265,197 participants and 14,000+ competitions (<a href="https://www.worldcubeassociation.org/posts/wca-world-championship-2025-to-welcome-record-number-of-competitors-in-seattle">WCA post, 2025</a>), and yearly competitions rose from 305 (2021) to about 2,700 (2024-2025) [OWN CALC]. The recreational base is larger and unmeasured, and no 2025-2026 market-size report was found.</p>
+<figure><div class="fig-title">Figure 4. Competitions worldwide rebounded while Vietnamese registrants declined</div><div style="width:100%;margin:0 auto"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 290" role="img" aria-label="Worldwide WCA competitions per year and unique Vietnamese registrants per year" font-family="'Segoe UI', Arial, sans-serif" font-size="11"><rect width="680" height="290" fill="#fcfcfb"/><text x="42.0" y="18.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">WCA competitions per year</text><text x="42.0" y="33.0" font-size="10" fill="#898781" text-anchor="start" font-weight="400">Worldwide, count</text><line x1="78" x2="330" y1="240.0" y2="240.0" stroke="#c3c2b7" stroke-width="1"/><text x="70.0" y="244.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">0</text><line x1="78" x2="330" y1="185.3" y2="185.3" stroke="#e1e0d9" stroke-width="1"/><text x="70.0" y="189.3" font-size="10" fill="#898781" text-anchor="end" font-weight="400">1,000</text><line x1="78" x2="330" y1="130.7" y2="130.7" stroke="#e1e0d9" stroke-width="1"/><text x="70.0" y="134.7" font-size="10" fill="#898781" text-anchor="end" font-weight="400">2,000</text><line x1="78" x2="330" y1="76.0" y2="76.0" stroke="#e1e0d9" stroke-width="1"/><text x="70.0" y="80.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">3,000</text><text x="93.8" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2018</text><path d="M83.8,240.0 V180.9 A4.0,4.0 0 0 1 87.8,176.9 H99.8 A4.0,4.0 0 0 1 103.8,180.9 V240.0 Z" fill="#2a78d6"/><text x="125.2" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2019</text><path d="M115.2,240.0 V171.3 A4.0,4.0 0 0 1 119.2,167.3 H131.2 A4.0,4.0 0 0 1 135.2,171.3 V240.0 Z" fill="#2a78d6"/><text x="156.8" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2020</text><path d="M146.8,240.0 V217.8 A4.0,4.0 0 0 1 150.8,213.8 H162.8 A4.0,4.0 0 0 1 166.8,217.8 V240.0 Z" fill="#2a78d6"/><text x="188.2" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2021</text><path d="M178.2,240.0 V227.3 A4.0,4.0 0 0 1 182.2,223.3 H194.2 A4.0,4.0 0 0 1 198.2,227.3 V240.0 Z" fill="#2a78d6"/><text x="188.2" y="218.3" font-size="10" fill="#0b0b0b" text-anchor="middle" font-weight="400">305</text><text x="219.8" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2022</text><path d="M209.8,240.0 V184.1 A4.0,4.0 0 0 1 213.8,180.1 H225.8 A4.0,4.0 0 0 1 229.8,184.1 V240.0 Z" fill="#2a78d6"/><text x="251.2" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2023</text><path d="M241.2,240.0 V126.8 A4.0,4.0 0 0 1 245.2,122.8 H257.2 A4.0,4.0 0 0 1 261.2,126.8 V240.0 Z" fill="#2a78d6"/><text x="282.8" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2024</text><path d="M272.8,240.0 V95.1 A4.0,4.0 0 0 1 276.8,91.1 H288.8 A4.0,4.0 0 0 1 292.8,95.1 V240.0 Z" fill="#2a78d6"/><text x="282.8" y="86.1" font-size="10" fill="#0b0b0b" text-anchor="middle" font-weight="400">2,723</text><text x="314.2" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2025</text><path d="M304.2,240.0 V95.7 A4.0,4.0 0 0 1 308.2,91.7 H320.2 A4.0,4.0 0 0 1 324.2,95.7 V240.0 Z" fill="#2a78d6"/><text x="314.2" y="86.7" font-size="10" fill="#0b0b0b" text-anchor="middle" font-weight="400">2,712</text><text x="378.0" y="18.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="600">Vietnamese accounts registered</text><text x="378.0" y="33.0" font-size="10" fill="#898781" text-anchor="start" font-weight="400">Unique accounts per year</text><line x1="414" x2="668" y1="240.0" y2="240.0" stroke="#c3c2b7" stroke-width="1"/><text x="406.0" y="244.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">0</text><line x1="414" x2="668" y1="185.3" y2="185.3" stroke="#e1e0d9" stroke-width="1"/><text x="406.0" y="189.3" font-size="10" fill="#898781" text-anchor="end" font-weight="400">400</text><line x1="414" x2="668" y1="130.7" y2="130.7" stroke="#e1e0d9" stroke-width="1"/><text x="406.0" y="134.7" font-size="10" fill="#898781" text-anchor="end" font-weight="400">800</text><line x1="414" x2="668" y1="76.0" y2="76.0" stroke="#e1e0d9" stroke-width="1"/><text x="406.0" y="80.0" font-size="10" fill="#898781" text-anchor="end" font-weight="400">1,200</text><text x="426.7" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2017</text><path d="M417.0,240.0 V83.7 A4.0,4.0 0 0 1 421.0,79.7 H432.4 A4.0,4.0 0 0 1 436.4,83.7 V240.0 Z" fill="#2a78d6"/><text x="426.7" y="74.7" font-size="10" fill="#0b0b0b" text-anchor="middle" font-weight="400">1,173</text><text x="452.1" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2018</text><path d="M442.4,240.0 V152.3 A4.0,4.0 0 0 1 446.4,148.3 H457.8 A4.0,4.0 0 0 1 461.8,152.3 V240.0 Z" fill="#2a78d6"/><text x="477.5" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2019</text><path d="M467.8,240.0 V173.3 A4.0,4.0 0 0 1 471.8,169.3 H483.2 A4.0,4.0 0 0 1 487.2,173.3 V240.0 Z" fill="#2a78d6"/><text x="502.9" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2020</text><text x="528.3" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2021</text><text x="553.7" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2022</text><path d="M544.0,240.0 V122.2 A4.0,4.0 0 0 1 548.0,118.2 H559.4 A4.0,4.0 0 0 1 563.4,122.2 V240.0 Z" fill="#2a78d6"/><text x="579.1" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2023</text><path d="M569.4,240.0 V164.1 A4.0,4.0 0 0 1 573.4,160.1 H584.8 A4.0,4.0 0 0 1 588.8,164.1 V240.0 Z" fill="#2a78d6"/><text x="604.5" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2024</text><path d="M594.8,240.0 V157.2 A4.0,4.0 0 0 1 598.8,153.2 H610.2 A4.0,4.0 0 0 1 614.2,157.2 V240.0 Z" fill="#2a78d6"/><text x="629.9" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2025</text><path d="M620.2,240.0 V190.8 A4.0,4.0 0 0 1 624.2,186.8 H635.6 A4.0,4.0 0 0 1 639.6,190.8 V240.0 Z" fill="#2a78d6"/><text x="629.9" y="181.8" font-size="10" fill="#0b0b0b" text-anchor="middle" font-weight="400">389</text><text x="655.3" y="256.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">2026*</text><path d="M645.6,240.0 V189.7 A4.0,4.0 0 0 1 649.6,185.7 H661.0 A4.0,4.0 0 0 1 665.0,189.7 V240.0 Z" fill="#2a78d6"/><text x="655.3" y="180.7" font-size="10" fill="#0b0b0b" text-anchor="middle" font-weight="400">397</text><text x="515.6" y="232.0" font-size="10" fill="#898781" text-anchor="middle" font-weight="400">no data</text></svg></div><figcaption>[OWN CALC] from the public WCA API; registrations, not attendance. Vietnam data starts in 2017, skips 2020-2021, and *2026 runs to 8 Oct.</figcaption></figure>
+<h3>Recommended edits to chap1.tex</h3>
+<table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Current</th>
+<th>Proposed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR Hiệu năng</td>
+<td>Độ trễ dưới 0,001 s</td>
+<td>"Độ phân giải 1 ms; độ trễ phát hiện chạm điển hình dưới 10 ms; sai lệch so với tham chiếu trong khoảng giới hạn 10 ms (đo bằng logic analyzer và camera)."</td>
+</tr>
+<tr>
+<td>NFR Nguồn điện</td>
+<td>Pin 15 V hoặc sạc Type-C</td>
+<td>"Pin Li-ion một cell (3,7 V danh định), sạc qua USB Type-C 5 V." Remove the 15 V sentence from the USB Type-C glossary entry or mark PD as optional</td>
+</tr>
+<tr>
+<td>Device statistics vs boundary table</td>
+<td>Functional list shows Ao100 on the device; table puts Ao100 on the PC</td>
+<td>Choose one; baseline: device shows best, mean, Ao5, Ao12; PC computes Ao100 and trends; device Ao100 is a Should</td>
+</tr>
+<tr>
+<td>PC link</td>
+<td>"qua Bluetooth"</td>
+<td>Add the PC bridge and the MQTT or REST hop to the service</td>
+</tr>
+<tr>
+<td>Glossary Ao5, Ao12, Ao100</td>
+<td>Trim fastest and slowest; Ao100 five each side</td>
+<td>Add cut = ceil(5% n), DNF as infinity, +2 as t + 2000 ms, undefined below n solves, "csTimer-style" label for Ao12 and Ao100</td>
+</tr>
+<tr>
+<td>NFR Dữ liệu</td>
+<td>"Sức chứa lớn"</td>
+<td>At least 10,000 records (160 KB at 16 B); zero loss over N randomised power cuts</td>
+</tr>
+<tr>
+<td>New acceptance table</td>
+<td>none</td>
+<td>Numeric targets for timing, power-loss, sync-loss, soak, SUS</td>
+</tr>
+<tr>
+<td>New sync semantics</td>
+<td>Wipe after PC confirms</td>
+<td>Acknowledge after fsync, idempotent by (user_id, seq), resend from last acknowledged</td>
+</tr>
+<tr>
+<td>New non-goals</td>
+<td>none</td>
+<td>WCA approval, custom PCB, ESP32 smart-cube central role</td>
+</tr>
+</tbody>
+</table>
+<h3>Questions for the lecturer and team</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Real deadline for the midterm demo and the week count</td>
+<td>Selects the 6, 8 or 10-week ladder</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Team size, midterm weight, and share of report versus demo</td>
+<td>Cornell-type rubrics put 20-50% on the report</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Demo format: live, video, or both; who attends</td>
+<td>Sets rehearsal and backup requirements</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Is a BLE-to-PC design with an MQTT or REST hop acceptable? Is Wi-Fi MQTT an acceptable fallback?</td>
+<td>Resolves R5</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Is the 15 V line intentional?</td>
+<td>Resolves issue a</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Will the lecturer accept 1 ms resolution with a measured delay in place of 0.001 s?</td>
+<td>Resolves issue b</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Can the lab lend a logic analyzer, oscilloscope or high-speed camera?</td>
+<td>Saves about 150,000 VND and raises measurement quality</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Are pre-made dev boards and open-source libraries allowed?</td>
+<td>Confirms the Tier B BOM</td>
+</tr>
+<tr>
+<td>9</td>
+<td>How will individual contribution be assessed?</td>
+<td>Shapes the task table and git evidence</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Real team hours per week</td>
+<td>Replaces the 10 h/person/week assumption</td>
+</tr>
+</tbody>
+</table>
+<h2>Conclusion</h2>
+<p>The decisive variable is hours per person, not features. At the HUST nominal allowance of about 100 hours per student for the whole course, the 8-week baseline already consumes 79 project hours each, so the team should fix the horizon from real availability and let the drop ladder, not optimism, decide scope. The 6-week list works only if the sync layer moves to Wi-Fi MQTT, which also aligns with the taught stack.</p>
+<p>Haitay's strongest argument against "csTimer already does this" is a failure demonstration. Pulling power mid-write and dropping the link mid-sync, with zero lost or duplicated records and a Bland-Altman plot beside them, shows engineering that browser timers do not need to face. Novelty claims stay modest: the gap is the integrated, acknowledged pipeline from a physical timer to a persistent per-user service, and it should be stated as "not found in searched sources".</p>
+<h2>Sources</h2>
+<p>Hardware timers and Stackmat: <a href="https://www.speedsolving.com/wiki/index.php/StackMat">Speedsolving wiki StackMat</a>; <a href="https://www.worldcubeassociation.org/posts/updating-the-official-list-of-approved-timers-october-2021">WCA timer list post (Oct 2021)</a>; <a href="https://www.worldcubeassociation.org/posts/adoption-of-4-pad-timing-august-2026">WCA 4-pad post (Aug 2026)</a>; <a href="https://www.speedstacks.com/store/retail/speed-stacks-g5-timer/">Speed Stacks G5</a>; <a href="https://rubikonline.vn/speedstacks-g5-pro-timer-dong-ho-bam-gio-rubik-cao-cap">H2 Rubik G5</a>; <a href="https://thegioirubik.com/danh-muc/phu-kien/timer/">thegioirubik timers</a>; <a href="https://www.cubelelo.com/products/gan-halo-timer-smart">Cubelelo GAN Halo</a>; <a href="https://www.gancube.com/products/gan-smart-timer">GAN Smart Timer</a>; <a href="https://speedcubeshop.com/products/qiyi-smart-timer-bluetooth-xuanwu">SpeedCubeShop QiYi</a>; <a href="https://zyorubik.com/products/phu-kien-rubik-qiyi-smart-timer-new-2023-thiet-bi-bam-gio-hang-qiyi-thong-minh-ket-noi-bluetooth-zyo-rubik">ZyO QiYi</a>; <a href="https://speedcubeshop.com/products/moyu-ai-bluetooth-timer">SpeedCubeShop MoYu</a>; <a href="https://websosanh.vn/s/gi%E1%BB%9D+rubik.htm">websosanh.vn</a>; <a href="https://www.speedsolving.com/threads/g5-stackmat-issues.89767/">G5 issues</a>; <a href="https://raw.githubusercontent.com/PaddyCo/StackmatTimer/master/Protocol.md">PaddyCo Protocol.md</a>; <a href="https://jayanth-rajakumar.github.io/ledmat/">ledmat</a>; <a href="https://github.com/m9aertner/StackMatGen4TimerTeensy">StackMatGen4TimerTeensy</a>.</p>
+<p>WCA: <a href="https://raw.githubusercontent.com/thewca/wca-regulations/official/wca-regulations.md">WCA Regulations (official branch markdown)</a>; <a href="https://www.worldcubeassociation.org/regulations/">WCA Regulations site</a>; <a href="https://www.speedcubersdigest.com/p/wca-to-implement-4-pad-timers-starting">Speedcubers Digest</a>; <a href="https://www.worldcubeassociation.org/posts/wca-world-championship-2025-to-welcome-record-number-of-competitors-in-seattle">WCA 2025 record post</a>; <a href="https://www.worldcubeassociation.org/api/v0/competitions/VietnamChampionship2025/wcif/public">WCA API example</a>.</p>
+<p>Open source, software, smart cubes: <a href="https://github.com/tibordp/cube-timer">tibordp/cube-timer</a>; <a href="https://ojdip.net/2020/11/esp32-cube-timer/">ojdip.net blog</a>; <a href="https://github.com/xoseperez/wisblock-smartcube-companion">wisblock-smartcube-companion</a>; <a href="https://github.com/liusonwood/StackmatLink">StackmatLink</a>; <a href="https://github.com/PaddyCo/StackmatTimer">PaddyCo/StackmatTimer</a>; <a href="https://keep.lib.asu.edu/items/187330">ASU thesis</a>; <a href="https://www.cstimer.net/">csTimer</a>; <a href="https://github.com/cs0x7f/cstimer">csTimer repo</a>; <a href="https://github.com/cs0x7f/cstimer/issues/34">issue #34</a>; <a href="https://github.com/cs0x7f/cstimer/issues/40">issue #40</a>; <a href="https://www.speedsolving.com/threads/new-speedsolving-timer.97451/">Speedsolving timer thread</a>; <a href="https://subx.guru/">Sub-X</a>; <a href="https://www.speedsolving.com/threads/cubeast-a-speedcubing-timer-for-bluetooth-cubes-with-support-for-all-bluetooth-cubes-all-timers-and-all-major-solving-methods.77406/">Cubeast thread</a>; <a href="https://github.com/jjangsangy/CubeProgression">CubeProgression</a>; <a href="https://github.com/kash/cubedesk">CubeDesk</a>; <a href="https://github.com/Borys35/cstimer-analyzer/issues/18">cstimer-analyzer #18</a>; <a href="https://gist.github.com/kana/1e96a2300f8479f67d1f208a57f2b9e7">kana gist</a>; <a href="https://www.speedsolving.com/wiki/index.php/Average">Speedsolving wiki Average</a>; <a href="https://github.com/cubing/cubing.js">cubing.js</a>; <a href="https://github.com/afedotov/gan-web-bluetooth">gan-web-bluetooth</a>; <a href="https://gist.github.com/afedotov/52057533a8b27a0277598160c384ae71">GAN MAC FAQ</a>; <a href="https://caniuse.com/web-bluetooth">caniuse Web Bluetooth</a>; <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API">MDN Web Bluetooth</a>.</p>
+<p>Pain evidence: <a href="https://www.speedsolving.com/threads/i-lost-my-cstimer-data.89015/">lost csTimer data</a>; <a href="https://www.speedsolving.com/threads/cstimer-got-reset.90778/">csTimer reset</a>; <a href="https://www.speedsolving.com/threads/stackmat-cstimer-issues.80169/">Stackmat csTimer issues</a>; <a href="https://www.speedsolving.com/threads/should-i-buy-my-son-gen-4-or-gen-5-stackmat-timer.88407/">Stackmat price thread</a>; <a href="https://www.speedsolving.com/threads/how-do-you-track-your-solves.78339/">tracking solves</a>; <a href="https://doanthanhnien.vn/tin-tuc/tuoi-tre-sang-tao/quang-ngai-thu-tai-rubik-lan-iii-%E2%80%93-san-choi-toa-sang-tai-nang-tre">Quang Ngai contest</a>.</p>
+<p>Embedded and BOM: <a href="https://docs.espressif.com/projects/esp-idf/en/v5.4/esp32s3/api-reference/peripherals/touch_pad.html">ESP-IDF touch</a>; <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gptimer.html">GPTimer</a>; <a href="https://docs.espressif.com/projects/esp-faq/en/latest/software-framework/bt/ble.html">ESP-FAQ BLE</a>; <a href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/file-system-considerations.html">File systems</a>; <a href="https://files.seeedstudio.com/wiki/Grove-Touch_Sensor/res/TTP223.pdf">TTP223 datasheet</a>; <a href="https://components101.com/ics/ch224k-usb-power-delivery-controller-ic">CH224K</a>; <a href="https://pyworld.vn/san-pham/esp32-devkit-v1-30pin.html">pyworld ESP32</a>; <a href="https://hshop.vn/mach-phat-trien-mke-k01-esp32-s3-dev-kit">hshop S3</a>; <a href="https://hshop.vn/lcd-oled-trang-0-96-inch-i2c">hshop OLED</a>; <a href="https://hshop.vn/panel-man-hinh-lcd-tft-ips-1-54-inch-st7789-spi-interface">hshop ST7789</a>; <a href="https://hshop.vn/mach-sac-pin-tp4056-lithium-battery-charge-controller-usb-c">hshop TP4056</a>; <a href="https://dientutuyetnga.com/products/cam-ung-dien-dung-mpr121-1">MPR121</a>; <a href="https://nshopvn.com/dich-vu/in-3d">Nshop 3D print</a>; <a href="https://salework.net/thoi-gian-giao-hang-shopee/">Shopee delivery</a>.</p>
+<p>Course and project management: <a href="https://soict.hust.edu.vn/wp-content/uploads/Bachelor-Computer-Engineering-program.pdf">SoICT program</a>; <a href="https://soict.hust.edu.vn/wp-content/uploads/QCDT.pdf">HUST regulation</a>; <a href="https://www.slideshare.net/slideshow/it4735iot-va-ung-dungv2021pdf/262849382">2021 IT4735 slides</a>; <a href="https://soict.hust.edu.vn/ts-dang-tuan-linh.html">lecturer profile</a>; <a href="https://github.com/nguyenLTpk/IoT-IT4735">IoT-IT4735 kiosk</a>; <a href="https://github.com/hunganh1310/20251-IT4735-IoT-Lab">20251 lab repo</a>; <a href="https://vanhunteradams.com/Pico/CourseMaterials/Final_Project.html">Cornell ECE 4760</a>; <a href="https://tbp.studentorg.berkeley.edu/syllabi/1548/download/">Berkeley ME 100</a>; <a href="https://homa-alem.github.io/teaching/ece_6501/6501_syllabus.pdf">UVA ECE</a>; <a href="https://arxiv.org/pdf/1810.07646">arXiv 1810.07646</a>; <a href="https://hubble.com/community/guides/why-your-first-ble-project-won-t-connect-and-how-to-fix-it/">Hubble BLE</a>; <a href="https://utdesign.utdallas.edu/partners/faq-corporate">UT Dallas</a>; <a href="https://capstone.groups.et.byu.net/wikis/doku.php?id=project-wiki%3Asyllabus%3Acapstone_time_management">BYU</a>; <a href="https://cms.simula.no/sites/default/files/publications/SE.3.Moloekken-Oestvold.2004.pdf">Moloekken-Oestvold</a>; <a href="https://doi.org/10.1037/0022-3514.67.3.366">Buehler 1994</a>; <a href="https://www.agilebusiness.org/resource/what-is-moscow-prioritization/">Agile Business Consortium</a>; <a href="https://www.pmi.org/learning/library/risk-analysis-decisions-uncertain-times-6686">PMI risk</a>; <a href="https://projectmanagementacademy.net/resources/blog/a-three-point-estimating-technique-pert/">PMA PERT</a>; <a href="https://tf.nist.gov/general/pdf/1930.pdf">NIST stopwatch guidance</a>; <a href="https://www-users.york.ac.uk/~mb55/meas/sizemeth.htm">Bland sample size</a>; <a href="https://www.nngroup.com/articles/why-you-only-need-to-test-with-5-users/">Nielsen 5 users</a>; <a href="https://roboticsknowledgebase.com/wiki/robotics-project-guide/demo-day/">demo guide</a>.</p>
+<p>Known gaps: the WCA Approved Timer List PDF, GAN CubeStation export features, Cubeast 2026 status, and the real IT4735 rubric were not verified. Several primary papers on IoT education and estimation returned errors and are cited from abstracts or summaries.</p></body></html>

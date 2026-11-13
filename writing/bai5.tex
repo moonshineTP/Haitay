@@ -1,0 +1,16 @@
+\input{preamble}
+
+\begin{document}
+\begingroup
+    \pagestyle{empty}
+    \include{titlepage-bai5}
+\endgroup
+
+\pagestyle{fancy}
+% Bài tập 5 gồm mục 2.1 đến 2.3 của chương 2, nên đặt bộ đếm chương trước chương 2.
+\setcounter{chapter}{1}
+\newcommand{\skipcomm}{}
+\include{chapters/chap2}
+
+\label{LastPage}
+\end{document}

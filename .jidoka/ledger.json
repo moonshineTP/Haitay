@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "state": "running",
+  "open_incident": null,
+  "last_green": null,
+  "debt": {
+    "value": 1,
+    "warn": 3,
+    "stop": 5,
+    "entries": [
+      {
+        "t": "2026-11-13T01:12:22Z",
+        "delta": 1,
+        "why": "G1 authored after ch3-5 drafts existed; producer-set-bar risk"
+      }
+    ]
+  },
+  "incidents": [],
+  "milestones": {
+    "G1-report": {
+      "spec": ".jidoka\\gates\\G1-report.md",
+      "sha256": "ee763d1d773f8a18b0e4be4ec3649fca9459bb4ee1e6c88ababe61cd8868a6c9",
+      "criteria": {
+        "C1": {
+          "edge": true,
+          "text": "[edge] Every simulation and ablation number quoted in chap3, chap4, chap5 equals `code/sim/out/results.json` and `ablations.json` from a fresh run | re-run both scripts, grep each number in the tex | script output plus grep hits"
+        },
+        "C2": {
+          "edge": false,
+          "text": "`main.tex` compiles with 0 errors, 0 undefined references, no overfull hbox above 10 pt | `bash scripts/compile.sh` and log grep | compile log"
+        },
+        "C3": {
+          "edge": false,
+          "text": "Each of the 8 checkpoint items maps to a named section of the report | build the item-to-section table from `main.toc` | table with section numbers"
+        },
+        "C4": {
+          "edge": false,
+          "text": "Every design decision shows candidates, budget, simplicity and an ablation, and states the chosen optimum (user's elasticity rule) | inspect decision and elasticity tables in chap3 plus `tab:sim-ablation` | table labels and row count"
+        },
+        "C5": {
+          "edge": false,
+          "text": "No team-decision violation and no em dash in chapters 3 to 5 | grep for pin nu\u00c3\u00b4i, cloud, \u00c4\u2018\u00c3\u00a1m m\u00c3\u00a2y, WCA h\u00e1\u00bb\u00a3p l\u00e1\u00bb\u2021, U+2014 | grep output with zero offending hits"
+        }
+      },
+      "records": [
+        {
+          "t": "2026-11-13T01:12:32Z",
+          "criterion": "C5",
+          "result": "pass",
+          "evidence": "08:12 grep over chap3-5 for em dash, battery power, cloud, WCA legality: 0 hits (pre-merge probe; re-run at merge)"
+        }
+      ],
+      "status": "open",
+      "history": [],
+      "waived_edge": null
+    },
+    "G2-slides": {
+      "spec": ".jidoka\\gates\\G2-slides.md",
+      "sha256": "9c67db54d81990ce4f2719fe75f83a25d8a0738c91ca6edbc7b8594b70663c43",
+      "criteria": {
+        "C1": {
+          "edge": false,
+          "text": "The 8 lecturer items appear in order, each on at least one frame | pdftotext frame titles | title list"
+        },
+        "C2": {
+          "edge": true,
+          "text": "[edge] Every number on a slide matches the report and the sim outputs, checked by a party other than the slide author | independent verify pass | verifier report with zero mismatches"
+        },
+        "C3": {
+          "edge": false,
+          "text": "Deck compiles, no overfull box above 5 pt | latexmk and log grep | log lines"
+        },
+        "C4": {
+          "edge": false,
+          "text": "A talk script exists with a time budget between 10 and 15 minutes | read `checkpoint1-script.md`, sum budgets | total minutes"
+        }
+      },
+      "records": [],
+      "status": "open",
+      "history": [],
+      "waived_edge": null
+    },
+    "G3-wokwi": {
+      "spec": ".jidoka\\gates\\G3-wokwi.md",
+      "sha256": "d27dd69b19dcf7e6a4d446eda4da2c70821a792d88bde2e8ecfb4f911eedc5bc",
+      "criteria": {
+        "C1": {
+          "edge": false,
+          "text": "The sketch compiles and the simulation runs on wokwi.com | screenshot of running circuit | `writing/figures/wokwi_circuit.png`"
+        },
+        "C2": {
+          "edge": true,
+          "text": "[edge] Serial `REC` lines captured from the real Wokwi run parse with 0 CRC failures and land in SQLite with rows equal to distinct seq count | re-run `wokwi_ingest.py` on `serial_run1.txt` here | ingest output"
+        },
+        "C3": {
+          "edge": false,
+          "text": "A public share URL exists and the project page loads | open the URL | page title and URL"
+        },
+        "C4": {
+          "edge": false,
+          "text": "`RESULTS.md` separates what ran for real from anything scripted or synthetic | read the file | quoted section"
+        }
+      },
+      "records": [],
+      "status": "open",
+      "history": [],
+      "waived_edge": null
+    },
+    "G4-merge": {
+      "spec": ".jidoka\\gates\\G4-merge.md",
+      "sha256": "9ce000db74f51530d04f444fb89ad1956bd73080a2aa6e2199d1325662a1708d",
+      "criteria": {
+        "C1": {
+          "edge": true,
+          "text": "[edge] A fresh run reproduces 17/17 scenarios and the six ablation results after all sessions' edits | run both scripts | output"
+        },
+        "C2": {
+          "edge": false,
+          "text": "Each sub-session's critic and verify findings are received, and unresolved ones are listed to the user | session reports | finding list"
+        },
+        "C3": {
+          "edge": false,
+          "text": "G1, G2, G3 closed, or open criteria listed as debt with owner | `jidoka.py status` | status output"
+        },
+        "C4": {
+          "edge": false,
+          "text": "Placeholders the team must fill (repo link, confirmed roles) are listed to the user | grep `c\u00e1\u00ba\u00a7n b\u00e1\u00bb\u2022 sung` | grep output"
+        }
+      },
+      "records": [],
+      "status": "open",
+      "history": [],
+      "waived_edge": null
+    }
+  },
+  "clean_streak": 0
+}
