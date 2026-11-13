@@ -32,3 +32,7 @@ python -I Haitay/code/sim/wokwi_ingest.py Haitay/code/wokwi/wokwi_run.txt
 ```
 
 The script prints the parsed record count, CRC failures, rows in SQLite, and Ao5, Ao12 and Ao100 recomputed on the PC. `sample_serial.txt` is a synthetic file for a first test.
+
+## Public project
+
+https://wokwi.com/projects/480535692769291265 (saved public 13-11-2026 08:31 +07, loads without sign-in)

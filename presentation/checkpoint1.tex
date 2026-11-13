@@ -398,20 +398,24 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 % ================================================================ 7d
 \begin{frame}{7. Mô phỏng Wokwi trên ESP32-S3}
 \begin{columns}[T]
-\column{0.55\textwidth}
+\column{0.53\textwidth}
 \centering
-\begin{tikzpicture}
-    \node[draw=red!75!black, dashed, rounded corners=4pt, minimum width=6.8cm, minimum height=4.2cm, align=center, font=\small]
-        {\cbs{cần bổ sung: ảnh chạy Wokwi}\\[0.4em]\footnotesize thay bằng \texttt{wokwi\_*.png} khi có};
-\end{tikzpicture}
-\column{0.42\textwidth}
-\small
-\begin{itemize}
-\item Hai pad thay bằng nút nhấn, vì Wokwi không mô phỏng cảm ứng điện dung và BLE.
-\item Mỗi lượt đã chốt in ra cổng nối tiếp một dòng \texttt{REC}.
-\item \texttt{wokwi\_ingest.py} nạp các dòng đó vào SQLite.
-\end{itemize}
+\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{wokwi_circuit.png}\\
+{\scriptsize Mạch: ESP32-S3, hai nút thay pad, ba nút chức năng}
+\column{0.45\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.4\textheight,keepaspectratio]{wokwi_serial.png}\\
+{\scriptsize Cổng nối tiếp: dòng \texttt{REC} cho mỗi lượt đã chốt}
 \end{columns}
+
+\medskip
+\raggedright\footnotesize
+\begin{itemize}
+\item 6 lượt solve, 12 dòng \texttt{REC} (6 khi chốt, 6 gửi lại khi đồng bộ), 0 lỗi CRC, 6 hàng trong SQLite.
+\item Ao5 bằng 3,30~s trên thiết bị và trên máy tính.
+\item Tín hiệu pad được lập trình sẵn (AUTOPLAY) vì Wokwi không giữ được hai phím cùng lúc; nút +2 và Đồng bộ được bấm thật.
+\end{itemize}
+Link Wokwi: \url{https://wokwi.com/projects/480535692769291265}
 \end{frame}
 
 % ================================================================ 8

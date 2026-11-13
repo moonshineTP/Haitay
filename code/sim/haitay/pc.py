@@ -53,6 +53,7 @@ class PcService:
     def __init__(self, db_path):
         fresh = not os.path.exists(db_path)
         self.db = sqlite3.connect(db_path)
+        self.db.execute("PRAGMA synchronous=FULL")  # COMMIT returns only after fsync, so ACK means on disk
         if fresh:
             here = os.path.dirname(__file__)
             self.db.executescript(open(os.path.join(here, "schema.sql")).read())

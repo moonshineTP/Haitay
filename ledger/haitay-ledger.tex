@@ -1,0 +1,130 @@
+\documentclass[a4paper,9pt]{extarticle}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{lmodern}
+\usepackage[margin=1.3cm]{geometry}
+\usepackage{booktabs,array,colortbl,xcolor,multicol}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.1em}
+\definecolor{hb}{RGB}{31,78,121}
+\newcommand{\hrow}{\rowcolor{hb}}
+\newcommand{\hc}[1]{\textcolor{white}{\textbf{#1}}}
+\newcommand{\blk}[1]{\par\medskip{\color{hb}\large\bfseries #1}\par\smallskip}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+{\color{hb}\LARGE\bfseries Haitay, sổ tra cứu Checkpoint 1}\hfill {\small 13/11/2026, cập nhật 08:35 +07}\par
+\small Nhóm Hai Người, IT4735. Trình bày 10 đến 15 phút. Mọi đường dẫn tính từ thư mục \texttt{Haitay/}.
+
+\blk{Đường dẫn chính}
+\begin{tabular}{L{3.2cm} L{14.2cm}}
+\toprule
+Kho mã & \url{https://github.com/moonshineTP/Haitay}\\
+Wokwi công khai & \url{https://wokwi.com/projects/480535692769291265}\\
+Slide & \texttt{presentation/checkpoint1.pdf}, lời nói: \texttt{presentation/checkpoint1-script.md}\\
+Báo cáo đặc tả & \texttt{writing/main.pdf} (chương 3 thiết kế, 4 mô phỏng, 5 kế hoạch)\\
+Sổ chất lượng & \texttt{.jidoka/} (gate G1 đến G4, rủi ro \texttt{risks-ranked.txt})\\
+\bottomrule
+\end{tabular}
+
+\blk{Tám mục của giảng viên, nằm ở đâu}
+\begin{tabular}{L{0.4cm} L{4.4cm} L{4.0cm} L{7.6cm}}
+\toprule
+\hrow \hc{\#} & \hc{Mục} & \hc{Slide / báo cáo (trang in)} & \hc{Ý chính để nói}\\
+\midrule
+1 & Giới thiệu, thành viên & S2 / bìa, 1.1 & Timer hai pad kiểu Stackmat, tự lưu và tính Ao5, Ao12, Ao100\\
+2 & Vấn đề, người dùng & S3 / 2.1, 3.1.1 (tr.~21) & Bỏ nhập tay và cáp csTimer; người tự luyện, CLB, phụ huynh\\
+3 & Yêu cầu chức năng, phi chức năng & S4 đến S6 / 1.2, 1.3, 3.1.4 (tr.~23) & 12 use case; N1 đến N12 có chỉ tiêu và cách đo\\
+4 & Kiến trúc bốn lớp & S7, S8 / 3.3 (tr.~28) & BLE GATT, HTTP/REST 127.0.0.1, SQL, REST và SSE\\
+5 & Thiết bị, chi phí, lợi ích & S9 / 3.4.1 (tr.~30) & 1.372.000 đ có dự phòng; một bộ 803.000 đ; G5 0,9 đến 1,0 triệu\\
+6 & Lựa chọn công nghệ & S10 / 2.4, 3.6 (tr.~17, 39) & Ứng viên, ngân sách, độ đơn giản, ablation, stack ở điểm gãy\\
+7 & Tiến độ, luồng dữ liệu & S11 đến S14 / 4.4 đến 4.7 (tr.~47) & Mô phỏng 17/17, ablation A1 đến A6, Wokwi tới SQLite\\
+8 & Phân công, repo, khó khăn & S15 / 5.1 đến 5.3 (tr.~54) & Chia theo lớp; FRAM phải đặt ngoài; BLE dễ trễ\\
+\bottomrule
+\end{tabular}
+
+\blk{Số liệu hay bị hỏi}
+\begin{multicols}{2}
+\begin{tabular}{L{4.0cm} L{4.2cm}}
+\toprule
+\hrow \hc{Số liệu} & \hc{Giá trị}\\
+\midrule
+Mô phỏng & 17/17 đạt\\
+Sai số đo giờ (400 lượt) & TB $-0{,}01$~ms, SD 3,26~ms, $\pm 7$~ms\\
+Cắt điện khi ghi & 100 lần, 0 bản ghi đã chốt mất\\
+Rơi BLE và mất ACK & 0 mất, 11 bản gửi lại bị loại trùng\\
+Dữ liệu mẫu & 90 ngày, 3.443 lượt\\
+Wokwi & 12 REC, 0 lỗi CRC, 6 hàng, Ao5 3,30~s\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{L{4.0cm} L{4.2cm}}
+\toprule
+\hrow \hc{Ablation (bỏ cơ chế)} & \hc{Hậu quả}\\
+\midrule
+A1 chống nảy & 198/200 lượt đo sai\\
+A2 ACK trước COMMIT & mất 11 bản ghi\\
+A3 sửa tại chỗ & 28/200 lần cắt điện mất lượt\\
+A4 bỏ CRC & 184 bản ghi rác lọt\\
+A5 bỏ khóa \texttt{(device\_id, seq)} & 11 bản ghi trùng\\
+A6 bỏ DS3231 & 20/20 mốc giờ phải đoán\\
+\bottomrule
+\end{tabular}
+\end{multicols}
+
+\blk{Thư mục}
+\begin{multicols}{2}
+\footnotesize
+\begin{tabular}{L{2.9cm} L{5.4cm}}
+\toprule
+\texttt{writing/chapters/} & \texttt{chap1} đến \texttt{chap5}; \texttt{chap2/} tách theo mục\\
+\texttt{writing/figures/} & \texttt{sim\_*.png}, \texttt{wokwi\_*.png}\\
+\texttt{code/sim/} & \texttt{run\_scenarios.py}, \texttt{run\_ablations.py}, \texttt{wokwi\_ingest.py}\\
+\texttt{code/sim/haitay/} & \texttt{proto}, \texttt{stats}, \texttt{device}, \texttt{pc}, \texttt{schema.sql}\\
+\texttt{code/sim/out/} & \texttt{results.json}, \texttt{ablations.json}\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{L{2.9cm} L{5.4cm}}
+\toprule
+\texttt{code/wokwi/} & \texttt{sketch.ino}, \texttt{diagram.json}, \texttt{serial\_run1.txt}, \texttt{RESULTS.md}\\
+\texttt{presentation/} & slide, lời nói\\
+\texttt{reports/} & báo cáo nghiên cứu nền, ghi chú nguồn\\
+\texttt{.jidoka/} & gate, sổ bất thường, rủi ro\\
+\texttt{../materials/} & slide môn học Ch1, Ch2, Ch5\\
+\bottomrule
+\end{tabular}
+\end{multicols}
+
+\blk{Lệnh demo (chạy từ \texttt{Haitay/})}
+\begin{tabular}{L{6.4cm} L{11.0cm}}
+\toprule
+\texttt{python -I code/sim/run\_scenarios.py} & 17 phép kiểm tra, khoảng 1 phút, vẽ lại hai hình\\
+\texttt{python -I code/sim/run\_ablations.py} & sáu ablation, khoảng 2 phút\\
+Mở link Wokwi, bấm nút xanh & firmware tự chơi sáu lượt (AUTOPLAY), xem OLED và cổng nối tiếp\\
+\bottomrule
+\end{tabular}
+
+\blk{Câu hỏi khó, trả lời ở đâu}
+\begin{tabular}{L{5.0cm} L{12.4cm}}
+\toprule
+Sao không dùng MQTT? & PUBACK chỉ báo broker nhận, chưa báo CSDL đã lưu; ACK cần COMMIT (3.6, ablation A2)\\
+Đây đâu phải dữ liệu thật? & Wokwi chạy firmware thật; chỉ tín hiệu pad là kịch bản; phần cứng là mốc M2 (4.7, 5.4)\\
+Độ trễ thật bao nhiêu? & 2 đến 10~ms mỗi cạnh là ước lượng; mô phỏng chỉ chứng minh firmware không cộng thêm sai số (4.4)\\
+Có dùng thi đấu được không? & Không, là timer luyện tập, ngoài danh sách WCA chấp thuận\\
+Pin? & Không có pin nuôi; USB-C 5~V; CR2032 chỉ giữ đồng hồ thực\\
+\bottomrule
+\end{tabular}
+
+\blk{Còn mở}
+\begin{itemize}
+\item Nhóm xác nhận bảng phân công (5.1, slide mục 8 còn \texttt{[cần bổ sung]}).
+\item Chương 3, năm điểm chờ nhóm quyết: mặc định OK khi dừng, bảng màn hình thiết bị, bản ghi FRAM hỏng khi nằm yên, lý do loại ESP32 cổ điển, kiểm thử UC12 sao lưu.
+\item Wokwi sketch, một blocker: \texttt{later()} so sánh có dấu 32 bit, nên sau 36 phút nhàn rỗi lượt đầu có thể sai; demo dưới 1 phút không bị ảnh hưởng. Bốn lỗi major xem \texttt{code/wokwi/RESULTS.md}.
+\item Slide: chưa so với timer Bluetooth giá rẻ (QiYi, GAN); chữ trong hình use case và biểu đồ hơi nhỏ trên máy chiếu.
+\end{itemize}
+\end{document}

@@ -175,9 +175,9 @@ Kịch bản D1 tạo ra một người chơi luyện tập 90 ngày liền, m�
 Hình~\ref{fig:sim-rolling} được vẽ từ chính hàm truy vấn mà điểm cuối \texttt{/stats/rolling} sẽ dùng. Ao5 dao động mạnh theo từng buổi, Ao12 mượt hơn, còn Ao100 cho thấy rõ xu hướng tiến bộ. Đây đúng là lý do dashboard đặt ba đường trên cùng một trục: người chơi vừa thấy phong độ hôm nay, vừa thấy hướng đi của cả quý. Ở giai đoạn này hình được xuất ra tệp tĩnh, và dashboard web sẽ dùng lại bộ dữ liệu mẫu này khi trình diễn.
 
 \section{Mô phỏng phần cứng trên Wokwi}
-Mô phỏng Python kiểm chứng giao thức, nhưng chưa chạy mã trên vi điều khiển. Để lấp khoảng trống ấy trước khi có phần cứng, nhóm chạy firmware trên trình mô phỏng Wokwi với bo ESP32-S3, màn hình OLED SSD1306 và đồng hồ thời gian thực DS1307 (Hình~\ref{fig:wokwi-circuit}).
+Mô phỏng Python kiểm chứng giao thức, nhưng chưa chạy mã trên vi điều khiển. Để lấp khoảng trống ấy trước khi có phần cứng, nhóm chuyển máy trạng thái, bộ chống nảy, bản ghi CRC và phép tính Ao sang C++ cho Arduino, rồi chạy trên trình mô phỏng Wokwi với bo ESP32-S3 (Hình~\ref{fig:wokwi-circuit}). Wokwi không có TFT ST7789 và DS3231 như thiết kế, nên OLED SSD1306 và DS1307 đứng thay. Sketch này là bản chuyển ngữ của mô phỏng Python, còn firmware ESP-IDF cho thiết bị thật là mốc M2.
 
-Wokwi không mô phỏng cảm biến điện dung và Bluetooth LE, nên hai pad được thay bằng nút nhấn, còn mỗi bản ghi 16 byte có CRC được in ra cổng nối tiếp dưới dạng một dòng \texttt{REC}. Công cụ trình duyệt không giữ được hai phím cùng lúc, vì vậy tín hiệu pad của sáu lượt giải được sinh theo kịch bản với thời lượng biết trước. Nút phạt +2 và nút đồng bộ vẫn được bấm thật. Máy trạng thái, bộ chống nảy và phép đo thời gian là mã firmware thật, nên thời gian đo được khớp kịch bản đến từng mili giây.
+Wokwi không mô phỏng cảm biến điện dung và Bluetooth LE, nên hai pad được thay bằng nút nhấn, còn mỗi bản ghi 16 byte có CRC được in ra cổng nối tiếp dưới dạng một dòng \texttt{REC}. Công cụ trình duyệt không giữ được hai phím cùng lúc, vì vậy tín hiệu pad của sáu lượt giải được sinh theo kịch bản với thời lượng biết trước. Nút phạt +2 và nút đồng bộ vẫn được bấm thật. Máy trạng thái, bộ chống nảy và phép đo thời gian chạy trên vi điều khiển mô phỏng mà không có đường tắt nào, nên thời gian đo được khớp kịch bản đến từng mili giây.
 
 \begin{table}[H]
     \centering
@@ -194,7 +194,7 @@ Wokwi không mô phỏng cảm biến điện dung và Bluetooth LE, nên hai pa
         Dòng \texttt{REC} trong log & 12, gồm 6 lúc chốt và 6 gửi lại khi đồng bộ \\
         Lỗi CRC & 0 \\
         \rowcolor{haitayblue!8}
-        Đồng bộ qua \texttt{PcService.sync} & 6 bản ghi mới, 0 trùng, 0 khung hỏng, ACK tới seq 6 \\
+        Đồng bộ qua \texttt{PcService.sync} & 6 bản ghi mới, 0 khung hỏng, ACK tới seq 6 \\
         Số hàng trong bảng solve & 6 \\
         \rowcolor{haitayblue!8}
         Ao5 trên thiết bị và trên máy tính & Cùng bằng 3,30~s \\
@@ -202,7 +202,7 @@ Wokwi không mô phỏng cảm biến điện dung và Bluetooth LE, nên hai pa
     \end{tabular}
 \end{table}
 
-Sáu bản ghi gửi lại khi đồng bộ đều bị khóa \texttt{(device\_id, seq)} loại bỏ, đúng như bất biến thứ ba. Giá trị Ao5 khớp nhau ở hai đầu cho thấy thiết bị và máy tính dùng chung một quy tắc tính trung bình. Nhờ vậy chuỗi cảm biến, giao thức và cơ sở dữ liệu đã được kiểm chứng trọn vẹn trên mã firmware, ở mức mô phỏng.
+Sáu dòng gửi lại giống hệt sáu dòng lúc chốt, nên script nạp gộp chúng theo seq trước khi đồng bộ; khả năng chống trùng của máy tính được kiểm ở S2 và A5 chứ không ở lần chạy này. Giá trị Ao5 khớp nhau ở hai đầu cho thấy vi điều khiển và máy tính dùng chung một quy tắc tính trung bình. Nhờ vậy chuỗi cảm biến, bản ghi, cơ sở dữ liệu và thống kê đã chạy thông trên vi điều khiển mô phỏng. Dự án Wokwi được công khai tại \url{https://wokwi.com/projects/480535692769291265}, nên bất kỳ ai cũng chạy lại được ngay trên trình duyệt.
 
 \begin{figure}[H]
     \centering

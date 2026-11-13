@@ -18,10 +18,10 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 | 12 | 7. Kết quả 17/17 | 0:40 | |
 | (demo) | Chạy mô phỏng | 1:00 | |
 | 13 | 7. Hình kết quả | 0:40 | |
-| 14 | 7. Wokwi | 0:30 | |
+| 14 | 7. Wokwi | 0:40 | |
 | 15 | 8. Phân công, khó khăn | 0:50 | |
 | 16 | Cảm ơn | 0:10 | |
-| | **Tổng** | **12:35** | |
+| | **Tổng** | **12:45** | |
 
 ## Từng trang
 
@@ -93,10 +93,12 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Hình trái: sai lệch đo giờ đối xứng quanh 0, firmware không cộng thêm sai số ngoài độ trễ cảm biến.
 - Hình phải: 90 ngày, 3.443 lượt đã đi qua giao thức thật vào SQLite; Ao100 cho thấy rõ xu hướng tiến bộ.
 
-**Trang 14. Wokwi (0:30)**
-- Sketch ESP32-S3 trên Wokwi thay hai pad bằng nút nhấn, vì Wokwi không mô phỏng cảm ứng điện dung và Bluetooth.
-- Mỗi lượt đã chốt in ra một dòng `REC`, rồi `wokwi_ingest.py` nạp vào SQLite.
-- [cần bổ sung] Nếu chưa có ảnh Wokwi, nói rõ đây là bước kế tiếp (mốc M1).
+**Trang 14. Wokwi (0:40)**
+- Sketch ESP32-S3 chạy trên Wokwi sáng nay; hai pad thay bằng nút nhấn vì Wokwi không mô phỏng cảm ứng điện dung và Bluetooth.
+- 6 lượt solve sinh 12 dòng `REC` (6 khi chốt, 6 gửi lại khi bấm Đồng bộ), 0 lỗi CRC; `wokwi_ingest.py` nạp đúng 6 hàng vào SQLite.
+- Ao5 bằng 3,30 s cả trên thiết bị lẫn trên máy tính.
+- Nói thẳng: tín hiệu pad được lập trình sẵn (AUTOPLAY) vì Wokwi không giữ được hai phím cùng lúc; nút +2 và Đồng bộ được bấm thật.
+- Link Wokwi công khai: https://wokwi.com/projects/480535692769291265 (mở được khi chưa đăng nhập).
 
 **Trang 15. Phân công, khó khăn (0:50)**
 - Phân công theo lớp kiến trúc: Hưng điều phối và mô phỏng, Giang thiết bị, Minh backend, Bảo dashboard. [cần bổ sung: nhóm xác nhận]

@@ -369,7 +369,7 @@ Ba bất biến giữ cho luồng này không mất và không nhân đôi dữ 
         \midrule
         \rowcolor{haitayblue!8}
         Bản ghi chưa xác nhận không bao giờ bị ghi đè & Thiết bị chỉ ghi vào ô có seq $\le$ \texttt{last\_ack}; nếu không còn ô, thiết bị từ chối lượt mới và yêu cầu đồng bộ & Mất dữ liệu khi bộ nhớ đầy \\
-        Máy tính chỉ xác nhận phần đã nằm trên đĩa & \texttt{ACK} được gửi sau khi giao dịch SQLite chứa lô đó COMMIT; phần đã xác nhận là một đoạn seq liên tục, không có lỗ & Thiết bị xóa bản ghi mà máy tính chưa lưu \\
+        Máy tính chỉ xác nhận phần đã nằm trên đĩa & \texttt{ACK} được gửi sau khi giao dịch SQLite chứa lô đó COMMIT với \texttt{synchronous=FULL}; phần đã xác nhận là một đoạn seq liên tục, không có lỗ & Thiết bị xóa bản ghi mà máy tính chưa lưu \\
         \rowcolor{haitayblue!8}
         Gửi lại không tạo bản sao & Khóa chính \texttt{(device\_id, seq)} trong bảng solve & Trùng bản ghi sau khi kết nối rơi \\
         \bottomrule

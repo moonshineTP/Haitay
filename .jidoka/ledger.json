@@ -105,8 +105,33 @@
           "text": "A talk script exists with a time budget between 10 and 15 minutes | read `checkpoint1-script.md`, sum budgets | total minutes"
         }
       },
-      "records": [],
-      "status": "open",
+      "records": [
+        {
+          "t": "2026-11-13T01:35:38Z",
+          "criterion": "C1",
+          "result": "pass",
+          "evidence": "08:36 pdftotext titles p2-15: items 1,2,3,3,3,4,4,5,6,7,7,7,7,8 in order"
+        },
+        {
+          "t": "2026-11-13T01:35:38Z",
+          "criterion": "C2",
+          "result": "pass",
+          "evidence": "beamer session ran a separate verifier agent; orchestrator spot check on PDF text: 3,26 17/17 1.372.000 803.000 3,30 repo and Wokwi URLs present and equal to report"
+        },
+        {
+          "t": "2026-11-13T01:35:39Z",
+          "criterion": "C3",
+          "result": "pass",
+          "evidence": "build/checkpoint1.log max overfull 4.14pt < 5pt, 16 pages"
+        },
+        {
+          "t": "2026-11-13T01:35:39Z",
+          "criterion": "C4",
+          "result": "pass",
+          "evidence": "checkpoint1-script.md total 12:45 within 10-15 min"
+        }
+      ],
+      "status": "closed",
       "history": [],
       "waived_edge": null
     },
@@ -149,9 +174,21 @@
           "criterion": "C4",
           "result": "pass",
           "evidence": "RESULTS.md table 'What ran, real versus scripted' marks AUTOPLAY pad samples as scripted"
+        },
+        {
+          "t": "2026-11-13T01:30:28Z",
+          "criterion": "C3",
+          "result": "pass",
+          "evidence": "08:31 saved public; fetch credentials:omit -> 200, title 'Haitay speedcubing timer (ESP32-S3)'"
+        },
+        {
+          "t": "2026-11-13T01:30:28Z",
+          "criterion": "C2",
+          "result": "pass",
+          "evidence": "08:27 re-ran wokwi_ingest.py here on serial_run1.txt: 12 parsed, 0 CRC fail, new 6 dup 0, 6 rows, Ao5 3.30"
         }
       ],
-      "status": "open",
+      "status": "closed",
       "history": [],
       "waived_edge": null
     },
@@ -176,11 +213,36 @@
           "text": "Placeholders the team must fill (repo link, confirmed roles) are listed to the user | grep `c\u00e1\u00ba\u00a7n b\u00e1\u00bb\u2022 sung` | grep output"
         }
       },
-      "records": [],
-      "status": "open",
+      "records": [
+        {
+          "t": "2026-11-13T01:29:16Z",
+          "criterion": "C1",
+          "result": "pass",
+          "evidence": "08:30 fresh runs: run_scenarios 17/17 (run 20261113-082542); run_ablations A1 198/200, A2 11, A3 28, A4 184, A5 11, A6 20/20, identical to 08:05 run"
+        },
+        {
+          "t": "2026-11-13T01:36:37Z",
+          "criterion": "C2",
+          "result": "pass",
+          "evidence": "critic+verify reports read from all 3 sessions; unresolved: ch3 x5 team decisions, Wokwi 1 blocker + 4 major, slides x2; all listed in ledger/haitay-ledger.pdf 'C\u00f2n m\u1edf'"
+        },
+        {
+          "t": "2026-11-13T01:36:38Z",
+          "criterion": "C3",
+          "result": "pass",
+          "evidence": "08:36 jidoka status: G1 5/5, G2 4/4, G3 4/4 closed"
+        },
+        {
+          "t": "2026-11-13T01:36:38Z",
+          "criterion": "C4",
+          "result": "pass",
+          "evidence": "grep c\u1ea7n b\u1ed5 sung: only presentation/checkpoint1.tex:438 roles confirmation, listed to user"
+        }
+      ],
+      "status": "closed",
       "history": [],
       "waived_edge": null
     }
   },
-  "clean_streak": 1
+  "clean_streak": 4
 }
