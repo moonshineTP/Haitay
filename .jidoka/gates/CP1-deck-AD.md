@@ -28,3 +28,18 @@
 | G6 | PASS | frame "7. Tiến độ" separates simulated from missing hardware |
 | G7 | PASS | no cross-reference to the report; no elasticity slide |
 | G8 | FAIL | S3 (100 power cuts, 0 lost) and S5 come from the FRAM byte-write model (code/sim/haitay/device.py: 8 KB, 512 slots); flash sector erase and page-program tears are not modelled |
+
+## Verdict v3, 09:16 +07 (deck tex and PDF as of 09:13 +07)
+
+| # | Result | Evidence |
+|---|---|---|
+| G1 | PASS on content, FAIL on drawing | frame "3. Yêu cầu chức năng: 4 use case": UC1-UC4 verb+object, two actors, UC4 include UC3; render at 110 dpi shows the ellipses' left ends outside the system boundary; fix sent to beamer-cp1 |
+| G2 | PASS | unchanged frame |
+| G3 | PASS | unchanged frame |
+| G4 | PASS | slide 3 maps 10 chap1 functions to UC1-UC4 (4+2+3+1), Smart Cube marked optional; N1-N12 unchanged |
+| G5 | PASS | pdftotext: 1.066.000 and 650.000 present, 0 hits for FRAM or FM24 |
+| G6 | PASS | unchanged frame |
+| G7 | PASS | no report cross-reference, no elasticity slide |
+| G8 | PASS | pdftotext shows footnote "S3, S5 dùng mô hình ghi từng byte; xóa sector flash chưa được mô phỏng" |
+
+Debt carried out of this gate (owner: orchestrator, not the deck): code/sim still models FRAM, so the report's flash power-loss claims have no simulation evidence.
