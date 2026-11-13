@@ -42,4 +42,8 @@
 | G7 | PASS | no report cross-reference, no elasticity slide |
 | G8 | PASS | pdftotext shows footnote "S3, S5 dùng mô hình ghi từng byte; xóa sector flash chưa được mô phỏng" |
 
+## Verdict v4, 09:29 +07 (deck tex and PDF as of 09:16 +07): CLOSED, 8/8 PASS
+
+G1 drawing fixed: boundary (1.5,1.0) to (12.6,-6.65); render of PDF page 4 at 110 dpi shows all four ellipses inside the box and «include» inside. Largest overfull vbox 2.9 pt (< 5 pt). G2 to G8 unchanged since v3.
+
 Debt carried out of this gate (owner: orchestrator, not the deck): code/sim still models FRAM, so the report's flash power-loss claims have no simulation evidence.
