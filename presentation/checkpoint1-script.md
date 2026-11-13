@@ -68,8 +68,8 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Gửi lại không tạo bản sao nhờ khóa chính (device_id, seq).
 
 **Trang 9. Thiết bị, chi phí (0:50)**
-- Tổng vật tư 1.066.000 đồng, gồm một bo dự phòng và hai lần in vỏ; dòng có dấu sao là ước lượng.
-- Bỏ bộ dự phòng và MPR121, một bộ hoàn chỉnh khoảng 650.000 đồng, trong khi Stackmat G5 giá 0,9 đến 1,0 triệu và không lưu lịch sử.
+- Tổng vật tư 1.775.000 đồng. Mọi linh kiện có ít nhất hai bản; bo ESP32-S3 và bộ pad có ba bản vì hỏng một trong hai thì không đo giờ được. Dòng có dấu sao là ước lượng.
+- Tính riêng một bộ và bỏ MPR121, một bộ hoàn chỉnh khoảng 650.000 đồng, trong khi Stackmat G5 giá 0,9 đến 1,0 triệu và không lưu lịch sử.
 - Lợi ích chính: không nhập tay từ lượt solve tới biểu đồ, dữ liệu ở lại máy người chơi.
 
 **Trang 10. Công nghệ (0:50)**
@@ -99,6 +99,10 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Ao5 bằng 3,30 s cả trên thiết bị lẫn trên máy tính.
 - Nói thẳng: tín hiệu pad được lập trình sẵn (AUTOPLAY) vì Wokwi không giữ được hai phím cùng lúc; nút +2 và Đồng bộ được bấm thật.
 - Link Wokwi công khai: https://wokwi.com/projects/480535692769291265 (mở được khi chưa đăng nhập).
+
+**Trang tiếp theo. Wokwi, một lượt giải UC1 (0:20)**
+- Hình động 10 khung: giữ tay, GO!, đồng hồ chạy, dừng ở 2,87 s, in dòng `REC`.
+- Hình động chỉ chạy trong Adobe Reader hoặc Okular; nếu máy chiếu dùng trình duyệt, mở GIF trên GitHub hoặc link Wokwi.
 
 **Trang 15. Phân công, khó khăn (0:50)**
 - Phân công: Hưng trưởng nhóm, đặc tả, thiết kế, mô phỏng, frontend dashboard, định nghĩa dữ liệu hiển thị; Giang backend phần cứng và triển khai logic thiết bị; Bảo backend phần mềm và triển khai logic; Minh kiểm thử và QA phần cứng.

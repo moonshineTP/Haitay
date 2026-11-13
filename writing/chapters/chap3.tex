@@ -501,31 +501,31 @@ Thiết bị được lắp từ các module bán sẵn trên bo mạch cắm, v
     \centering
     \small
     \renewcommand{\arraystretch}{1.35}
-    \caption{Danh mục vật tư cho một nguyên mẫu và một bộ dự phòng}
+    \caption{Danh mục vật tư theo quy tắc dự phòng hai và ba bản ($^\dagger$: tối quan trọng, ba bản)}
     \label{tab:bom}
-    \begin{tabular}{>{\raggedright\arraybackslash}m{3.6cm} >{\raggedright\arraybackslash}m{4.6cm} >{\centering\arraybackslash}m{0.7cm} >{\raggedleft\arraybackslash}m{1.7cm} >{\raggedright\arraybackslash}m{3.0cm}}
+    \begin{tabular}{>{\raggedright\arraybackslash}m{3.4cm} >{\raggedright\arraybackslash}m{3.5cm} >{\centering\arraybackslash}m{0.6cm} >{\raggedleft\arraybackslash}m{1.6cm} >{\raggedleft\arraybackslash}m{1.7cm} >{\raggedright\arraybackslash}m{2.7cm}}
         \toprule
         \rowcolor{haitayblue}
-        \textcolor{white}{Linh kiện} & \textcolor{white}{Thông số quyết định} & \textcolor{white}{SL} & \textcolor{white}{Đơn giá (đ)} & \textcolor{white}{Lý do chọn} \\
+        \textcolor{white}{Linh kiện} & \textcolor{white}{Thông số quyết định} & \textcolor{white}{SL} & \textcolor{white}{Đơn giá (đ)} & \textcolor{white}{Thành tiền (đ)} & \textcolor{white}{Lý do chọn} \\
         \midrule
         \rowcolor{haitayblue!8}
-        Bo phát triển ESP32-S3 & Bluetooth LE 5.0, 14 kênh chạm, USB-C & 2 & 295.000 & Mục 2.3; một bo dự phòng \\
-        Màn hình TFT IPS 1,54 inch ST7789 & 240$\times$240, SPI & 1 & 85.000 & Đọc rõ hơn OLED 0,96 inch, không chiếm bus I2C \\
+        Bo phát triển ESP32-S3$^\dagger$ & Bluetooth LE 5.0, 14 kênh chạm, USB-C & 3 & 295.000 & 885.000 & Mục 2.3; bộ não duy nhất \\
+        Màn hình TFT IPS 1,54 inch ST7789 & 240$\times$240, SPI & 2 & 85.000 & 170.000 & Đọc rõ hơn OLED 0,96 inch, không chiếm bus I2C \\
         \rowcolor{haitayblue!8}
-        Phân vùng flash 12~KB trong module & 768 ô, xóa theo sector 4~KB & 1 & 0 & Có sẵn, không phải đặt ngoài \\
-        Module DS3231 kèm pin CR2032 & $\pm 2$~ppm, I2C & 1 & 44.000 & Giữ giờ khi rút cáp \\
+        Phân vùng flash 12~KB trong module & 768 ô, xóa theo sector 4~KB & 3 & 0 & 0 & Có sẵn trong mỗi bo \\
+        Module DS3231 kèm pin CR2032 & $\pm 2$~ppm, I2C & 2 & 44.000 & 88.000 & Giữ giờ khi rút cáp \\
         \rowcolor{haitayblue!8}
-        Module MPR121 & 12 kênh chạm, I2C & 1 & 25.000 & Dự phòng nếu cảm biến có sẵn nhiễu \\
-        Lá đồng, dây, ba nút nhấn & Lá đồng dán, nút lõm 6~mm & 1 & 130.000* & Hai pad và ba nút chức năng \\
+        Module MPR121 & 12 kênh chạm, I2C & 2 & 25.000 & 50.000 & Dự phòng nếu cảm biến có sẵn nhiễu \\
+        Lá đồng, dây, ba nút nhấn$^\dagger$ & Lá đồng dán, nút lõm 6~mm & 3 & 130.000* & 390.000 & Hai pad và ba nút chức năng \\
         \rowcolor{haitayblue!8}
-        Vỏ in 3D & Khoảng 120~g nhựa, hai lần in & 2 & 96.000 & Thân máy dạng thanh ngang \\
+        Vỏ in 3D & Khoảng 120~g nhựa mỗi lần in & 2 & 96.000 & 192.000 & Thân máy dạng thanh ngang \\
         \midrule
-        \multicolumn{3}{l}{\textbf{Tổng (đã gồm số lượng)}} & \textbf{1.066.000} & Chưa gồm vận chuyển \\
+        \multicolumn{4}{l}{\textbf{Tổng}} & \textbf{1.775.000} & Chưa gồm vận chuyển \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Tổng trên gồm một bộ dự phòng và hai lần in vỏ. Bỏ bộ dự phòng và MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 650.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Haitay là timer luyện tập, không nằm trong danh sách timer được WCA chấp thuận, nên nó bổ trợ chứ không thay Stackmat trong thi đấu. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
+Nhóm mua theo một quy tắc dự phòng: mọi linh kiện có ít nhất hai bản, còn hai linh kiện nằm trên đường đo giờ có ba bản. Bo ESP32-S3 và bộ pad thuộc nhóm này, vì hỏng một trong hai thì UC1 dừng hẳn. Ngược lại, mất màn hình thì thời gian vẫn hiện trên dashboard, còn mất DS3231 thì mốc giờ chỉ phải ước lượng như ablation A6. Ba bo cũng vừa với cách chia việc: một bo ở bàn hàn của Giang, một bo cho Minh kiểm thử, một bo giữ nguyên cho buổi demo. Tính riêng một bộ và bỏ MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 650.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Haitay là timer luyện tập, không nằm trong danh sách timer được WCA chấp thuận, nên nó bổ trợ chứ không thay Stackmat trong thi đấu. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
 
 \subsection{Bảng chân kết nối}
 Nhóm chia ngoại vi thành hai bus để màn hình không chiếm bus của đồng hồ thực. Với phương án OLED 128$\times$64 dùng chung bus, một khung hình đầy đủ trên I2C 400~kHz mất khoảng 15 đến 23~ms. Vì vậy màn hình đi trên SPI, còn bus I2C chỉ dành cho DS3231. Nhật ký solve nằm trong flash của module, nên không chiếm chân nào.
@@ -1010,7 +1010,7 @@ Gộp hai phép thử lại, stack được chọn gồm các thành phần dư�
         \node[lb, below right, text=haitayblue, font=\scriptsize\bfseries] at (h) {Haitay: 1.066};
         \draw[dashed, haitayblue] (a) -- (h) -- (c);
     \end{tikzpicture}
-    \caption{Giá và độ phức tạp của ba mức trong báo cáo nghiên cứu nền và của stack được chọn. Giá gồm một bộ dự phòng; giá các mức có phí vận chuyển, giá Haitay thì chưa; trục đứng là ước lượng của nhóm.}
+    \caption{Giá và độ phức tạp của ba mức trong báo cáo nghiên cứu nền và của stack được chọn. Giá gồm một bộ dự phòng; giá các mức có phí vận chuyển, giá Haitay thì chưa; trục đứng là ước lượng của nhóm. Điểm Haitay giữ cùng cơ sở so sánh này, còn kế hoạch mua theo quy tắc dự phòng ở Bảng~\ref{tab:bom} là 1.775.000 đồng.}
     \label{fig:knee}
 \end{figure}
 

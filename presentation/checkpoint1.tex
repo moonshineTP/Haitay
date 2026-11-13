@@ -6,6 +6,7 @@
 \usepackage{lmodern}
 \usepackage{booktabs, array, colortbl}
 \usepackage{tikz}
+\usepackage{animate}
 \usetikzlibrary{arrows.meta,positioning,fit,backgrounds,shapes.geometric}
 \graphicspath{{figures/}}
 
@@ -44,7 +45,7 @@
 \title{Haitay}
 \subtitle{Thiết bị bấm giờ speedcubing, Project Checkpoint 1}
 \author{Nhóm Hai Người}
-\institute{IT4735 IoT và Ứng dụng, lớp 175680, GV: TS. Đặng Tuấn Linh}
+\institute{IT4735 IoT và Ứng dụn}
 \date{13/11/2026}
 
 \begin{document}
@@ -56,7 +57,7 @@
 \column{0.54\textwidth}
 \textbf{Haitay}: bộ bấm giờ hai pad kiểu Stackmat. Thiết bị tự lưu mọi lượt solve, tính Ao5, Ao12, Ao100, rồi đồng bộ qua Bluetooth LE sang máy tính.
 
-{\scriptsize Ao5: trung bình 5 lượt gần nhất, bỏ lượt nhanh nhất và chậm nhất. +2: phạt 2~s. DNF: không hoàn thành.}
+{Ao5: trung bình 5 lượt gần nhất, {\scriptsize \emph{bỏ lượt nhanh nhất và chậm nhất.} +2: phạt 2~s. DNF: không hoàn thành.}}
 
 \medskip
 \small
@@ -73,7 +74,7 @@ Nguyễn Anh Bảo & 20220014 \\
 \column{0.43\textwidth}
 \centering
 \includegraphics[width=\linewidth,height=0.5\textheight,keepaspectratio]{stackmat.jpg}\\
-{\tiny Stackmat, ảnh Protocoldoug, CC0, Wikimedia Commons}
+{\tiny Stackmat, ảnh Protocoldoug}
 
 \medskip
 \alert{\textbf{Đo từng giây, thấy từng tiến bộ.}}
@@ -104,7 +105,7 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
 \end{tabular}
 
 \smallskip
-{\footnotesize Haitay là timer luyện tập, bổ trợ cho timer thi đấu.}
+{\footnotesize Haitay là \emph{timer luyện tập, cá nhân hóa}, bổ trợ cho timer thi đấu.}
 \end{columns}
 \end{frame}
 
@@ -276,31 +277,32 @@ Chỉ ACK phần đã nằm trên đĩa & \texttt{ACK} gửi sau khi giao dịch
 % ================================================================ 5
 \begin{frame}{5. Thiết bị, chi phí và lợi ích}
 \begin{columns}[T]
-\column{0.64\textwidth}
-\footnotesize
-\begin{tabular}{L{4.5cm} C{0.4cm} R{1.5cm}}
+\column{0.66\textwidth}
+\scriptsize
+\begin{tabular}{L{3.6cm} C{0.3cm} R{1.1cm} R{1.2cm}}
 \toprule
-\hrow \hc{Linh kiện} & \hc{SL} & \hc{Đơn giá (đ)} \\
+\hrow \hc{Linh kiện} & \hc{SL} & \hc{Đơn giá} & \hc{Cộng} \\
 \midrule
-\srow Bo ESP32-S3 (1 dự phòng) & 2 & 295.000 \\
-TFT 1,54 inch ST7789, SPI & 1 & 85.000 \\
-\srow Flash trong module, nhật ký 12~KB & 1 & 0 \\
-DS3231 kèm pin CR2032 & 1 & 44.000 \\
-\srow MPR121 (dự phòng cảm biến) & 1 & 25.000 \\
-Lá đồng, dây, ba nút nhấn & 1 & 130.000* \\
-\srow Vỏ in 3D, hai lần in & 2 & 96.000 \\
+\srow Bo ESP32-S3$^\dagger$ & 3 & 295.000 & 885.000 \\
+TFT 1,54 inch ST7789 & 2 & 85.000 & 170.000 \\
+\srow Flash 12~KB trong module & 3 & 0 & 0 \\
+DS3231 kèm pin CR2032 & 2 & 44.000 & 88.000 \\
+\srow MPR121 (dự phòng) & 2 & 25.000 & 50.000 \\
+Lá đồng, dây, ba nút$^\dagger$ & 3 & 130.000* & 390.000 \\
+\srow Vỏ in 3D & 2 & 96.000 & 192.000 \\
 \midrule
-\textbf{Tổng (đã gồm số lượng)} & & \textbf{1.066.000} \\
+\textbf{Tổng (đồng)} & & & \textbf{1.775.000} \\
 \bottomrule
 \end{tabular}
 
-{\tiny Giá quan sát tháng 10/2026, chưa gồm vận chuyển; * là ước lượng.}
-\column{0.33\textwidth}
+{\tiny Mọi linh kiện ít nhất 2 bản; $^\dagger$ tối quan trọng, 3 bản. Giá tháng 10/2026, chưa gồm vận chuyển; * là ước lượng.}
+\column{0.31\textwidth}
 \textbf{Lợi ích dự kiến}
 \begin{itemize}\footnotesize
-\item Một bộ hoàn chỉnh khoảng 650.000 đồng; Stackmat G5 giá 0,9 đến 1,0 triệu.
+\item Một bộ hoàn chỉnh khoảng 650.000 đồng; Stackmat G5 giá 0,9 đến 1,0 triệu (\emph{chưa tính sản xuất hàng loạt.})
 \item Không nhập tay từ lượt solve tới biểu đồ.
 \item Dữ liệu ở lại máy người chơi, không phí dịch vụ.
+\item Mã nguồn mở, kết nối cộng đồng.
 \end{itemize}
 \end{columns}
 \end{frame}
@@ -347,7 +349,7 @@ Linh kiện chưa về đủ, nên nhóm chạy cả luồng bằng \textbf{mô 
         \node[done] (\nm) at (\px,0) {\txt};
     }
     \foreach \a/\b in {s/p, p/d, d/u} { \draw[arr] (\a) -- (\b); }
-    \foreach \px/\txt in {0/{Chưa có: ESP32-S3 và pad thật}, 3.4/{Chưa có: GATT NimBLE, bleak}, 6.8/{Chưa có: dịch vụ FastAPI}, 10.2/{Chưa có: Chart.js và SSE}} {
+    \foreach \px/\txt in {0/{Chưa có: ESP32-S3 và pad thật}, 3.4/{Chưa có: thực hành GATT NimBLE, bleak}, 6.8/{Chưa có: nghiên cứu FastAPI}, 10.2/{Chưa có: hiểu sơ lược Chart.js và SSE}} {
         \node[todo] at (\px,-1.45) {\txt};
     }
 \end{tikzpicture}
@@ -357,8 +359,10 @@ Linh kiện chưa về đủ, nên nhóm chạy cả luồng bằng \textbf{mô 
 Khung xanh: đã chạy trong mô phỏng. Khung xám: việc chuyển sang phần cứng và web.
 \end{frame}
 
+\section{Mô phỏng (WIP)}
+
 % ================================================================ 7b
-\begin{frame}{7. Kết quả mô phỏng: 17/17 phép kiểm tra đạt}
+\begin{frame}{7. Kết quả mô phỏng: các phép kiểm tra}
 \footnotesize
 \begin{tabular}{L{0.7cm} L{4.8cm} L{7.0cm}}
 \toprule
@@ -374,7 +378,7 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 \end{tabular}
 
 \medskip
-\small Lần chạy 13/11/2026, hạt giống cố định: \texttt{python -I code/sim/run\_scenarios.py}\\
+\small Mã chạy theo Repo: \texttt{python -I code/sim/run\_scenarios.py}\\
 \footnotesize S3, S5 dùng mô hình ghi từng byte; xóa sector flash chưa được mô phỏng.
 \end{frame}
 
@@ -393,12 +397,12 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 \end{frame}
 
 % ================================================================ 7d
-\begin{frame}{7. Mô phỏng Wokwi trên ESP32-S3}
+\begin{frame}{7. Mô phỏng: Wokwi trên ESP32-S3}
 \begin{columns}[T]
 \column{0.57\textwidth}
 \centering
 \includegraphics[width=\linewidth]{wokwi_circuit_full.png}\\
-{\scriptsize Mạch: ESP32-S3, hai nút thay pad, ba nút chức năng}
+{\scriptsize Mạch: ESP32-S3, hai nút chạm, ba nút chức năng}
 
 \smallskip
 {\scriptsize \url{https://wokwi.com/projects/480535692769291265}}
@@ -416,6 +420,19 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 \end{columns}
 \end{frame}
 
+% ================================================================ 7e
+\begin{frame}{7. Mô phỏng: Wokwi, một lượt giải (UC1)}
+\centering
+\animategraphics[height=0.6\textheight,controls,loop,autoplay]{1.2}{figures/wokwi/f}{01}{10}
+
+\smallskip
+\small Giữ tay, GO!, đồng hồ chạy, dừng ở 2,87~s, rồi in dòng \texttt{REC}. Pad lập trình sẵn (AUTOPLAY).\\
+\footnotesize \href{https://wokwi.com/projects/480535692769291265}{Mở mô phỏng trên Wokwi}; hình động chạy trong Adobe Reader, Okular.
+\end{frame}
+
+
+\section{Phân công và dự tính}
+
 % ================================================================ 8
 \begin{frame}{8. Phân công, kho mã và khó khăn}
 \begin{columns}[T]
@@ -425,10 +442,10 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 \toprule
 \hrow \hc{Thành viên} & \hc{Phụ trách} \\
 \midrule
-\srow Phạm Gia Hưng & Trưởng nhóm; đặc tả, thiết kế, mô phỏng; frontend dashboard, định nghĩa dữ liệu hiển thị \\
+\srow Phạm Gia Hưng & Trưởng nhóm; đặc tả, thiết kế, mô phỏng; frontend dashboard, định nghĩa dữ liệu \\
 Đỗ Trường Giang & Backend phần cứng: mạch, firmware, triển khai logic thiết bị \\
-\srow Nguyễn Anh Bảo & Backend phần mềm: bridge BLE, API, SQLite, triển khai logic \\
-Dương Thanh Minh & Kiểm thử và QA phần cứng \\
+\srow Nguyễn Anh Bảo & Backend phần mềm: bridge BLE, API, SQLite, triển khai logic hiển thị \\
+Dương Thanh Minh & Mua thiết bị; kiểm thử và QA phần cứng \\
 \bottomrule
 \end{tabular}
 
@@ -444,6 +461,7 @@ Kho mã: \url{https://github.com/moonshineTP/Haitay}
 \end{itemize}
 \end{columns}
 \end{frame}
+
 
 \begin{frame}[standout]
 Cảm ơn thầy và các bạn\\[0.4em]
