@@ -301,10 +301,18 @@
           "evidence": "09:14 re-check after beamer fixes: FRAM/FM24 count 0, overfull 2.93pt, 16 pages"
         }
       ],
-      "status": "open",
-      "history": [],
+      "status": "closed",
+      "history": [
+        {
+          "t": "2026-11-13T02:15:19Z",
+          "override": "User approved 09:15 +07: copper foil, wires and buttons are commodity parts; C2 fail accepted for checkpoint 1",
+          "problems": [
+            "C2: fail"
+          ]
+        }
+      ],
       "waived_edge": null
     }
   },
-  "clean_streak": 4
+  "clean_streak": 0
 }
