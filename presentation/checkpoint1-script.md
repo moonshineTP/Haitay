@@ -7,8 +7,8 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 | 1 | Trang bìa | 0:20 | |
 | 2 | 1. Giới thiệu dự án | 0:40 | |
 | 3 | 2. Vấn đề và người dùng | 0:50 | |
-| 4 | 3. Use case | 0:45 | |
-| 5 | 3. Máy trạng thái UC01 | 0:40 | |
+| 4 | 3. Bốn use case | 0:45 | |
+| 5 | 3. Core logic | 0:40 | |
 | 6 | 3. Phi chức năng | 1:00 | |
 | 7 | 4. Kiến trúc bốn lớp | 1:10 | |
 | 8 | 4. Luồng đồng bộ | 0:50 | |
@@ -39,13 +39,14 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 - Người dùng chính là người tự luyện tại bàn; thiết bị cũng hỗ trợ nhiều người dùng chung nhờ chuyển user, còn PIN trên máy tính là tùy chọn.
 - Haitay là timer luyện tập, bổ trợ cho timer thi đấu.
 
-**Trang 4. Use case (0:45)**
-- Ba tác nhân: Người chơi, Người dùng máy tính, và Dịch vụ đồng bộ nối hai bên.
-- Bảy use case trên thiết bị: bấm giờ, đánh dấu OK, +2, DNF, thống kê nhanh, quản lý lượt solve, session, đồng bộ, chuyển người dùng.
-- Năm use case trên máy tính: quản lý người dùng, gắn session, dashboard, PIN, sao lưu.
-- Nhấn mạnh UC01: giữ hai tay 1,5 giây mới sẵn sàng; UC07 chuyển người dùng luôn gồm đồng bộ trước.
+**Trang 4. Bốn use case (0:45)**
+- Mỗi use case là một nhu cầu của người dùng, đặt tên theo động từ cộng tân ngữ; tác nhân chính là Người chơi, tác nhân phụ là Người chơi kế tiếp.
+- UC1 Bấm giờ lượt giải (trên thiết bị): giữ tay, bấm giờ, chọn OK, +2, DNF, xem Ao, sửa lượt cũ, mở session mới.
+- UC2 Theo dõi tiến bộ (dashboard trên máy tính, lịch sử trên thiết bị) và UC3 Sao lưu lịch sử luyện tập (thiết bị, bridge, máy chủ).
+- UC4 Chuyển thiết bị cho người khác luôn gồm UC3: chỉ xóa thiết bị sau khi đã sao lưu.
+- Dòng nhỏ trong mỗi hình elip là 10 chức năng của Chương 1; Smart Cube là tùy chọn, ngoài phạm vi.
 
-**Trang 5. Máy trạng thái UC01 (0:40)**
+**Trang 5. Core logic: máy trạng thái bấm giờ (0:40)**
 - Đặt hai tay lên hai pad, giữ đủ 1,5 giây thì Sẵn sàng; nhả sớm thì quay về Chờ, chống chạm nhầm.
 - Nhấc ít nhất một tay thì đồng hồ chạy (mốc t0), đặt lại hai tay thì dừng (mốc t1), rồi chọn OK, +2 hoặc DNF.
 - Chống nảy cần ba mẫu ổn định, nhưng mốc giờ lùi về mẫu đầu tiên, nên không cộng thêm độ trễ.
@@ -83,7 +84,7 @@ Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 
 
 **Trang 12. Kết quả 17/17 (0:40)**
 - Lần chạy 13/11/2026 đạt cả 17 phép kiểm tra.
-- Đọc nhanh T1, S2, S3: sai lệch trung bình −0,01 ms, rơi Bluetooth không mất không trùng, 100 lần cắt điện không mất bản ghi đã chốt.
+- Đọc nhanh T1, S2, S3: sai lệch trung bình −0,01 ms, rơi Bluetooth không mất không trùng, 100 lần cắt điện không mất bản ghi đã chốt. Nói rõ: S3, S5 dùng mô hình ghi từng byte, chưa mô phỏng xóa sector flash.
 - Chuyển sang demo.
 
 **Demo mô phỏng (1:00)**, xem mục dưới.

@@ -122,10 +122,10 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
 ]
     \draw[sys] (2.3,1.0) rectangle (12.2,-6.65);
     \node[font=\footnotesize\bfseries, text=haitayblue, anchor=north west] at (2.4,0.95) {Hệ thống Haitay};
-    \node[uc] (u1) at (6.8,-0.6)  {\textbf{UC1 Bấm giờ lượt giải}\\{\scriptsize bấm kiểu Stackmat, thấy ngay kết quả và phong độ}};
-    \node[uc] (u2) at (6.8,-2.3) {\textbf{UC2 Theo dõi tiến bộ}\\{\scriptsize xu hướng Ao5, Ao12, Ao100 qua nhiều tuần}};
-    \node[uc] (u3) at (6.8,-4.0)  {\textbf{UC3 Sao lưu lịch sử luyện tập}\\{\scriptsize không bao giờ mất một lượt giải}};
-    \node[uc] (u4) at (6.8,-5.7) {\textbf{UC4 Chuyển thiết bị cho người khác}\\{\scriptsize dùng chung một timer mà không lẫn dữ liệu}};
+    \node[uc] (u1) at (6.8,-0.7)  {\textbf{UC1 Bấm giờ lượt giải}\\{\scriptsize đo thời gian, thống kê nhanh, quản lý lượt, lưu cục bộ}};
+    \node[uc] (u2) at (6.8,-2.3) {\textbf{UC2 Theo dõi tiến bộ}\\{\scriptsize dashboard tương tác, quản lý theo người dùng}};
+    \node[uc] (u3) at (6.8,-4.0)  {\textbf{UC3 Sao lưu lịch sử luyện tập}\\{\scriptsize kết nối máy tính, đồng bộ, sao lưu dài hạn}};
+    \node[uc] (u4) at (6.8,-5.7) {\textbf{UC4 Chuyển thiết bị cho người khác}\\{\scriptsize chuyển user, chỉ xóa sau khi đã sao lưu}};
     \pic at (0.7,-3.0) {actor}; \node[align=center] at (0.7,-3.55) {Người chơi};
     \pic at (13.6,-5.4) {actor}; \node[align=center] at (13.6,-5.95) {Người chơi\\kế tiếp};
     \foreach \i in {1,...,4} { \draw[lnk] (0.95,-2.65) -- (u\i.west); }
@@ -134,12 +134,11 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
     \node[font=\scriptsize, black!60, anchor=west] at (11.15,-4.85) {«include»};
 \end{tikzpicture}
 
-\smallskip
-\footnotesize Mỗi use case là một nhu cầu. Giữ tay 1,5~s, chọn +2, xem Ao, sửa lượt cũ là các bước bên trong UC1.
+\footnotesize Dòng nhỏ: 10 chức năng của Chương 1. Smart Cube: tùy chọn, ngoài phạm vi.
 \end{frame}
 
 % ================================================================ 3a
-\begin{frame}{3. UC1 Bấm giờ lượt giải: máy trạng thái}
+\begin{frame}{3. Core logic: máy trạng thái bấm giờ}
 \centering
 \begin{tikzpicture}[
     scale=0.85, transform shape,
@@ -375,7 +374,8 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 \end{tabular}
 
 \medskip
-\small Lần chạy 13/11/2026, hạt giống cố định: \texttt{python -I code/sim/run\_scenarios.py}
+\small Lần chạy 13/11/2026, hạt giống cố định: \texttt{python -I code/sim/run\_scenarios.py}\\
+\footnotesize S3, S5 dùng mô hình ghi từng byte; xóa sector flash chưa được mô phỏng.
 \end{frame}
 
 % ================================================================ 7c

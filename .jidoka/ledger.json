@@ -293,6 +293,12 @@
           "criterion": "C3",
           "result": "pass",
           "evidence": "09:11 pdftotext: main, deck, ledger each show 1.066.000 and 650.000; 0 hits for 1.372 or 803.000"
+        },
+        {
+          "t": "2026-11-13T02:14:22Z",
+          "criterion": "C1",
+          "result": "pass",
+          "evidence": "09:14 re-check after beamer fixes: FRAM/FM24 count 0, overfull 2.93pt, 16 pages"
         }
       ],
       "status": "open",
