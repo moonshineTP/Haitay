@@ -56,6 +56,8 @@
 \column{0.54\textwidth}
 \textbf{Haitay}: bộ bấm giờ hai pad kiểu Stackmat. Thiết bị tự lưu mọi lượt solve, tính Ao5, Ao12, Ao100, rồi đồng bộ qua Bluetooth LE sang máy tính.
 
+{\scriptsize Ao5: trung bình 5 lượt gần nhất, bỏ lượt nhanh nhất và chậm nhất. +2: phạt 2~s. DNF: không hoàn thành.}
+
 \medskip
 \small
 \begin{tabular}{L{3.2cm} L{1.9cm}}
@@ -139,6 +141,36 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
 \end{tikzpicture}
 \end{frame}
 
+% ================================================================ 3a
+\begin{frame}{3. UC01 Bấm giờ: máy trạng thái kiểu Stackmat}
+\centering
+\begin{tikzpicture}[
+    scale=0.85, transform shape,
+    font=\scriptsize,
+    st/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=8pt, minimum width=2.1cm, minimum height=0.9cm, font=\footnotesize\bfseries},
+    tr/.style={-{Stealth[length=2mm]}, thick, haitayblue},
+    lb/.style={align=center, fill=white, inner sep=1pt}
+]
+    \node[st] (idle) at (0,0) {Chờ};
+    \node[st] (hold) at (3.6,0) {Đang giữ};
+    \node[st] (ready) at (7.2,0) {Sẵn sàng};
+    \node[st, fill=haitayorange!15, draw=haitayorange] (run) at (10.8,0) {Chạy};
+    \node[st] (stop) at (10.8,-2.8) {Dừng};
+    \draw[tr] (idle) -- node[lb, above=4pt]{hai pad\\cùng chạm} (hold);
+    \draw[tr] (hold) -- node[lb, above=4pt]{giữ đủ\\1,5~s} (ready);
+    \draw[tr] (hold) to[bend left=35] (idle);
+    \node[lb] at (1.8,-1.25) {nhả trước 1,5~s};
+    \draw[tr] (ready) -- node[lb, above=4pt]{nhả ít nhất\\một pad: $t_0$} (run);
+    \draw[tr] (run) -- node[lb, right=6pt]{hai pad cùng\\chạm lại: $t_1$} (stop);
+    \draw[tr] (stop) -| (idle);
+    \node[lb] at (5.4,-3.15) {chọn OK, +2 hoặc DNF; ghi FRAM; cập nhật Ao5, Ao12, Ao100};
+\end{tikzpicture}
+
+\bigskip
+\raggedright\small
+Thời gian solve $= t_1 - t_0$. Cạnh chạm chỉ được công nhận sau ba mẫu ổn định, nhưng mốc giờ lùi về mẫu đầu tiên, nên chống nảy không cộng thêm độ trễ.
+\end{frame}
+
 % ================================================================ 3b
 \begin{frame}{3. Yêu cầu phi chức năng đo được}
 \footnotesize
@@ -149,7 +181,7 @@ Nhiều người dùng chung thiết bị & Chuyển user, dữ liệu tách ri�
 \hrow \hc{Mã} & \hc{Chỉ tiêu} \\
 \midrule
 \srow N1 & Mốc giờ có độ phân giải dưới 1~ms \\
-N2 & Trễ phát hiện chạm 2 đến 10~ms; sai lệch solve trong $\pm 10$~ms \\
+N2 & Trễ phát hiện chạm 2 đến 10~ms; sai lệch $\pm 10$~ms \\
 \srow N3* & Chạm hai tay dưới 1,5~s không làm đồng hồ sẵn sàng \\
 N4 & 0 bản ghi đã chốt bị mất qua 100 lần cắt điện \\
 \srow N5 & 0 mất, 0 trùng khi rơi kết nối Bluetooth \\
@@ -171,9 +203,7 @@ N12* & Module firmware kiểm thử riêng được \\
 \end{tabular}
 \end{columns}
 
-\smallskip
-Mỗi chỉ tiêu có cách kiểm chứng: máy phân tích logic, relay cắt nguồn, ngắt Bluetooth 20 đến 50 lần.\\
-* Ngưỡng do nhóm đề xuất, chờ thống nhất.
+Kiểm chứng: máy phân tích logic, relay cắt nguồn, ngắt Bluetooth 20 đến 50 lần. * Ngưỡng nhóm đề xuất.
 \end{frame}
 
 % ================================================================ 4
@@ -182,17 +212,17 @@ Mỗi chỉ tiêu có cách kiểm chứng: máy phân tích logic, relay cắt 
 \resizebox{\linewidth}{!}{%
 \begin{tikzpicture}[
     font=\footnotesize,
-    own/.style={draw=haitayblue, fill=haitayblue!8, rounded corners=3pt, minimum height=0.85cm, text width=3.3cm, align=center},
-    ext/.style={draw=black!45, fill=black!5, rounded corners=3pt, minimum height=0.85cm, text width=2.5cm, align=center},
+    own/.style={draw=haitayblue, fill=haitayblue!22, rounded corners=3pt, minimum height=0.85cm, text width=3.3cm, align=center},
+    ext/.style={draw=black!45, fill=black!15, rounded corners=3pt, minimum height=0.85cm, text width=2.5cm, align=center},
     lay/.style={font=\footnotesize\bfseries, text=haitayblue, anchor=west, text width=2.5cm, align=left},
     arr/.style={-{Stealth[length=2mm]}, thick, haitayblue},
-    lbl/.style={font=\scriptsize, anchor=east, align=right}
+    lbl/.style={font=\scriptsize, anchor=east, align=right, fill=white, inner sep=1.5pt}
 ]
     \node[lay] at (-0.4,0)    {Thiết bị\\\scriptsize\mdseries lớp cảm nhận};
     \node[lay] at (-0.4,-1.8) {Gateway\\\scriptsize\mdseries lớp mạng};
     \node[lay] at (-0.4,-3.6) {Server\\\scriptsize\mdseries lớp trung gian};
     \node[lay] at (-0.4,-5.4) {Ứng dụng\\\scriptsize\mdseries lớp ứng dụng};
-    \node[ext] (pad) at (3.6,0)  {\textbf{Hai pad lá đồng}\\cảm biến chạm};
+    \node[ext] (pad) at (3.0,0)  {\textbf{Hai pad lá đồng}\\cảm biến chạm};
     \node[own] (mcu) at (8.0,0)  {\textbf{ESP32-S3}\\đo giờ, FRAM, DS3231};
     \node[own] (br)  at (8.0,-1.8) {\textbf{Bridge BLE}\\Python, bleak};
     \node[own] (api) at (8.0,-3.6) {\textbf{Ingest và API}\\Python, FastAPI};
@@ -283,17 +313,18 @@ Lá đồng, dây, ba nút nhấn & 1 & 130.000* \\
 \begin{frame}{6. Lựa chọn công nghệ và lý do}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{0.9}
 \begin{tabular}{L{2.1cm} L{2.2cm} L{2.2cm} L{5.8cm}}
 \toprule
 \hrow \hc{Hạng mục} & \hc{Chọn} & \hc{Không chọn} & \hc{Lý do} \\
 \midrule
-\srow Truyền thông & Bluetooth LE & Wi-Fi, Zigbee & Cách vài mét, vài KB mỗi buổi; USB-C dự phòng \\
+\srow Truyền thông & Bluetooth LE & Wi-Fi, Zigbee & Vài mét, vài KB mỗi buổi; USB-C dự phòng \\
 Vi điều khiển & ESP32-S3 N8 & Pico 2 W; STM32WB55 dự phòng & Chạm và BLE có sẵn; hệ sinh thái trưởng thành \\
-\srow Lưu trên thiết bị & FRAM & EEPROM; flash dự phòng & Ghi tức thì, $10^{14}$ lần ghi, chịu rút cáp \\
-Gateway tới server & HTTP/REST & MQTT & PUBACK chỉ báo broker đã nhận, chưa báo CSDL đã lưu \\
+\srow Lưu trên thiết bị & FRAM & EEPROM; flash dự phòng & Ghi từng byte, không xóa sector; rút cáp chỉ hỏng bản ghi mới nhất \\
+Gateway tới server & HTTP/REST & MQTT & Trả seq đã lưu sau COMMIT; MQTT cần thêm broker \\
 \srow Cơ sở dữ liệu & SQLite & InfluxDB & Vài MB, cần quan hệ và khóa chống trùng \\
 Backend & Python: bleak, FastAPI & Web Bluetooth & Chạy nền, tự nối lại; Web Bluetooth phải bấm mỗi lần \\
-\srow Web & Chart.js, SSE & WebSocket & Chỉ cần đẩy một chiều, SSE tự nối lại \\
+\srow Web & Trang tĩnh Chart.js, SSE & Grafana, WebSocket & Không thêm dịch vụ; chỉ cần đẩy một chiều \\
 \bottomrule
 \end{tabular}
 \end{frame}
@@ -335,9 +366,9 @@ Khung xanh: đã chạy trong mô phỏng. Khung xám: việc chuyển sang ph�
 \footnotesize
 \begin{tabular}{L{0.7cm} L{4.8cm} L{7.0cm}}
 \toprule
-\hrow \hc{Mã} & \hc{Kịch bản bất lợi} & \hc{Kết quả đo được} \\
+\hrow \hc{Mã} & \hc{Kịch bản bất lợi} & \hc{Kết quả trong mô phỏng} \\
 \midrule
-\srow T1 & 400 lượt, trễ cảm biến 2 đến 10~ms & Sai lệch TB $-0{,}01$~ms, SD 3,26~ms, trong $[-7, 7]$~ms \\
+\srow T1 & 400 lượt, trễ cảm biến giả định 2 đến 10~ms & Sai lệch TB $-0{,}01$~ms, SD 3,26~ms, trong $[-7, 7]$~ms \\
 S2 & Rơi BLE sau khung 7, mất một ACK & 3 lần kết nối, 11 bản ghi gửi lại bị loại trùng \\
 \srow S3 & 100 lần cắt điện giữa lúc ghi & 0 bản ghi đã chốt bị mất \\
 S4 & Một khung bị lật một byte & Bị từ chối, lần kết nối sau gửi lại đủ \\
@@ -356,11 +387,11 @@ S7 & Chuyển người dùng A sang B & WIPE bị từ chối khi chưa ACK; A 3
 \column{0.5\textwidth}
 \centering
 \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{sim_timing.png}\\
-\footnotesize Firmware không cộng thêm sai số ngoài độ trễ cảm biến
+\footnotesize Logic đo giờ không cộng sai số ngoài độ trễ giả định; chưa đo trên pad thật
 \column{0.5\textwidth}
 \centering
 \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{sim_rolling.png}\\
-\footnotesize 90 ngày, 3.443 lượt đồng bộ qua giao thức thật, truy vấn từ SQLite
+\footnotesize Dữ liệu sinh 90 ngày, 3.443 lượt, qua khung giao thức thật trên BLE ảo, truy vấn từ SQLite
 \end{columns}
 \end{frame}
 
@@ -401,7 +432,7 @@ Nguyễn Anh Bảo & Dashboard web, kịch bản demo \\
 
 \smallskip
 Phân công đề xuất: \cbs{cần bổ sung: nhóm xác nhận}\\
-Kho mã: \cbs{cần bổ sung: link repository}
+Kho mã: \url{https://github.com/moonshineTP/Haitay}
 \column{0.42\textwidth}
 \textbf{Khó khăn và rủi ro lớn nhất}
 \begin{itemize}\footnotesize

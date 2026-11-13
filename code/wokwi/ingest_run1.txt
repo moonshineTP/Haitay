@@ -1,0 +1,15 @@
+records parsed: 12
+CRC failures: 0
+sync: new 6, dup 0, bad frames 0, acked 6
+rows in SQLite: 6
+Ao5: 3.30 s
+Ao12: undefined
+Ao100: undefined
+database: tmp\sim\wokwi-20261113-082022\pc.sqlite
+['device_id', 'seq', 'session_id', 'time_ms', 'penalty', 'deleted', 'ts', 'ts_estimated', 'edit_seq']
+('HT-WOKWI', 1, 1, 2870, 0, 0, 1794557628, 0, 0)
+('HT-WOKWI', 2, 1, 3240, 0, 0, 1794557674, 0, 0)
+('HT-WOKWI', 3, 1, 2530, 0, 0, 1794557732, 0, 0)
+('HT-WOKWI', 4, 1, 3610, 0, 0, 1794557859, 0, 0)
+('HT-WOKWI', 5, 1, 3050, 0, 0, 1794557895, 0, 0)
+('HT-WOKWI', 6, 1, 2420, 1, 0, 1794557994, 0, 0)

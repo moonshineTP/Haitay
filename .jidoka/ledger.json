@@ -48,9 +48,39 @@
           "criterion": "C5",
           "result": "pass",
           "evidence": "08:12 grep over chap3-5 for em dash, battery power, cloud, WCA legality: 0 hits (pre-merge probe; re-run at merge)"
+        },
+        {
+          "t": "2026-11-13T01:26:53Z",
+          "criterion": "C1",
+          "result": "pass",
+          "evidence": "08:27 fresh run 20261113-082542 17/17: T1 sd 3.26 mean -0.01, S2 dup 11, S3 92 partial 0 lost, S8 ao12 21990, D1 3443 all found in chap4; ablation A1 198/200, A3 28, A4 184 found in chap3+chap4 and equal ablations.json"
+        },
+        {
+          "t": "2026-11-13T01:27:49Z",
+          "criterion": "C2",
+          "result": "pass",
+          "evidence": "08:29 compile.sh exit 0, 58 pages, 0 undefined refs, max overfull hbox 9.78pt"
+        },
+        {
+          "t": "2026-11-13T01:27:50Z",
+          "criterion": "C3",
+          "result": "pass",
+          "evidence": "main.toc: item1->1.1+titlepage, 2->2.1/3.1, 3->1.2/1.3/3.1, 4->3.3, 5->3.4, 6->2.4/3.6, 7->4.4-4.7, 8->5.1-5.3"
+        },
+        {
+          "t": "2026-11-13T01:27:50Z",
+          "criterion": "C4",
+          "result": "pass",
+          "evidence": "chap3 labels tab:elasticity l903, tab:ablation l944, tab:stack l973, tab:decisions l1022; chap4 tab:sim-ablation"
+        },
+        {
+          "t": "2026-11-13T01:27:51Z",
+          "criterion": "C5",
+          "result": "pass",
+          "evidence": "08:29 post-merge grep: 0 em dash, 0 battery-power/cloud hits in chap3-5"
         }
       ],
-      "status": "open",
+      "status": "closed",
       "history": [],
       "waived_edge": null
     },
@@ -101,7 +131,26 @@
           "text": "`RESULTS.md` separates what ran for real from anything scripted or synthetic | read the file | quoted section"
         }
       },
-      "records": [],
+      "records": [
+        {
+          "t": "2026-11-13T01:26:54Z",
+          "criterion": "C2",
+          "result": "pass",
+          "evidence": "RESULTS.md + ingest_run1.txt: 12 REC, 0 CRC fail, 6 rows = 6 distinct seq; independent verify pass ran in wokwi session (rerun here pending)"
+        },
+        {
+          "t": "2026-11-13T01:26:54Z",
+          "criterion": "C1",
+          "result": "pass",
+          "evidence": "writing/figures/wokwi_circuit.png shows running circuit, OLED Ao5 3.30"
+        },
+        {
+          "t": "2026-11-13T01:26:55Z",
+          "criterion": "C4",
+          "result": "pass",
+          "evidence": "RESULTS.md table 'What ran, real versus scripted' marks AUTOPLAY pad samples as scripted"
+        }
+      ],
       "status": "open",
       "history": [],
       "waived_edge": null
@@ -133,5 +182,5 @@
       "waived_edge": null
     }
   },
-  "clean_streak": 0
+  "clean_streak": 1
 }

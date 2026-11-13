@@ -18,7 +18,9 @@ Wokwi cannot simulate capacitive touch or BLE, so the two pads are pushbuttons a
 | Session | 16 | Commit a pending solve, then start a new session |
 | Dong bo | 17 | Commit a pending solve, then resend all unsynced records as `REC` lines |
 
-After a stop, release a pad and touch both again (or press Dong bo) to commit the solve and print its `REC` line. Keyboard bindings in `diagram.json` let you hold both pads at once: A = left pad, L = right pad, 1 = Chon, 2 = Session, 3 = Dong bo.
+After a stop, release a pad and touch both again (or press Dong bo) to commit the solve and print its `REC` line. Keyboard bindings in `diagram.json` let you hold both pads at once: A = left pad, L = right pad, 1 = Chon, 2 = Session, 3 = Dong bo. Click the canvas first so it has keyboard focus.
+
+`sketch.ino` ships with `#define AUTOPLAY` on: six scripted solves of known length drive the pad samples, while the real pad buttons stay OR-ed in. Comment the define out for fully manual play. `RESULTS.md` records why and what the run showed.
 
 ## Ingest the serial output
 

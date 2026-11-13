@@ -1,26 +1,27 @@
 # Kịch bản trình bày Checkpoint 1
 
-Bài nói dài khoảng 12 phút cho 15 trang của `checkpoint1.pdf`, cộng 1 phút demo mô phỏng. Mỗi trang ghi thời lượng và các ý cần nói, còn số liệu đều lấy từ báo cáo `writing/main.pdf`.
+Bài nói dài khoảng 12 phút cho 16 trang của `checkpoint1.pdf`, cộng 1 phút demo mô phỏng. Mỗi trang ghi thời lượng và các ý cần nói, còn số liệu đều lấy từ báo cáo `writing/main.pdf`.
 
 | Trang | Nội dung | Thời lượng | Người nói |
 |---|---|---|---|
 | 1 | Trang bìa | 0:20 | [cần bổ sung] |
 | 2 | 1. Giới thiệu dự án | 0:40 | |
 | 3 | 2. Vấn đề và người dùng | 0:50 | |
-| 4 | 3. Use case | 1:00 | |
-| 5 | 3. Phi chức năng | 1:00 | |
-| 6 | 4. Kiến trúc bốn lớp | 1:10 | |
-| 7 | 4. Luồng đồng bộ | 0:50 | |
-| 8 | 5. Thiết bị, chi phí | 0:50 | |
-| 9 | 6. Công nghệ | 0:50 | |
-| 10 | 7. Luồng đầu cuối | 0:50 | |
-| 11 | 7. Kết quả 17/17 | 0:40 | |
+| 4 | 3. Use case | 0:45 | |
+| 5 | 3. Máy trạng thái UC01 | 0:40 | |
+| 6 | 3. Phi chức năng | 1:00 | |
+| 7 | 4. Kiến trúc bốn lớp | 1:10 | |
+| 8 | 4. Luồng đồng bộ | 0:50 | |
+| 9 | 5. Thiết bị, chi phí | 0:50 | |
+| 10 | 6. Công nghệ | 0:50 | |
+| 11 | 7. Luồng đầu cuối | 0:50 | |
+| 12 | 7. Kết quả 17/17 | 0:40 | |
 | (demo) | Chạy mô phỏng | 1:00 | |
-| 12 | 7. Hình kết quả | 0:40 | |
-| 13 | 7. Wokwi | 0:30 | |
-| 14 | 8. Phân công, khó khăn | 0:50 | |
-| 15 | Cảm ơn | 0:10 | |
-| | **Tổng** | **12:10** | |
+| 13 | 7. Hình kết quả | 0:40 | |
+| 14 | 7. Wokwi | 0:30 | |
+| 15 | 8. Phân công, khó khăn | 0:50 | |
+| 16 | Cảm ơn | 0:10 | |
+| | **Tổng** | **12:35** | |
 
 ## Từng trang
 
@@ -38,66 +39,71 @@ Bài nói dài khoảng 12 phút cho 15 trang của `checkpoint1.pdf`, cộng 1 
 - Người dùng chính là người tự luyện tại bàn; thiết bị cũng hỗ trợ nhiều người dùng chung nhờ chuyển user, còn PIN trên máy tính là tùy chọn.
 - Haitay là timer luyện tập, bổ trợ cho timer thi đấu.
 
-**Trang 4. Use case (1:00)**
+**Trang 4. Use case (0:45)**
 - Ba tác nhân: Người chơi, Người dùng máy tính, và Dịch vụ đồng bộ nối hai bên.
 - Bảy use case trên thiết bị: bấm giờ, đánh dấu OK, +2, DNF, thống kê nhanh, quản lý lượt solve, session, đồng bộ, chuyển người dùng.
 - Năm use case trên máy tính: quản lý người dùng, gắn session, dashboard, PIN, sao lưu.
 - Nhấn mạnh UC01: giữ hai tay 1,5 giây mới sẵn sàng; UC07 chuyển người dùng luôn gồm đồng bộ trước.
 
-**Trang 5. Phi chức năng (1:00)**
-- Mười chỉ tiêu N1 đến N10, mỗi chỉ tiêu có con số và cách kiểm chứng.
+**Trang 5. Máy trạng thái UC01 (0:40)**
+- Đặt hai tay lên hai pad, giữ đủ 1,5 giây thì Sẵn sàng; nhả sớm thì quay về Chờ, chống chạm nhầm.
+- Nhấc ít nhất một tay thì đồng hồ chạy (mốc t0), đặt lại hai tay thì dừng (mốc t1), rồi chọn OK, +2 hoặc DNF.
+- Chống nảy cần ba mẫu ổn định, nhưng mốc giờ lùi về mẫu đầu tiên, nên không cộng thêm độ trễ.
+
+**Trang 6. Phi chức năng (1:00)**
+- Mười hai chỉ tiêu N1 đến N12, mỗi chỉ tiêu có con số và cách kiểm chứng.
 - Tách hai con số về thời gian: độ phân giải dưới 1 ms (N1) và độ trễ phát hiện chạm 2 đến 10 ms (N2).
 - Toàn vẹn dữ liệu: 0 bản ghi đã chốt bị mất qua 100 lần cắt điện, 0 mất và 0 trùng khi rơi Bluetooth.
-- N7 và N8 là đề xuất, nhóm sẽ chốt trước khi đo.
+- Các dòng có dấu sao (N3, N7, N8, N9, N11, N12) là ngưỡng nhóm đề xuất, sẽ chốt trước khi đo.
 
-**Trang 6. Kiến trúc bốn lớp (1:10)**
+**Trang 7. Kiến trúc bốn lớp (1:10)**
 - Lớp cảm nhận: hai pad lá đồng nối kênh chạm của ESP32-S3; firmware đo giờ, ghi FRAM, giữ giờ bằng DS3231.
 - Chặng thiết bị tới gateway là Bluetooth LE, dịch vụ GATT: notify bản ghi, write lệnh.
 - Gateway là bridge Python dùng bleak, gửi HTTP/REST JSON tới dịch vụ FastAPI chỉ nghe trên 127.0.0.1; dữ liệu nằm trong SQLite.
 - Dashboard web truy vấn bằng REST và nhận báo dữ liệu mới qua SSE; ba lớp trên cùng chạy trên máy tính người chơi.
 
-**Trang 7. Luồng đồng bộ (0:50)**
+**Trang 8. Luồng đồng bộ (0:50)**
 - Thiết bị lưu trước, gửi sau: mỗi khung LOG mang 11 bản ghi 16 byte.
 - Máy tính chỉ gửi ACK sau khi SQLite COMMIT, nên thiết bị không bao giờ xóa thứ máy tính chưa lưu.
 - Gửi lại không tạo bản sao nhờ khóa chính (device_id, seq).
 
-**Trang 8. Thiết bị, chi phí (0:50)**
+**Trang 9. Thiết bị, chi phí (0:50)**
 - Tổng vật tư 1.372.000 đồng, gồm một bo dự phòng và hai lần in vỏ; dòng có dấu sao là ước lượng.
-- Một bộ hoàn chỉnh khoảng 0,6 triệu đồng, trong khi Stackmat G5 giá 0,9 đến 1,0 triệu và không lưu lịch sử.
+- Bỏ bộ dự phòng và MPR121, một bộ hoàn chỉnh khoảng 803.000 đồng, trong khi Stackmat G5 giá 0,9 đến 1,0 triệu và không lưu lịch sử.
 - Lợi ích chính: không nhập tay từ lượt solve tới biểu đồ, dữ liệu ở lại máy người chơi.
 
-**Trang 9. Công nghệ (0:50)**
+**Trang 10. Công nghệ (0:50)**
 - Bluetooth LE vì thiết bị và máy tính cách vài mét, mỗi buổi chỉ vài KB, máy tính có sẵn bộ thu; USB-C làm dự phòng.
 - FRAM vì ghi tức thì và chịu rút cáp; HTTP/REST thay MQTT vì PUBACK chỉ báo broker đã nhận, chưa báo cơ sở dữ liệu đã lưu.
 - SQLite vì dữ liệu vài MB, cần quan hệ và khóa chống trùng; SSE vì dashboard chỉ cần nhận một chiều.
 
-**Trang 10. Luồng đầu cuối (0:50)**
+**Trang 11. Luồng đầu cuối (0:50)**
 - Linh kiện chưa về đủ, nên nhóm chạy toàn bộ luồng cảm biến, giao thức, cơ sở dữ liệu, giao diện bằng mô phỏng Python.
 - Khung xanh là phần đã chạy; logic bản ghi, CRC, đồng bộ và lược đồ là mã thật sẽ chuyển sang firmware và máy chủ.
 - Khung xám là việc còn lại: phần cứng thật, GATT với bleak, FastAPI, Chart.js.
 
-**Trang 11. Kết quả 17/17 (0:40)**
+**Trang 12. Kết quả 17/17 (0:40)**
 - Lần chạy 13/11/2026 đạt cả 17 phép kiểm tra.
 - Đọc nhanh T1, S2, S3: sai lệch trung bình −0,01 ms, rơi Bluetooth không mất không trùng, 100 lần cắt điện không mất bản ghi đã chốt.
 - Chuyển sang demo.
 
 **Demo mô phỏng (1:00)**, xem mục dưới.
 
-**Trang 12. Hình kết quả (0:40)**
+**Trang 13. Hình kết quả (0:40)**
 - Hình trái: sai lệch đo giờ đối xứng quanh 0, firmware không cộng thêm sai số ngoài độ trễ cảm biến.
 - Hình phải: 90 ngày, 3.443 lượt đã đi qua giao thức thật vào SQLite; Ao100 cho thấy rõ xu hướng tiến bộ.
 
-**Trang 13. Wokwi (0:30)**
+**Trang 14. Wokwi (0:30)**
 - Sketch ESP32-S3 trên Wokwi thay hai pad bằng nút nhấn, vì Wokwi không mô phỏng cảm ứng điện dung và Bluetooth.
 - Mỗi lượt đã chốt in ra một dòng `REC`, rồi `wokwi_ingest.py` nạp vào SQLite.
 - [cần bổ sung] Nếu chưa có ảnh Wokwi, nói rõ đây là bước kế tiếp (mốc M1).
 
-**Trang 14. Phân công, khó khăn (0:50)**
+**Trang 15. Phân công, khó khăn (0:50)**
 - Phân công theo lớp kiến trúc: Hưng điều phối và mô phỏng, Giang thiết bị, Minh backend, Bảo dashboard. [cần bổ sung: nhóm xác nhận]
-- Kho mã chung, nhánh riêng, xem chéo trước khi hợp nhất. [cần bổ sung: link repository]
-- Khó khăn lớn nhất: FRAM phải đặt ngoài 1 đến 3 tuần, Bluetooth LE dễ trễ tiến độ, đo trễ tuyệt đối cần thiết bị tham chiếu.
+- Kho mã chung github.com/moonshineTP/Haitay, nhánh riêng, xem chéo trước khi hợp nhất.
+- Khó khăn và rủi ro lớn nhất: FRAM phải đặt ngoài 1 đến 3 tuần, Bluetooth LE dễ trễ tiến độ, đo trễ tuyệt đối cần thiết bị tham chiếu, cảm biến chạm có thể kích hoạt sai khi tay ẩm.
 
-**Trang 15. Cảm ơn (0:10)**
+**Trang 16. Cảm ơn (0:10)**
 - Cảm ơn thầy và các bạn, nhóm sẵn sàng nhận câu hỏi.
 
 ## Demo mô phỏng (1 phút)
@@ -109,5 +115,5 @@ Chuẩn bị trước khi lên: mở terminal ở thư mục `Haitay/`, phóng t
    python -I code/sim/run_scenarios.py
    ```
 2. Khi kết quả hiện ra, chỉ vào dòng tổng `17/17` và ba dòng T1, S2, S3.
-3. Mở `code/sim/out/results.json` nếu thầy muốn xem số liệu thô, hoặc quay lại trang 12 để xem hai hình vừa được vẽ lại.
-4. Phương án dự phòng: nếu máy lỗi, chiếu trang 11 và 12, vì cả hai lấy từ lần chạy 13/11/2026.
+3. Mở `code/sim/out/results.json` nếu thầy muốn xem số liệu thô, hoặc quay lại trang 13 để xem hai hình vừa được vẽ lại.
+4. Phương án dự phòng: nếu máy lỗi, chiếu trang 12 và 13, vì cả hai lấy từ lần chạy 13/11/2026.

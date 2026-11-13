@@ -1,0 +1,64 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce3808,len:0x370
+load:0x403c9700,len:0x900
+load:0x403cc700,len:0x2364
+entry 0x403c98ac
+# Haitay Wokwi sim, record format v1
+# AUTOPLAY: 6 scripted solves on the pads
+# crc selftest 29b1 OK
+# oled ok, rtc ok
+# state ARMING
+# state READY
+# state RUNNING
+# state STOPPED
+# time 2.87 (2870 ms)
+REC 01000000360b0000bcc6f66a0100a9d1
+# ao5 - ao12 - ao100 -
+# state ARMING
+# state READY
+# state RUNNING
+# state STOPPED
+# time 3.24 (3240 ms)
+REC 02000000a80c0000eac6f66a01008259
+# ao5 - ao12 - ao100 -
+# state ARMING
+# state READY
+# state RUNNING
+# state STOPPED
+# time 2.53 (2530 ms)
+REC 03000000e209000024c7f66a01003627
+# ao5 - ao12 - ao100 -
+# state ARMING
+# state READY
+# state RUNNING
+# state STOPPED
+# time 3.61 (3610 ms)
+REC 040000001a0e0000a3c7f66a0100048b
+# ao5 - ao12 - ao100 -
+# state ARMING
+# state READY
+# state RUNNING
+# state STOPPED
+# time 3.05 (3050 ms)
+REC 05000000ea0b0000c7c7f66a0100a5e5
+# ao5 3.05 ao12 - ao100 -
+# state ARMING
+# state READY
+# state RUNNING
+# state STOPPED
+# time 2.42 (2420 ms)
+# penalty +2
+REC 06000000740900002ac8f66a01019457
+# ao5 3.30 ao12 - ao100 -
+# state IDLE
+# sync: resending 6 records
+REC 01000000360b0000bcc6f66a0100a9d1
+REC 02000000a80c0000eac6f66a01008259
+REC 03000000e209000024c7f66a01003627
+REC 040000001a0e0000a3c7f66a0100048b
+REC 05000000ea0b0000c7c7f66a0100a5e5
+REC 06000000740900002ac8f66a01019457

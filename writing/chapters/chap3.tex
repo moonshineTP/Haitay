@@ -128,7 +128,7 @@ Ba use case dưới đây mang rủi ro cao nhất, nên được đặc tả đ
 {Dịch vụ đồng bộ (khởi tạo), Người chơi (bấm nút Đồng bộ)}
 {Thiết bị và máy tính đã ghép đôi Bluetooth; dịch vụ trên máy tính đang chạy}
 {1. Dịch vụ kết nối, đọc Info và State. 2. Dịch vụ gửi \texttt{SET\_TIME}. 3. Dịch vụ gửi \texttt{SYNC}. 4. Thiết bị gửi các khung LOG từ \texttt{last\_ack}$\,+\,1$. 5. Với mỗi khung, dịch vụ kiểm tra CRC và tính liên tục của seq, lưu trong một giao dịch, rồi gửi \texttt{ACK}. 6. Thiết bị gửi khung END.}
-{4a. Kết nối rơi: dịch vụ kết nối lại và quay về bước 1; thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. 5a. Khung sai CRC hoặc lệch seq: dịch vụ ngừng ACK và quay về bước 3. 5b. Bản ghi đã có trong CSDL: bỏ qua theo khóa \texttt{(device\_id, seq)}.}
+{4a. Kết nối rơi: dịch vụ kết nối lại và quay về bước 1; thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. 5a. Khung chứa bản ghi sai CRC hoặc lệch seq: dịch vụ ngừng ACK và quay về bước 3. 5b. Bản ghi đã có trong CSDL: bỏ qua theo khóa \texttt{(device\_id, seq)}.}
 {Mọi bản ghi tới seq cuối nằm trong SQLite; \texttt{last\_ack} của thiết bị bằng seq cuối}
 {Đồng bộ không mất dữ liệu khi gián đoạn; sao lưu dài hạn}
 
@@ -340,8 +340,8 @@ Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đo�
         }
         \node[note, anchor=west] at (0.15,-0.9) {1. Dừng đồng hồ, chọn OK, +2 hoặc DNF\\2. Ghi 16 byte vào FRAM: bản ghi đã chốt};
         \draw[msg] (4.2,-1.9) -- node[above]{đọc Info, State} (0,-1.9);
-        \draw[msg] (4.2,-2.6) -- node[above]{write \texttt{SET\_TIME(unix)}, write \texttt{SYNC}} (0,-2.6);
-        \draw[msg] (0,-3.3) -- node[above]{notify LOG: 11 bản ghi, seq $k+1 \ldots k+11$} (4.2,-3.3);
+        \draw[msg] (4.2,-2.6) -- node[above, font=\tiny]{write \texttt{SET\_TIME(unix)}, \texttt{SYNC}} (0,-2.6);
+        \draw[msg] (0,-3.3) -- node[above, font=\tiny]{notify LOG: 11 bản ghi, seq $k+1 \ldots k+11$} (4.2,-3.3);
         \draw[msg] (4.2,-4.0) -- node[above]{POST \texttt{/api/v1/ingest}} (8.4,-4.0);
         \draw[msg] (8.4,-4.7) -- node[above]{BEGIN, INSERT, COMMIT} (12.6,-4.7);
         \draw[msg] (12.6,-5.4) -- node[above]{đã ghi xuống đĩa} (8.4,-5.4);
@@ -349,13 +349,13 @@ Một lượt solve đi từ cú chạm tay tới biểu đồ qua hai giai đo�
         \draw[msg] (4.2,-6.8) -- node[above]{write \texttt{ACK}$(k+11)$} (0,-6.8);
         \node[note, anchor=west] at (0.15,-7.5) {3. Lưu \texttt{last\_ack} vào NVS; các ô có seq $\le k+11$ được phép ghi đè};
         \node[note, anchor=center, text width=11.5cm] at (6.3,-8.6) {Lặp lại cho đến khung END. Nếu kết nối rơi hoặc một khung sai CRC, bridge dừng gửi ACK, kết nối lại và thiết bị gửi tiếp từ \texttt{last\_ack}$\,+\,1$. Bản ghi trùng bị loại theo khóa \texttt{(device\_id, seq)}.};
-        \draw[msg, dashed] (8.4,-9.7) -- node[above]{SSE: có dữ liệu mới, dashboard vẽ lại} (12.6,-9.7);
+        \node[note, anchor=center, text width=11.5cm] at (6.3,-9.6) {Sau mỗi lô, dịch vụ ingest phát một sự kiện SSE; dashboard trong trình duyệt nhận sự kiện và tải lại khoảng đang xem.};
     \end{tikzpicture}
-    \caption{Biểu đồ tuần tự của UC06 cho một lô bản ghi. Mũi tên nét đứt là thông báo cho dashboard.}
+    \caption{Biểu đồ tuần tự của UC06 cho một lô bản ghi}
     \label{fig:seq}
 \end{figure}
 
-Ba bất biến giữ cho luồng này không mất và không nhân đôi dữ liệu. Mỗi bất biến được bảo đảm bởi đúng một cơ chế, nên kiểm thử chỉ cần nhắm vào cơ chế đó.
+Ba bất biến giữ cho luồng này không mất và không nhân đôi dữ liệu. Mỗi bất biến có một cơ chế chính, nên kiểm thử chỉ cần nhắm vào cơ chế đó; riêng bản ghi sửa gửi lại được chặn thêm bằng trường \texttt{edit\_seq}.
 
 \begin{table}[H]
     \centering
@@ -518,7 +518,7 @@ Thiết bị được lắp từ các module bán sẵn trên bo mạch cắm, v
     \end{tabular}
 \end{table}
 
-Tổng trên gồm một bộ dự phòng và hai lần in vỏ. Bỏ bộ dự phòng và MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 803.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
+Tổng trên gồm một bộ dự phòng và hai lần in vỏ. Bỏ bộ dự phòng và MPR121, một bộ Haitay hoàn chỉnh theo bảng trên tốn khoảng 803.000 đồng, trong khi Stackmat G5 có giá 0,9 đến 1,0 triệu đồng và không tự lưu lịch sử. Haitay là timer luyện tập, không nằm trong danh sách timer được WCA chấp thuận, nên nó bổ trợ chứ không thay Stackmat trong thi đấu. Lợi ích chính nằm ở thời gian của người chơi: mỗi lượt solve đi tới biểu đồ mà không cần nhập tay, cắm cáp hay tự tính trung bình. Dữ liệu cũng ở lại trên máy tính của người chơi, nên hệ thống không phát sinh phí dịch vụ.
 
 \subsection{Bảng chân kết nối}
 Nhóm chia ngoại vi thành hai bus để màn hình không bao giờ chặn việc ghi bản ghi. Với phương án OLED 128$\times$64 dùng chung bus, một khung hình đầy đủ trên I2C 400~kHz mất khoảng 15 đến 23~ms, đủ lâu để một lần rút cáp rơi đúng vào lúc FRAM đang chờ bus. Vì vậy màn hình đi trên SPI, còn FRAM và DS3231 dùng chung bus I2C chỉ dành cho dữ liệu.
@@ -553,7 +553,7 @@ Nhóm chia ngoại vi thành hai bus để màn hình không bao giờ chặn vi
         15 & GPIO vào & Nút Chọn & Kéo lên trong, mức thấp khi nhấn; OK, +2, DNF \\
         16 & GPIO vào & Nút Session & Kéo lên trong; mở session mới, xem lịch sử \\
         \rowcolor{haitayblue!8}
-        17 & GPIO vào & Nút Đồng bộ & Kéo lên trong; yêu cầu đồng bộ, xóa lượt cuối \\
+        17 & GPIO vào & Nút Đồng bộ & Kéo lên trong; nhấn ngắn: yêu cầu đồng bộ; nhấn giữ 2~s: xóa lượt cuối, có xác nhận \\
         19, 20 & USB D$-$, D$+$ & Cổng USB-C & Cấp nguồn 5~V, đường dữ liệu dự phòng \\
         \bottomrule
     \end{tabular}
@@ -573,19 +573,19 @@ Một số chân được cố ý tránh. GPIO 0, 3, 45 và 46 là chân strappi
         \node[mod] (pl) at (-5,1.6) {Pad trái\\lá đồng};
         \node[mod] (pr) at (-5,-0.2) {Pad phải\\lá đồng};
         \node[mod] (btn) at (-5,-2.0) {Ba nút nhấn\\Chọn, Session, Đồng bộ};
-        \node[mod] (fram) at (5,2.0) {FRAM FM24CL64B\\0x50};
-        \node[mod] (rtc) at (5,0.6) {DS3231 và CR2032\\0x68};
-        \node[mod] (tft) at (5,-0.9) {TFT ST7789\\240$\times$240};
-        \node[mod] (usb) at (5,-2.3) {Cổng USB-C\\5~V};
+        \node[mod] (fram) at (6.2,2.0) {FRAM FM24CL64B\\0x50};
+        \node[mod] (rtc) at (6.2,0.6) {DS3231 và CR2032\\0x68};
+        \node[mod] (tft) at (6.2,-0.9) {TFT ST7789\\240$\times$240};
+        \node[mod] (usb) at (6.2,-2.3) {Cổng USB-C\\5~V};
         \draw[bus] (pl) -- node[above]{GPIO4} (mcu.west |- pl);
         \draw[bus] (pr) -- node[above]{GPIO5} (mcu.west |- pr);
         \draw[bus] (btn) -- node[above]{GPIO15, 16, 17} (mcu.west |- btn);
-        \draw[bus] (mcu.east |- fram) -- node[above]{I2C0: GPIO8, 9} (fram);
-        \draw[bus] (3.2,2.0) |- (rtc);
-        \draw[bus] (mcu.east |- tft) -- node[above]{SPI2: GPIO10 đến 14, 21} (tft);
-        \draw[pwr] (usb) -- node[above]{5~V, GPIO19, 20} (mcu.east |- usb);
+        \draw[bus] (mcu.east |- fram) -- node[above, font=\tiny]{I2C0: GPIO8, 9} (fram);
+        \draw[bus] (4.2,2.0) |- (rtc);
+        \draw[bus] (mcu.east |- tft) -- node[above, font=\tiny]{SPI2: GPIO10 đến 14, 21} (tft);
+        \draw[pwr] (usb) -- node[above, font=\tiny]{5~V, GPIO19, 20} (mcu.east |- usb);
     \end{tikzpicture}
-    \caption{Sơ đồ đấu nối mức khối. Mọi module dùng chung đất và nguồn 3,3~V từ bộ ổn áp trên bo ESP32-S3.}
+    \caption{Sơ đồ đấu nối mức khối. Mọi module dùng chung đất và nguồn 3,3~V từ bộ ổn áp trên bo ESP32-S3; bus I2C0 có điện trở kéo lên 4,7~k$\Omega$.}
     \label{fig:wiring}
 \end{figure}
 
@@ -619,7 +619,9 @@ Firmware viết trên ESP-IDF với FreeRTOS, và được chia thành các modu
     \end{tabular}
 \end{table}
 
-Chống nảy và độ chính xác thường kéo nhau theo hai hướng ngược chiều, vì chờ tín hiệu ổn định đồng nghĩa với ghi mốc muộn hơn. Firmware tách hai việc này ra. Tác vụ \texttt{timing} xét trạng thái chạm mỗi 1~ms, và một cạnh chỉ được công nhận khi tín hiệu giữ nguyên trong ba mẫu liên tiếp, nhưng mốc giờ ghi lại là mẫu \emph{đầu tiên} của chuỗi ổn định đó. Nhờ vậy, bộ lọc loại được những lần chạm chập chờn mà không cộng thêm độ trễ vào thời gian solve.
+Module \texttt{stats} tính AoN kiểu csTimer, giống hệt phía máy tính. Thời gian hiệu dụng là $t$, là $t + 2000$~ms với +2 và là vô cùng với DNF. Hàm bỏ $\lceil 0{,}05n \rceil$ giá trị ở mỗi đầu (1 với Ao5 và Ao12, 5 với Ao100) rồi lấy trung bình phần còn lại; nếu giá trị lớn nhất còn lại là DNF thì AoN là DNF, còn chưa đủ $n$ lượt thì AoN chưa xác định. Mọi bản ghi sửa được áp trước khi tính.
+
+Chống nảy và độ chính xác thường kéo nhau theo hai hướng ngược chiều, vì chờ tín hiệu ổn định đồng nghĩa với ghi mốc muộn hơn. Firmware tách hai việc này ra. Hàm ngắt ghi mốc GPTimer cho mỗi cạnh, còn tác vụ \texttt{timing} được \texttt{esp\_timer} đánh thức mỗi 1~ms và chỉ công nhận cạnh khi trạng thái giữ nguyên ba lần xét liên tiếp. Mốc giờ dùng để tính thời gian là mốc hàm ngắt ghi ở cạnh \emph{đầu tiên} của chuỗi ổn định đó, nên vẫn giữ độ phân giải dưới 1~ms. Nhờ vậy, bộ lọc loại được những lần chạm chập chờn mà không cộng thêm độ trễ vào thời gian solve.
 
 \subsection{Cấu trúc bản ghi}
 \label{sec:record}
@@ -651,7 +653,7 @@ Bản ghi trên thiết bị phải nhỏ, tự kiểm tra được và sống s
 
 Nhật ký được thiết kế theo kiểu chỉ ghi thêm. Khi người chơi đổi một lượt cũ thành +2 hoặc xóa nó, thiết bị không sửa ô cũ mà ghi một bản ghi sửa mới trỏ tới seq của lượt đó. Nhờ quy tắc này, một lần rút cáp chỉ có thể làm hỏng bản ghi mới nhất, vốn chưa được chốt, và CRC sẽ phát hiện nó. Phương án sửa tại chỗ bị loại vì một lần ghi dở ở byte \texttt{flags} sẽ phá hỏng một bản ghi đã chốt từ trước.
 
-FRAM được chia thành 512 ô, và bản ghi seq $n$ nằm ở ô $(n-1) \bmod 512$. Vòng đệm không có phần đầu lưu con trỏ, vì cập nhật cùng lúc bản ghi và con trỏ sẽ tạo ra một khoảnh khắc hai nơi không khớp nhau. Thay vào đó, mỗi lần khởi động firmware quét 512 ô, coi seq lớn nhất có CRC hợp lệ là đầu vòng đệm. Chỉ hai giá trị nhỏ nằm trong NVS của flash: \texttt{last\_ack} và \texttt{boot\_id}. NVS của ESP-IDF tự bảo đảm tính nguyên tử khi ghi, và hai giá trị này chỉ đổi khi đồng bộ hoặc khi bật máy.
+FRAM được chia thành 512 ô, và bản ghi seq $n$ nằm ở ô $(n-1) \bmod 512$. Vòng đệm không có phần đầu lưu con trỏ, vì cập nhật cùng lúc bản ghi và con trỏ sẽ tạo ra một khoảnh khắc hai nơi không khớp nhau. Thay vào đó, mỗi lần khởi động firmware quét 512 ô, coi seq lớn nhất có CRC hợp lệ là đầu vòng đệm. Đầu vòng đệm lấy giá trị lớn hơn giữa seq đó và \texttt{last\_ack}, nên seq vẫn tăng sau \texttt{WIPE} hoặc khi vòng đệm trống. Chỉ hai giá trị nhỏ nằm trong NVS của flash: \texttt{last\_ack} và \texttt{boot\_id}. NVS của ESP-IDF tự bảo đảm tính nguyên tử khi ghi, và hai giá trị này chỉ đổi khi đồng bộ hoặc khi bật máy.
 
 \subsection{Giao thức Bluetooth LE}
 \label{sec:gatt}
@@ -678,7 +680,7 @@ Giao thức giữa thiết bị và bridge cụ thể hóa Bảng~\ref{tab:gatt}
     \end{tabular}
 \end{table}
 
-Với MTU thương lượng là 185 byte, mỗi thông báo mang được $\lfloor (185 - 3 - 2) / 16 \rfloor = 11$ bản ghi. Bộ nhớ đầy 512 bản ghi vì vậy đi hết trong 47 khung. Bảng~\ref{tab:commands} liệt kê bốn lệnh máy tính gửi xuống.
+Với MTU thương lượng là 185 byte, mỗi thông báo mang được $\lfloor (185 - 3 - 2) / 16 \rfloor = 11$ bản ghi. Bộ nhớ đầy 512 bản ghi vì vậy đi hết trong 47 khung. MTU do hai bên thương lượng, nên thiết bị đọc MTU thực tế và tính số bản ghi mỗi khung là $\lfloor(\text{MTU} - 5)/16\rfloor$; nếu hệ điều hành chỉ cho MTU mặc định 23 thì mỗi khung mang một bản ghi. Bảng~\ref{tab:commands} liệt kê bốn lệnh máy tính gửi xuống.
 
 \begin{table}[H]
     \centering
@@ -786,7 +788,7 @@ Mô hình miền được ánh xạ thành năm bảng, trong đó Bản ghi s�
         \node[ent] (dev) at (10.6,0) {\begin{tabular}{l}\textbf{device}\\\hline \underline{device\_id}\\fw\_version, hw\_version\\last\_ack\\last\_seen\end{tabular}};
         \node[ent] (sol) at (5.2,-3.9) {\begin{tabular}{l}\textbf{solve}\\\hline \underline{device\_id, seq}\\session\_id (FK)\\time\_ms, penalty, deleted\\ts, ts\_estimated\\edit\_seq\end{tabular}};
         \node[ent] (syn) at (10.6,-3.9) {\begin{tabular}{l}\textbf{sync\_log}\\\hline \underline{sync\_id}\\device\_id (FK)\\started\_at, last\_ack\\frames\_ok, frames\_bad\\records\_new, records\_dup\end{tabular}};
-        \draw[rel] (usr) -- node[m, above, pos=0.12]{1} node[m, above, pos=0.86]{0..*} node[m, below]{sở hữu} (ses);
+        \draw[rel] (usr) -- node[m, above, pos=0.12]{0..1} node[m, above, pos=0.86]{0..*} node[m, below]{sở hữu} (ses);
         \draw[rel] (dev) -- node[m, above, pos=0.12]{1} node[m, above, pos=0.84]{0..*} node[m, below]{tạo} (ses);
         \draw[rel] (ses) -- node[m, right, pos=0.12]{1} node[m, right, pos=0.86]{1..*} node[m, left]{gồm} (sol);
         \draw[rel] (dev) -- node[m, right, pos=0.12]{1} node[m, right, pos=0.86]{0..*} node[m, left]{ghi nhật ký} (syn);
@@ -849,6 +851,10 @@ Mọi điểm cuối có tiền tố \texttt{/api/v1}, nhận và trả JSON. Tr
         GET & /devices/\{id\} & Phiên bản firmware, \texttt{last\_ack}, lần đồng bộ cuối & 200; 404 \\
         \rowcolor{haitayblue!8}
         GET & /events & Luồng Server-Sent Events báo có dữ liệu mới & 200 \\
+        POST & /auth/login & \texttt{user\_id}, PIN; trả token phiên trong cookie HttpOnly (UC11) & 200; 401 \\
+        \rowcolor{haitayblue!8}
+        PATCH, DELETE & /users/\{id\} & Đổi tên, đặt lại PIN; xóa người dùng chưa có session (UC08) & 200; 404; 409 \\
+        POST & /backup & Chép \texttt{haitay.db} bằng SQLite backup API (UC12) & 201 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -879,7 +885,7 @@ Dashboard là một trang duy nhất, xếp thông tin theo thứ tự người 
 Biểu đồ giới hạn tối đa 5.000 điểm, gộp điểm khi khoảng thời gian dài hơn, để trang không chậm dần khi lịch sử lớn lên. Khi bridge đẩy xong một lô, máy chủ phát một sự kiện SSE và dashboard tải lại đúng khoảng đang xem.
 
 \subsection{An toàn thông tin}
-Phạm vi của Haitay là một thiết bị và một máy tính, nên bề mặt tấn công khá hẹp. Dịch vụ chỉ nghe trên 127.0.0.1, vì vậy máy khác trong mạng không gọi được API. Thiết bị chỉ chấp nhận lệnh từ máy tính đã ghép đôi Bluetooth và lưu khóa liên kết, và kho mã không chứa khóa hay mật khẩu nào. Khi nhiều người dùng chung một máy tính, mỗi người có thể đặt PIN, và máy chủ chỉ lưu giá trị băm của PIN.
+Phạm vi của Haitay là một thiết bị và một máy tính, nên bề mặt tấn công khá hẹp. Dịch vụ chỉ nghe trên 127.0.0.1, vì vậy máy khác trong mạng không gọi được API. Thiết bị ghép đôi bằng LE Secure Connections với mã số so khớp hiện trên màn hình TFT, chỉ mở ghép đôi khi người chơi nhấn giữ nút Đồng bộ, và đặc tính Control chỉ nhận lệnh qua liên kết đã mã hóa. Kho mã không chứa khóa hay mật khẩu nào. Khi nhiều người dùng chung một máy tính, mỗi người có thể đặt PIN; máy chủ lưu PIN bằng scrypt với muối riêng, và khi PIN bật thì mọi lệnh ghi lên dữ liệu của người đó đòi token đăng nhập.
 
 % =====================================================================
 \section{Tổng hợp quyết định thiết kế}
@@ -1003,7 +1009,7 @@ Gộp hai phép thử lại, stack được chọn gồm các thành phần dư�
     \label{fig:knee}
 \end{figure}
 
-Stack được chọn nằm ở điểm gãy của đường cong giá và độ phức tạp. So với mức A, nó chi thêm khoảng 770.000 đồng, chủ yếu cho ESP32-S3 thay ESP32 cổ điển, FRAM, DS3231 và màn hình, để phủ N4 và mốc giờ thực. So với mức B, nó bỏ pin và màn hình thứ hai theo quyết định nguồn của nhóm, rồi dùng phần tiền đó cho FRAM. Đi tiếp tới mức C tốn thêm khoảng 1,1 triệu đồng mà không phủ thêm yêu cầu nào.
+Stack được chọn nằm ở điểm gãy của đường cong giá và độ phức tạp. So với mức A, nó chi thêm khoảng 770.000 đồng, chủ yếu cho ESP32-S3 thay ESP32 cổ điển, FRAM, DS3231 và màn hình, để phủ N4 và mốc giờ thực. So với mức B, nó bỏ pin, mạch sạc và màn hình thứ hai theo quyết định nguồn của nhóm, rồi thêm hai chip FRAM, nên đắt hơn khoảng 90.000 đồng nhưng phủ được N4. Đi tiếp tới mức C tốn thêm khoảng 1,1 triệu đồng mà không phủ thêm yêu cầu nào.
 
 \subsection{Quyết định kỹ thuật và phương án bị loại}
 Bảng~\ref{tab:decisions} gom các quyết định chi tiết của chương này. Lựa chọn linh kiện và công nghệ truyền thông đã được lập luận ở chương trước, nên không lặp lại ở đây.
